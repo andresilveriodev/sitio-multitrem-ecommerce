@@ -1,0 +1,20 @@
+export interface CartItem {
+  productId: number
+  visitorId: string
+  productName: string
+  quantity: number
+  unitPrice: number
+  selectedItems?: string[]
+  subtotal: number
+}
+
+export interface Cart {
+  id: string
+  visitorId: string
+  items: CartItem[]
+  total: number
+  itemCount: number
+  createdAt: string
+  updatedAt: string
+}
+
