@@ -5,6 +5,8 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/contexts/CartContext";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { ChatProvider } from "@/contexts/ChatContext";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -35,10 +37,13 @@ export default function RootLayout({
         className={`${inter.variable} ${poppins.variable} antialiased`}
       >
         <CartProvider>
-          <Header />
-          <main className="pt-16">{children}</main>
-          <Footer />
-          <CartDrawer />
+          <ChatProvider>
+            <Header />
+            <main className="pt-16">{children}</main>
+            <Footer />
+            <CartDrawer />
+            <ChatWidget />
+          </ChatProvider>
         </CartProvider>
       </body>
     </html>

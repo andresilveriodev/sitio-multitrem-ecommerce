@@ -26,6 +26,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         'border-red-500 focus-visible:ring-red-500 focus-visible:border-red-500',
     }
 
+    // Remover aria-invalid dos props se existir para evitar conflito
+    const { 'aria-invalid': _, ...restProps } = props
+
     return (
       <div className="w-full">
         {label && (
@@ -51,9 +54,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               leftIcon && 'pl-10',
               className
             )}
-            aria-invalid={hasError}
+            aria-invalid={hasError ? true : undefined}
             aria-describedby={hasError ? `${inputId}-error` : undefined}
-            {...props}
+            {...restProps}
           />
         </div>
         {error && (
