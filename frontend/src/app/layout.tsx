@@ -21,7 +21,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Sítio Multitrem - Hortaliças Frescas e Ovos Caipiras",
-  description: "Produtos frescos direto do produtor em Abadiânia-GO. Hortaliças colhidas no dia e ovos caipiras para sua mesa.",
+  description: "Produtos frescos direto do produtor em Terezópolis de Goiás. Hortaliças colhidas no dia e ovos caipiras para sua mesa.",
 };
 
 export default function RootLayout({

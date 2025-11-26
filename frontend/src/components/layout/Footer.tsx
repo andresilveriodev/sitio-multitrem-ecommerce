@@ -18,7 +18,7 @@ export function Footer() {
               Produtos frescos direto do produtor
             </p>
             <p className="text-sm text-foreground/60">
-              Produção familiar em Abadiânia-GO, com todo carinho e qualidade
+              Produção familiar em Terezópolis de Goiás, com todo carinho e qualidade
               que sua família merece.
             </p>
           </div>
@@ -51,7 +51,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2 text-foreground/80">
                 <MapPin className="h-4 w-4" />
-                <span>Abadiânia - GO</span>
+                <span>Terezópolis de Goiás</span>
               </li>
             </ul>
           </div>

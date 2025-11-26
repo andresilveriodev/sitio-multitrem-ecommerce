@@ -43,7 +43,7 @@ export function Hero() {
 
           {/* Descrição */}
           <p className="text-base sm:text-lg text-foreground/70 max-w-2xl mx-auto">
-            Produção familiar em Abadiânia-GO, com todo carinho e qualidade que
+            Produção familiar em Terezópolis de Goiás, com todo carinho e qualidade que
             sua família merece.
           </p>
 

@@ -63,7 +63,7 @@ export function Delivery() {
                       Região
                     </h3>
                     <p className="text-sm text-foreground/70">
-                      Abadiânia e região
+                      Terezópolis de Goiás e região
                     </p>
                   </div>
                 </div>

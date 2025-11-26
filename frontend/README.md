@@ -1,6 +1,6 @@
 # Sítio Multitrem - Frontend
 
-E-commerce single-page para o Sítio Multitrem (Abadiânia-GO) que vende hortaliças frescas e ovos caipiras.
+E-commerce single-page para o Sítio Multitrem (Terezópolis de Goiás) que vende hortaliças frescas e ovos caipiras.
 
 ## 🚀 Como Rodar o Projeto
 
