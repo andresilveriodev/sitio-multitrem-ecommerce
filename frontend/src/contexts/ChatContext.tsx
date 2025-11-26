@@ -125,7 +125,7 @@ export function useChatActions() {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content,
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         intent: intent as any,
       }
       // Acessar setMessages através do contexto
