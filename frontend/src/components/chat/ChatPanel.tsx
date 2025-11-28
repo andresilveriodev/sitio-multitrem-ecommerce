@@ -1,14 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { X, Minimize2, Send, Leaf } from 'lucide-react'
+import { X, Minimize2, Send, Leaf, ShoppingCart, ExternalLink } from 'lucide-react'
 import { useChat } from '@/contexts/ChatContext'
 import { ChatMessage } from './ChatMessage'
 import { Input, Button } from '@/components/ui'
-import { simulateAIResponse } from '@/lib/mock-chat'
 import { useCart } from '@/hooks/useCart'
 import { cn } from '@/lib/utils'
-import { PRODUCTS } from '@/lib/mock-data'
+import { aiService } from '@/services/ai.service'
 
 export function ChatPanel() {
   const {
@@ -16,10 +15,10 @@ export function ChatPanel() {
     isOpen,
     isTyping,
     sendMessage: sendMessageContext,
-    addAssistantMessage,
     closeChat,
+    paymentLink,
   } = useChat()
-  const { addItem, items, total } = useCart()
+  const { visitorId } = useCart()
   const [inputValue, setInputValue] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isMinimized, setIsMinimized] = useState(false)
@@ -37,25 +36,9 @@ export function ChatPanel() {
 
     const userMessage = inputValue.trim()
     setInputValue('')
-    sendMessageContext(userMessage)
-
-    // Simular resposta da IA
-    const response = await simulateAIResponse(userMessage, {
-      addItem,
-      items,
-      total,
-    })
-
-    // Adicionar resposta do assistente
-    addAssistantMessage(response.content, response.intent)
-
-    // Executar ações se necessário
-    if (response.action === 'add_to_cart' && response.productId) {
-      const product = PRODUCTS.find((p) => p.id === response.productId)
-      if (product) {
-        addItem(product, response.quantity || 1, response.selectedItems)
-      }
-    }
+    
+    // Enviar mensagem (já processa a resposta do ai-service)
+    await sendMessageContext(userMessage, visitorId)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -126,6 +109,24 @@ export function ChatPanel() {
                       style={{ animationDelay: '0.2s' }}
                     />
                   </div>
+                </div>
+              </div>
+            )}
+            {paymentLink && (
+              <div className="flex justify-start">
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 max-w-[80%]">
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    Link de pagamento gerado
+                  </p>
+                  <a
+                    href={paymentLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 text-sm underline"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Abrir link de pagamento
+                  </a>
                 </div>
               </div>
             )}

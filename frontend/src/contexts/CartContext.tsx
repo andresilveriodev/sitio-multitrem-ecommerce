@@ -29,6 +29,7 @@ interface CartContextType {
   openCart: () => void
   closeCart: () => void
   toggleCart: () => void
+  refreshCart: () => Promise<void>
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -106,6 +107,46 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       setCart(newCart)
       saveCartToStorage(newCart)
+    }
+  }, [visitorId])
+
+  // Escutar evento de atualização do carrinho (disparado pelo chat)
+  useEffect(() => {
+    const handleRefresh = async () => {
+      try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
+        const response = await fetch(`${API_URL}/cart/${visitorId}`)
+        
+        if (response.ok) {
+          const cartData = await response.json()
+          // Converter formato do backend para formato do frontend
+          const convertedCart: Cart = {
+            id: cartData.id || `cart-${Date.now()}`,
+            visitorId: cartData.visitorId || visitorId,
+            items: (cartData.items || []).map((item: any) => ({
+              productId: item.productId,
+              productName: item.product?.name || 'Produto',
+              unitPrice: item.product?.price || 0,
+              quantity: item.quantity,
+              subtotal: item.subtotal || (item.product?.price || 0) * item.quantity,
+              selectedItems: item.selectedItems || [],
+            })),
+            total: cartData.total || 0,
+            itemCount: cartData.itemCount || 0,
+            createdAt: cartData.createdAt || new Date().toISOString(),
+            updatedAt: cartData.updatedAt || new Date().toISOString(),
+          }
+          setCart(convertedCart)
+          saveCartToStorage(convertedCart)
+        }
+      } catch (error) {
+        console.error('Error refreshing cart:', error)
+      }
+    }
+
+    window.addEventListener('cart:refresh', handleRefresh)
+    return () => {
+      window.removeEventListener('cart:refresh', handleRefresh)
     }
   }, [visitorId])
 
@@ -257,6 +298,38 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const closeCart = useCallback(() => setIsOpen(false), [])
   const toggleCart = useCallback(() => setIsOpen((prev) => !prev), [])
 
+  const refreshCart = useCallback(async () => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
+      const response = await fetch(`${API_URL}/cart/${visitorId}`)
+      
+      if (response.ok) {
+        const cartData = await response.json()
+        // Converter formato do backend para formato do frontend
+        const convertedCart: Cart = {
+          id: cartData.id || `cart-${Date.now()}`,
+          visitorId: cartData.visitorId || visitorId,
+          items: (cartData.items || []).map((item: any) => ({
+            productId: item.productId,
+            productName: item.product?.name || 'Produto',
+            unitPrice: item.product?.price || 0,
+            quantity: item.quantity,
+            subtotal: item.subtotal || (item.product?.price || 0) * item.quantity,
+            selectedItems: item.selectedItems || [],
+          })),
+          total: cartData.total || 0,
+          itemCount: cartData.itemCount || 0,
+          createdAt: cartData.createdAt || new Date().toISOString(),
+          updatedAt: cartData.updatedAt || new Date().toISOString(),
+        }
+        setCart(convertedCart)
+        saveCartToStorage(convertedCart)
+      }
+    } catch (error) {
+      console.error('Error refreshing cart:', error)
+    }
+  }, [visitorId])
+
   const value: CartContextType = {
     cart,
     items: cart?.items || [],
@@ -272,6 +345,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     openCart,
     closeCart,
     toggleCart,
+    refreshCart,
   }
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>

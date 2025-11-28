@@ -7,17 +7,20 @@ import {
   type ReactNode,
 } from 'react'
 import type { AIMessage } from '@/types'
+import { aiService } from '@/services/ai.service'
 
 interface ChatContextType {
   messages: AIMessage[]
   isOpen: boolean
   isTyping: boolean
-  sendMessage: (content: string) => void
+  sendMessage: (content: string, visitorId: string) => Promise<void>
   addAssistantMessage: (content: string, intent?: string) => void
   clearMessages: () => void
   openChat: () => void
   closeChat: () => void
   toggleChat: () => void
+  paymentLink: string | null
+  setPaymentLink: (link: string | null) => void
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
@@ -26,8 +29,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState<AIMessage[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
+  const [paymentLink, setPaymentLink] = useState<string | null>(null)
 
-  const sendMessage = (content: string) => {
+  const sendMessage = async (content: string, visitorId: string) => {
     if (!content.trim()) return
 
     const userMessage: AIMessage = {
@@ -39,6 +43,68 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
     setMessages((prev) => [...prev, userMessage])
     setIsTyping(true)
+
+    try {
+      // Buscar histórico da conversa
+      const history = messages
+        .slice(-10)
+        .map((msg) => ({
+          role: msg.role,
+          content: msg.content,
+          timestamp: msg.timestamp,
+        }))
+
+      // Chamar ai-service
+      const response = await aiService.sendMessage({
+        visitorId,
+        message: content.trim(),
+        conversationHistory: history,
+        source: 'web',
+      })
+
+      // Adicionar resposta do assistente
+      const assistantMessage: AIMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: response.response,
+        timestamp: new Date().toISOString(),
+        intent: response.actions.length > 0 ? 'action' : undefined,
+      }
+
+      setMessages((prev) => [...prev, assistantMessage])
+      setIsTyping(false)
+
+      // Processar ações
+      if (response.paymentLink) {
+        setPaymentLink(response.paymentLink)
+      } else {
+        setPaymentLink(null)
+      }
+
+      // Sincronizar carrinho se foi modificado
+      // O carrinho será atualizado automaticamente quando o usuário interagir com a página
+      // ou podemos disparar um evento customizado para atualizar o carrinho
+      if (response.cart || response.actions.some((a: any) => 
+        a.function === 'add_to_cart' || 
+        a.function === 'remove_from_cart' || 
+        a.function === 'view_cart'
+      )) {
+        // Disparar evento para atualizar carrinho
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('cart:refresh'))
+        }
+      }
+    } catch (error) {
+      console.error('Error sending message:', error)
+      const errorMessage: AIMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.',
+        timestamp: new Date().toISOString(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+      setIsTyping(false)
+    }
   }
 
   // Função auxiliar para adicionar mensagem do assistente (será usada externamente)
@@ -98,6 +164,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         openChat,
         closeChat,
         toggleChat,
+        paymentLink,
+        setPaymentLink,
       }}
     >
       {children}
