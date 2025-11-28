@@ -39,28 +39,28 @@ export function Header() {
     <>
       <header
         className={cn(
-          'fixed top-0 z-50 w-full border-b border-foreground/10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-all',
+          'fixed top-0 z-50 w-full border-b border-gray-200 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-all',
           isScrolled && 'shadow-sm'
         )}
       >
         <div className="container-custom">
-          <div className="flex h-16 items-center justify-between">
+          <div className="flex h-16 sm:h-20 items-center justify-between">
             {/* Logo */}
             <Link
               href="/"
-              className="flex items-center gap-2 text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
+              className="flex items-center gap-2 text-xl sm:text-2xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
             >
-              <span className="text-2xl">🌿</span>
+              <span className="text-2xl sm:text-3xl">🌿</span>
               <span>Sítio Multitrem</span>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-6 lg:gap-8">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-sm font-medium text-foreground/80 hover:text-primary-600 transition-colors"
+                  className="text-sm sm:text-base font-medium text-gray-700 hover:text-primary-600 transition-colors"
                 >
                   {item.name}
                 </Link>
@@ -77,7 +77,7 @@ export function Header() {
 
               {isLoggedIn ? (
                 <button
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-primary-50 transition-colors"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm sm:text-base font-medium text-gray-700 hover:bg-primary-50 transition-colors"
                   aria-label="Perfil do usuário"
                 >
                   <User className="h-5 w-5" />
@@ -97,7 +97,7 @@ export function Header() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="md:hidden rounded-lg p-2 text-foreground hover:bg-primary-50 transition-colors"
+                className="md:hidden rounded-lg p-2 text-gray-700 hover:bg-primary-50 transition-colors"
                 aria-label="Abrir menu"
               >
                 <Menu className="h-6 w-6" />
@@ -118,7 +118,7 @@ export function Header() {
               key={item.name}
               href={item.href}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-base font-medium text-foreground hover:text-primary-600 transition-colors"
+              className="text-base font-medium text-gray-700 hover:text-primary-600 transition-colors"
             >
               {item.name}
             </Link>

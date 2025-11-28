@@ -36,21 +36,21 @@ export function HowItWorks() {
   return (
     <section
       id="como-funciona"
-      className="py-16 sm:py-20 md:py-24 bg-background"
+      className="py-20 sm:py-24 md:py-32 bg-background"
     >
       <div className="container-custom">
         {/* Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
+        <div className="text-center mb-12 sm:mb-16 md:mb-20">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 sm:mb-4 leading-tight">
             Como Funciona
           </h2>
-          <p className="text-lg sm:text-xl text-foreground/70 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto leading-relaxed">
             Receba produtos frescos em 4 passos simples
           </p>
         </div>
 
         {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
           {steps.map((step, index) => {
             const Icon = step.icon
             return (
@@ -62,29 +62,29 @@ export function HowItWorks() {
 
                 <Card
                   variant="elevated"
-                  className="h-full text-center relative overflow-hidden group hover:shadow-xl transition-shadow"
+                  className="h-full text-center relative overflow-hidden group"
                 >
                   {/* Número de fundo */}
-                  <div className="absolute -top-4 -right-4 text-8xl font-bold text-primary-50 group-hover:text-primary-100 transition-colors">
+                  <div className="absolute -top-6 -right-6 text-7xl sm:text-8xl font-bold text-primary-50 group-hover:text-primary-100 transition-colors opacity-60">
                     {step.number}
                   </div>
 
                   {/* Conteúdo */}
-                  <div className="relative z-10 pt-8 pb-6">
+                  <div className="relative z-10 p-6 sm:p-8">
                     {/* Ícone */}
-                    <div className="flex justify-center mb-4">
-                      <div className="rounded-full bg-primary-100 p-4 group-hover:bg-primary-200 transition-colors">
-                        <Icon className="h-8 w-8 text-primary-600" />
+                    <div className="flex justify-center mb-4 sm:mb-6">
+                      <div className="rounded-full bg-primary-100 p-4 sm:p-5 group-hover:bg-primary-200 transition-colors">
+                        <Icon className="h-8 w-8 sm:h-10 sm:w-10 text-primary-600" />
                       </div>
                     </div>
 
                     {/* Título */}
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
+                    <h3 className="text-xl sm:text-2xl font-semibold text-foreground mb-3 sm:mb-4 leading-snug">
                       {step.title}
                     </h3>
 
                     {/* Descrição */}
-                    <p className="text-sm text-foreground/70 leading-relaxed">
+                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                       {step.description}
                     </p>
                   </div>

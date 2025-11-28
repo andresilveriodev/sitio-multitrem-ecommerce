@@ -19,7 +19,7 @@ export function ProductGrid({
 }: ProductGridProps) {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 md:gap-10">
         {Array.from({ length: 8 }).map((_, i) => (
           <Skeleton key={i} variant="card" className="h-80" />
         ))}
@@ -29,8 +29,8 @@ export function ProductGrid({
 
   if (products.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-lg text-foreground/70">
+      <div className="text-center py-12 sm:py-16">
+        <p className="text-lg sm:text-xl text-gray-700 leading-relaxed">
           Nenhum produto encontrado nesta categoria.
         </p>
       </div>
@@ -38,7 +38,7 @@ export function ProductGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 md:gap-10">
       {products.map((product) => (
         <ProductCard
           key={product.id}

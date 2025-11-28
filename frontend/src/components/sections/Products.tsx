@@ -42,14 +42,14 @@ export function Products({ onAddToCart, onSelectKit }: ProductsProps) {
 
   return (
     <>
-      <section id="produtos" className="py-16 sm:py-20 md:py-24 bg-background">
+      <section id="produtos" className="py-20 sm:py-24 md:py-32 bg-background">
         <div className="container-custom">
           {/* Header */}
-          <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
+          <div className="text-center mb-12 sm:mb-16 md:mb-20">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 sm:mb-4 leading-tight">
               Nossos Produtos
             </h2>
-            <p className="text-lg sm:text-xl text-foreground/70 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto leading-relaxed">
               Tudo fresquinho, colhido no dia do seu pedido
             </p>
           </div>

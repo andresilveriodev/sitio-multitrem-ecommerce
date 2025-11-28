@@ -23,7 +23,7 @@ export function Hero() {
 
       {/* Conteúdo */}
       <div className="container-custom relative z-10">
-        <div className="max-w-3xl mx-auto text-center space-y-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700">
+        <div className="max-w-3xl mx-auto text-center space-y-6 sm:space-y-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-700">
           {/* Badge */}
           <div className="flex justify-center">
             <Badge variant="success" size="md" className="text-sm">
@@ -32,23 +32,23 @@ export function Hero() {
           </div>
 
           {/* Título */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground leading-tight">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-foreground leading-tight">
             Sítio Multitrem
           </h1>
 
           {/* Subtítulo */}
-          <p className="text-xl sm:text-2xl text-foreground/80 font-medium">
+          <p className="text-xl sm:text-2xl text-foreground/90 font-semibold leading-snug">
             Hortaliças frescas e ovos caipiras, colhidos no dia para sua mesa
           </p>
 
           {/* Descrição */}
-          <p className="text-base sm:text-lg text-foreground/70 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-gray-700 max-w-2xl mx-auto leading-relaxed">
             Produção familiar em Terezópolis de Goiás, com todo carinho e qualidade que
             sua família merece.
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6 sm:pt-8">
             <Button
               variant="primary"
               size="lg"

@@ -53,6 +53,10 @@
   --background: var(--color-background);
   --foreground: var(--color-foreground);
   --muted-foreground: #6b7280;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-200: #e5e7eb;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -83,8 +87,66 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading), system-ui, -apple-system, sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.2;
+}
+
+/* Escala tipográfica consistente */
+h1 {
+  font-size: 2.5rem; /* text-5xl */
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h3 {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 600;
+  line-height: 1.375; /* leading-snug */
+}
+
+h4 {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600;
+  line-height: 1.375; /* leading-snug */
+}
+
+@media (min-width: 640px) {
+  h1 {
+    font-size: 3rem; /* sm:text-6xl */
+  }
+  h2 {
+    font-size: 2.25rem; /* sm:text-4xl */
+  }
+  h3 {
+    font-size: 1.875rem; /* sm:text-3xl */
+  }
+  h4 {
+    font-size: 1.5rem; /* sm:text-2xl */
+  }
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 3.5rem; /* md:text-7xl */
+  }
+  h2 {
+    font-size: 3rem; /* md:text-5xl */
+  }
+}
+
+/* Line heights customizados */
+.leading-relaxed {
+  line-height: 1.625;
+}
+
+.leading-snug {
+  line-height: 1.375;
 }
 
 /* Scrollbar estilizada */

@@ -43,7 +43,7 @@ export function ProductCard({
   }
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-lg border border-foreground/10 bg-background transition-all hover:shadow-lg">
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-background transition-all hover:shadow-xl">
       {/* Imagem */}
       <div className="relative aspect-square w-full overflow-hidden bg-primary-50">
         {product.imageUrl ? (
@@ -60,8 +60,8 @@ export function ProductCard({
         )}
 
         {/* Badge de categoria */}
-        <div className="absolute top-2 right-2">
-          <Badge variant="default" size="sm">
+        <div className="absolute top-3 right-3">
+          <Badge variant="default" size="sm" className="bg-white/95 backdrop-blur-sm">
             <Icon className="mr-1 h-3 w-3" />
             {categoryLabels[product.category]}
           </Badge>
@@ -69,27 +69,29 @@ export function ProductCard({
       </div>
 
       {/* Conteúdo */}
-      <div className="flex flex-1 flex-col p-4">
-        <h3 className="mb-1 text-lg font-semibold text-foreground">
-          {product.name}
-        </h3>
+      <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
+        <div>
+          <h3 className="mb-2 text-lg sm:text-xl font-semibold text-foreground leading-snug">
+            {product.name}
+          </h3>
 
-        {product.description && (
-          <p className="mb-3 text-sm text-foreground/70">
-            {product.description}
-          </p>
-        )}
+          {product.description && (
+            <p className="mb-3 text-sm text-gray-700 leading-relaxed">
+              {product.description}
+            </p>
+          )}
 
-        {isKit && (product as KitProduct).kitSize && (
-          <p className="mb-3 text-xs text-primary-600 font-medium">
-            {(product as KitProduct).kitSize} hortaliças à escolha
-          </p>
-        )}
+          {isKit && (product as KitProduct).kitSize && (
+            <p className="mb-4 text-sm text-primary-600 font-medium">
+              {(product as KitProduct).kitSize} hortaliças à escolha
+            </p>
+          )}
+        </div>
 
         {/* Preço e botão */}
-        <div className="mt-auto flex items-center justify-between">
+        <div className="mt-auto flex items-center justify-between gap-3">
           <div>
-            <span className="text-2xl font-bold text-primary-600">
+            <span className="text-2xl sm:text-3xl font-bold text-primary-600">
               R$ {product.price.toFixed(2).replace('.', ',')}
             </span>
           </div>
@@ -97,7 +99,7 @@ export function ProductCard({
             variant="primary"
             size="sm"
             onClick={handleClick}
-            className="ml-2"
+            className="flex-shrink-0"
           >
             {isKit ? 'Escolher' : 'Adicionar'}
           </Button>

@@ -19,23 +19,23 @@ export function Card({
   const baseStyles = 'rounded-lg bg-background'
 
   const variants = {
-    default: 'border border-foreground/10',
-    elevated: 'shadow-lg',
+    default: 'border border-gray-200',
+    elevated: 'shadow-lg hover:shadow-xl transition-shadow',
     bordered: 'border-2 border-primary-200',
   }
 
   return (
     <div className={cn(baseStyles, variants[variant], className)}>
       {header && (
-        <div className="border-b border-foreground/10 px-6 py-4">
+        <div className="border-b border-gray-200 px-6 py-5 sm:px-8 sm:py-6">
           {header}
         </div>
       )}
-      <div className={cn('px-6 py-4', header && 'pt-6', footer && 'pb-6')}>
+      <div className={cn('p-5 sm:p-6 md:p-8', header && 'pt-6 sm:pt-8', footer && 'pb-6 sm:pb-8')}>
         {children}
       </div>
       {footer && (
-        <div className="border-t border-foreground/10 px-6 py-4">
+        <div className="border-t border-gray-200 px-6 py-5 sm:px-8 sm:py-6">
           {footer}
         </div>
       )}
