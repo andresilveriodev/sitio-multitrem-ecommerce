@@ -18,7 +18,9 @@
     "build": "cd shared && npm run build && cd ../frontend && npm run build",
     "build:shared": "cd shared && npm run build",
     "install:all": "npm install && npm run build:shared",
-    "setup": "node scripts/setup.js || bash scripts/setup.sh || powershell -ExecutionPolicy Bypass -File scripts/setup.ps1"
+    "setup": "node scripts/setup.js || bash scripts/setup.sh || powershell -ExecutionPolicy Bypass -File scripts/setup.ps1",
+    "test": "cd services/product-service && npm test && cd ../cart-service && npm test && cd ../order-service && npm test",
+    "test:coverage": "cd services/product-service && npm run test:cov && cd ../cart-service && npm run test:cov && cd ../order-service && npm run test:cov"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

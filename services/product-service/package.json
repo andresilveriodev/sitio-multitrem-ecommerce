@@ -7,7 +7,10 @@
     "build": "tsc",
     "start": "node dist/main.js",
     "start:dev": "ts-node-dev --respawn --transpile-only src/main.ts",
-    "start:watch": "ts-node-dev --respawn --transpile-only src/main.ts"
+    "start:watch": "ts-node-dev --respawn --transpile-only src/main.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -21,13 +24,19 @@
     "@sitio/shared": "file:../../shared",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
+    "@nestjs/swagger": "^7.1.17",
+    "swagger-ui-express": "^5.0.0",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "typeorm": "^0.3.27"
   },
   "devDependencies": {
+    "@nestjs/testing": "^11.1.9",
+    "@types/jest": "^29.5.12",
     "@types/node": "^24.10.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
   }
