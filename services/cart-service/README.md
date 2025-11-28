@@ -66,3 +66,4 @@ O carrinho é armazenado no Redis com:
 - Formato: JSON com estrutura do Cart
 
 
+
