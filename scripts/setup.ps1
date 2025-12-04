@@ -89,3 +89,6 @@ Write-Host "2. Inicie PostgreSQL e Redis"
 Write-Host "3. Execute: npm run dev"
 Write-Host ""
 
+
+
+

@@ -109,7 +109,7 @@ npm run dev
 
 Isso iniciará:
 - Frontend (porta 3000)
-- Gateway (porta 3000) - conflito! Ajuste as portas
+- Gateway (porta 8000)
 - Product Service (porta 3001)
 - Cart Service (porta 3002)
 - Order Service (porta 3003)
@@ -153,7 +153,7 @@ npm run dev:ai
 
 | Serviço | Porta | URL |
 |---------|-------|-----|
-| Gateway | 3000 | http://localhost:3000 |
+| Gateway | 8000 | http://localhost:8000 |
 | Frontend | 3000 | http://localhost:3000 (em dev) |
 | Product Service | 3001 | http://localhost:3001 |
 | Cart Service | 3002 | http://localhost:3002 |
@@ -169,25 +169,25 @@ npm run dev:ai
 
 ```bash
 # Gateway
-curl http://localhost:3000/health
+curl http://localhost:8000/health
 
 # Status de todos os serviços
-curl http://localhost:3000/health/services
+curl http://localhost:8000/health/services
 ```
 
 ### Exemplos de Requisições
 
 ```bash
 # Listar produtos
-curl http://localhost:3000/api/products
+curl http://localhost:8000/api/products
 
 # Criar carrinho
-curl -X POST http://localhost:3000/api/cart/visitor123/items \
+curl -X POST http://localhost:8000/api/cart/visitor123/items \
   -H "Content-Type: application/json" \
   -d '{"productId": 1, "quantity": 2}'
 
 # Ver carrinho
-curl http://localhost:3000/api/cart/visitor123
+curl http://localhost:8000/api/cart/visitor123
 ```
 
 ## 📁 Estrutura do Projeto
@@ -263,7 +263,7 @@ npm run build:shared       # Build apenas do shared package
 
 ### Porta já em uso
 
-Se a porta 3000 estiver em uso, ajuste a porta do Gateway ou Frontend no `.env`.
+Se a porta 8000 (Gateway) ou 3000 (Frontend) estiver em uso, ajuste as portas nos arquivos `.env`.
 
 ### Erro de conexão com banco
 

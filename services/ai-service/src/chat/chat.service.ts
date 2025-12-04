@@ -26,8 +26,9 @@ export class ChatService {
   ) {
     this.openai = openaiClient
     this.model = configService.get<string>('OPENAI_MODEL', 'gpt-4o-mini')
-    this.temperature = configService.get<number>('OPENAI_TEMPERATURE', 0.7)
-    this.maxTokens = configService.get<number>('OPENAI_MAX_TOKENS', 500)
+    // Converter string para number (variáveis de ambiente são sempre strings)
+    this.temperature = Number(configService.get<string>('OPENAI_TEMPERATURE', '0.7')) || 0.7
+    this.maxTokens = Number(configService.get<string>('OPENAI_MAX_TOKENS', '500')) || 500
     this.productServiceUrl =
       configService.get<string>('PRODUCT_SERVICE_URL') ||
       'http://localhost:3001'
@@ -39,9 +40,20 @@ export class ChatService {
     // Buscar histórico do Redis se não fornecido
     let history = conversationHistory || (await this.getConversationHistory(visitorId))
 
-    // Buscar produtos atuais
-    const productsResponse = await axios.get(`${this.productServiceUrl}/products`)
-    const products = productsResponse.data
+    // Buscar produtos atuais (com tratamento de erro se Product Service não estiver disponível)
+    let products: any[] = []
+    try {
+      const productsResponse = await axios.get(`${this.productServiceUrl}/products`, {
+        timeout: 5000, // Timeout de 5 segundos
+      })
+      products = productsResponse.data || []
+    } catch (error: any) {
+      console.warn(
+        `Product Service não disponível (${this.productServiceUrl}): ${error.message}. Continuando sem lista de produtos.`,
+      )
+      // Continua com lista vazia de produtos
+      products = []
+    }
 
     // Montar system prompt com produtos
     const systemPrompt = buildSystemPrompt(products)
@@ -71,6 +83,14 @@ export class ChatService {
 
     // Se a IA chamou funções, executar
     if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
+      // Adicionar mensagem do assistant com tool_calls APENAS UMA VEZ
+      messages.push({
+        role: 'assistant',
+        content: assistantMessage.content,
+        tool_calls: assistantMessage.tool_calls,
+      })
+
+      // Executar cada função e adicionar resposta
       for (const toolCall of assistantMessage.tool_calls) {
         const functionName = toolCall.function.name as any
         const params = JSON.parse(toolCall.function.arguments)
@@ -88,12 +108,7 @@ export class ChatService {
           result,
         })
 
-        // Adicionar resultado às mensagens
-        messages.push({
-          role: 'assistant',
-          content: null,
-          tool_calls: assistantMessage.tool_calls,
-        })
+        // Adicionar mensagem de resposta (tool) para cada tool_call
         messages.push({
           role: 'tool',
           tool_call_id: toolCall.id,

@@ -84,3 +84,6 @@ echo "2. Inicie PostgreSQL e Redis"
 echo "3. Execute: npm run dev"
 echo ""
 
+
+
+

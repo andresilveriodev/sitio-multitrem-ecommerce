@@ -68,7 +68,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         role: 'assistant',
         content: response.response,
         timestamp: new Date().toISOString(),
-        intent: response.actions.length > 0 ? 'action' : undefined,
+        intent: response.actions.length > 0 ? 'other' : undefined,
       }
 
       setMessages((prev) => [...prev, assistantMessage])

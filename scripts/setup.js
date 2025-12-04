@@ -109,3 +109,6 @@ console.log('1. Configure as variáveis de ambiente nos arquivos .env');
 console.log('2. Inicie PostgreSQL e Redis');
 console.log('3. Execute: npm run dev\n');
 
+
+
+

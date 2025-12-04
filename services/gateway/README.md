@@ -32,7 +32,7 @@ PAYMENT_SERVICE_URL=http://localhost:3004
 AUTH_SERVICE_URL=http://localhost:3005
 WHATSAPP_SERVICE_URL=http://localhost:3006
 AI_SERVICE_URL=http://localhost:3007
-PORT=3000
+PORT=8000
 NODE_ENV=development
 ```
 
@@ -70,7 +70,7 @@ O gateway roteia as seguintes rotas:
 
 ## Porta
 
-O gateway roda na porta **3000** por padrão.
+O gateway roda na porta **8000** por padrão.
 
 ## Funcionalidades
 
@@ -86,17 +86,17 @@ O gateway roda na porta **3000** por padrão.
 
 ### Frontend
 ```typescript
-// Todas as requisições vão para o gateway na porta 3000
-const response = await fetch('http://localhost:3000/api/products')
+// Todas as requisições vão para o gateway na porta 8000
+const response = await fetch('http://localhost:8000/api/products')
 ```
 
 ### Health Check
 ```bash
 # Status do gateway
-curl http://localhost:3000/health
+curl http://localhost:8000/health
 
 # Status de todos os serviços
-curl http://localhost:3000/health/services
+curl http://localhost:8000/health/services
 ```
 
 ## Segurança

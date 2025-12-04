@@ -19,8 +19,16 @@ export class ChatController {
   @ApiOperation({ summary: 'Processar mensagem do assistente IA' })
   @ApiBody({ type: ChatMessageDto })
   @ApiResponse({ status: 200, description: 'Resposta do assistente IA' })
+  @ApiResponse({ status: 500, description: 'Erro interno do servidor' })
   async chat(@Body() dto: ChatMessageDto) {
-    return this.chatService.processMessage(dto)
+    try {
+      return await this.chatService.processMessage(dto)
+    } catch (error: any) {
+      console.error('Error processing message:', error)
+      throw new Error(
+        error.message || 'Erro ao processar mensagem. Verifique se os serviços estão rodando.',
+      )
+    }
   }
 
   @Get('conversation/:visitorId')

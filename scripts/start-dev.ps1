@@ -38,3 +38,10 @@ Write-Host ""
 # Iniciar todos os serviços
 npm run dev
 
+
+
+
+
+
+
+

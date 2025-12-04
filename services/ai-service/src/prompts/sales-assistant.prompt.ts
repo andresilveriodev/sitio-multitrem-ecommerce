@@ -39,16 +39,19 @@ COMPORTAMENTO:
 export const buildSystemPrompt = (products: any[]): string => {
   const productsList = products
     .map((p) => {
+      // Converter price para número (pode vir como string do banco)
+      const price = typeof p.price === 'string' ? parseFloat(p.price) : Number(p.price) || 0
+      
       if (p.category === 'hortalicas') {
-        return `- ${p.name}: R$ ${p.price.toFixed(2)}`
+        return `- ${p.name}: R$ ${price.toFixed(2)}`
       } else if (p.category === 'ovos') {
-        return `- ${p.name} (${p.quantity} ovos): R$ ${p.price.toFixed(2)}`
+        return `- ${p.name} (${p.quantity || 'N/A'} ovos): R$ ${price.toFixed(2)}`
       } else if (p.category === 'kits') {
-        return `- ${p.name}: R$ ${p.price.toFixed(2)}`
+        return `- ${p.name}: R$ ${price.toFixed(2)}`
       } else if (p.category === 'combos') {
-        return `- ${p.name}: R$ ${p.price.toFixed(2)}`
+        return `- ${p.name}: R$ ${price.toFixed(2)}`
       }
-      return `- ${p.name}: R$ ${p.price.toFixed(2)}`
+      return `- ${p.name}: R$ ${price.toFixed(2)}`
     })
     .join('\n')
 

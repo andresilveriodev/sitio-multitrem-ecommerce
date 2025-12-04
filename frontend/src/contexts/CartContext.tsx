@@ -114,7 +114,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const handleRefresh = async () => {
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
         const response = await fetch(`${API_URL}/cart/${visitorId}`)
         
         if (response.ok) {

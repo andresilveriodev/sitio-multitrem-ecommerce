@@ -70,12 +70,12 @@ PAYMENT_SERVICE_URL=http://localhost:3004
 AUTH_SERVICE_URL=http://localhost:3005
 WHATSAPP_SERVICE_URL=http://localhost:3006
 AI_SERVICE_URL=http://localhost:3007
-GATEWAY_URL=http://localhost:3000
+GATEWAY_URL=http://localhost:8000
 ```
 
 ### Frontend (Next.js)
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
 NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080
 NEXT_PUBLIC_KEYCLOAK_REALM=sitio-multitrem
 NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=sitio-app
@@ -97,7 +97,7 @@ PORT=3000
 
 ## Portas dos Serviços
 
-- **Gateway**: 3000
+- **Gateway**: 8000
 - **Product Service**: 3001
 - **Cart Service**: 3002
 - **Order Service**: 3003
@@ -128,4 +128,10 @@ PORT=3000
 2. Crie um realm chamado `sitio-multitrem`
 3. Crie um client chamado `sitio-app`
 4. Configure as URLs de redirecionamento
+
+
+
+
+
+
 

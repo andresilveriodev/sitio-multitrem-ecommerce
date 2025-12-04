@@ -17,6 +17,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(RateLimitMiddleware, ProxyMiddleware)
+      .exclude('health', 'health/(.*)')
       .forRoutes('*')
   }
 }

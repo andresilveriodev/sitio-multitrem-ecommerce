@@ -40,3 +40,10 @@ echo ""
 # Iniciar todos os serviços
 npm run dev
 
+
+
+
+
+
+
+

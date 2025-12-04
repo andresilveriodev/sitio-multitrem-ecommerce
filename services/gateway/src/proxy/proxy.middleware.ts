@@ -15,50 +15,69 @@ export class ProxyMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const path = req.path
 
+    // Ignorar rotas do próprio gateway
+    if (path.startsWith('/health')) {
+      return next()
+    }
+
     // Mapear rotas para serviços
     let targetService: string | null = null
-    let targetPath = path
+    let pathRewritePattern: string = ''
+    let pathRewriteReplacement: string = ''
 
     if (path.startsWith('/api/products')) {
       targetService = 'product'
-      targetPath = path.replace('/api/products', '')
+      pathRewritePattern = '^/api/products'
+      pathRewriteReplacement = ''
     } else if (path.startsWith('/api/cart')) {
       targetService = 'cart'
-      targetPath = path.replace('/api/cart', '')
+      pathRewritePattern = '^/api/cart'
+      pathRewriteReplacement = ''
     } else if (path.startsWith('/api/orders')) {
       targetService = 'order'
-      targetPath = path.replace('/api/orders', '')
+      pathRewritePattern = '^/api/orders'
+      pathRewriteReplacement = ''
     } else if (path.startsWith('/api/delivery')) {
       targetService = 'order'
-      targetPath = path.replace('/api/delivery', '')
+      pathRewritePattern = '^/api/delivery'
+      pathRewriteReplacement = ''
     } else if (path.startsWith('/api/payments')) {
       targetService = 'payment'
-      targetPath = path.replace('/api/payments', '')
+      pathRewritePattern = '^/api/payments'
+      pathRewriteReplacement = ''
     } else if (path.startsWith('/api/webhooks')) {
       targetService = 'payment'
-      targetPath = path.replace('/api/webhooks', '/webhooks')
+      pathRewritePattern = '^/api/webhooks'
+      pathRewriteReplacement = '/webhooks'
     } else if (path.startsWith('/api/auth')) {
       targetService = 'auth'
-      targetPath = path.replace('/api/auth', '/auth')
+      pathRewritePattern = '^/api/auth'
+      pathRewriteReplacement = '/auth'
     } else if (path.startsWith('/api/whatsapp')) {
       targetService = 'whatsapp'
-      targetPath = path.replace('/api/whatsapp', '/whatsapp')
+      pathRewritePattern = '^/api/whatsapp'
+      pathRewriteReplacement = '/whatsapp'
     } else if (path.startsWith('/api/ai')) {
       targetService = 'ai'
-      targetPath = path.replace('/api/ai', '/ai')
+      pathRewritePattern = '^/api/ai'
+      pathRewriteReplacement = '/ai'
     }
 
     if (!targetService || !this.servicesConfig[targetService]) {
+      console.log(`[Gateway] No service found for path: ${path}`)
       return next()
     }
 
     const serviceConfig = this.servicesConfig[targetService]
+    console.log(`[Gateway] Routing ${path} -> ${serviceConfig.url} (rewrite: ${pathRewritePattern} -> ${pathRewriteReplacement})`)
+    
     const proxyOptions: any = {
       target: serviceConfig.url,
       changeOrigin: true,
       pathRewrite: {
-        [`^${req.path}`]: targetPath,
+        [pathRewritePattern]: pathRewriteReplacement,
       },
+      logLevel: 'debug',
       timeout: serviceConfig.timeout,
       onProxyReq: (proxyReq: any, req: Request) => {
         // Preservar headers importantes
@@ -70,11 +89,12 @@ export class ProxyMiddleware implements NestMiddleware {
         }
       },
       onError: (err: Error, req: Request, res: Response) => {
-        console.error(`Proxy error for ${targetService}:`, err.message)
+        console.error(`[Gateway] Proxy error for ${targetService} (${serviceConfig.url}):`, err.message)
         if (!res.headersSent) {
           res.status(HttpStatus.BAD_GATEWAY).json({
             error: 'Service unavailable',
             service: targetService,
+            url: serviceConfig.url,
             message: err.message,
           })
         }
