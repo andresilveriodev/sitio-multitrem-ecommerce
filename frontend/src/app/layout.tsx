@@ -7,6 +7,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { ChatProvider } from "@/contexts/ChatContext";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,10 +33,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${poppins.variable} antialiased`}
+        suppressHydrationWarning
       >
+        <AuthProvider>
         <CartProvider>
           <ChatProvider>
             <Header />
@@ -45,6 +48,7 @@ export default function RootLayout({
             <ChatWidget />
           </ChatProvider>
         </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

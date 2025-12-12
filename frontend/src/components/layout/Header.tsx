@@ -1,13 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Menu, LogIn, User } from 'lucide-react'
+import { Menu, User } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui'
 import { CartButton } from './CartButton'
 import { MobileMenu } from './MobileMenu'
 import { useCart } from '@/hooks/useCart'
+import { useAuth } from '@/contexts/AuthContext'
+import { LoginModal } from '@/components/auth/LoginModal'
 
 const navigation = [
   { name: 'Produtos', href: '#produtos' },
@@ -18,8 +20,9 @@ const navigation = [
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const isLoggedIn = false // TODO: Integrar com Keycloak
+  const { isAuthenticated, user, logout } = useAuth()
   const { itemCount, openCart } = useCart()
 
   // Detectar scroll
@@ -75,22 +78,35 @@ export function Header() {
                 className="hidden sm:flex"
               />
 
-              {isLoggedIn ? (
-                <button
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm sm:text-base font-medium text-gray-700 hover:bg-primary-50 transition-colors"
-                  aria-label="Perfil do usuário"
-                >
-                  <User className="h-5 w-5" />
-                  <span className="hidden sm:inline">Perfil</span>
-                </button>
+              {isAuthenticated ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm sm:text-base font-medium text-gray-700 hover:bg-primary-50 transition-colors"
+                    aria-label="Perfil do usuário"
+                    title={user?.email || user?.preferred_username || 'Usuário'}
+                  >
+                    <User className="h-5 w-5" />
+                    <span className="hidden sm:inline">
+                      {user?.given_name || user?.preferred_username || 'Perfil'}
+                    </span>
+                  </button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={logout}
+                    className="hidden sm:flex"
+                  >
+                    Sair
+                  </Button>
+                </div>
               ) : (
                 <Button
                   variant="outline"
                   size="sm"
-                  leftIcon={<LogIn className="h-4 w-4" />}
                   className="hidden sm:flex"
+                  onClick={() => setIsLoginModalOpen(true)}
                 >
-                  Entrar
+                  Boas vindas :) Entre ou Cadastre-se
                 </Button>
               )}
 
@@ -106,6 +122,12 @@ export function Header() {
           </div>
         </div>
       </header>
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      />
 
       {/* Mobile Menu */}
       <MobileMenu
@@ -132,14 +154,30 @@ export function Header() {
               }}
               className="w-full justify-start"
             />
-            {!isLoggedIn && (
+            {!isAuthenticated && (
               <Button
                 variant="outline"
                 size="sm"
-                leftIcon={<LogIn className="h-4 w-4" />}
                 className="mt-2 w-full"
+                onClick={() => {
+                  setIsLoginModalOpen(true)
+                  setIsMobileMenuOpen(false)
+                }}
               >
-                Entrar
+                Boas vindas :) Entre ou Cadastre-se
+              </Button>
+            )}
+            {isAuthenticated && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2 w-full"
+                onClick={() => {
+                  logout()
+                  setIsMobileMenuOpen(false)
+                }}
+              >
+                Sair
               </Button>
             )}
           </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
@@ -22,7 +22,15 @@ export function Modal({
   size = 'md',
   className,
 }: ModalProps) {
+  const [isMounted, setIsMounted] = useState(false)
+
   useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isMounted) return
+    
     if (isOpen) {
       document.body.style.overflow = 'hidden'
     } else {
@@ -32,9 +40,11 @@ export function Modal({
     return () => {
       document.body.style.overflow = ''
     }
-  }, [isOpen])
+  }, [isOpen, isMounted])
 
   useEffect(() => {
+    if (!isMounted) return
+    
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
         onClose()
@@ -43,9 +53,9 @@ export function Modal({
 
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  }, [isOpen, onClose, isMounted])
 
-  if (!isOpen) return null
+  if (!isMounted || !isOpen) return null
 
   const sizes = {
     sm: 'max-w-md',
