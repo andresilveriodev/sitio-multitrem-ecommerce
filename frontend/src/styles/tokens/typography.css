@@ -1,0 +1,161 @@
+/**
+ * Design Tokens - Typography
+ * Sistema de tipografia baseado no Orgânico do Chico
+ */
+
+:root {
+  /* ========================================
+     FONT FAMILIES
+     ======================================== */
+  
+  --font-family-primary: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-family-heading: 'Inter', sans-serif;
+  --font-family-mono: 'Fira Code', 'Courier New', monospace;
+  
+  /* ========================================
+     FONT SIZES
+     ======================================== */
+  
+  /* Extra Small */
+  --text-xs: 0.75rem;      /* 12px - Labels pequenos, badges */
+  
+  /* Small */
+  --text-sm: 0.875rem;     /* 14px - Descrições, subtextos */
+  
+  /* Base */
+  --text-base: 1rem;       /* 16px - Corpo de texto padrão */
+  
+  /* Large */
+  --text-lg: 1.125rem;     /* 18px - Subtítulos, leads */
+  
+  /* Extra Large */
+  --text-xl: 1.25rem;      /* 20px - Títulos pequenos */
+  
+  /* 2X Large */
+  --text-2xl: 1.5rem;      /* 24px - Títulos médios */
+  
+  /* 3X Large */
+  --text-3xl: 1.875rem;    /* 30px - Títulos grandes */
+  
+  /* 4X Large */
+  --text-4xl: 2.25rem;     /* 36px - Hero titles, displays */
+  
+  /* 5X Large */
+  --text-5xl: 3rem;        /* 48px - Hero principais */
+  
+  /* ========================================
+     FONT WEIGHTS
+     ======================================== */
+  
+  --font-normal: 400;      /* Texto normal */
+  --font-medium: 500;      /* Ênfase leve */
+  --font-semibold: 600;    /* Subtítulos */
+  --font-bold: 700;        /* Títulos, destaque */
+  --font-extrabold: 800;   /* Super destaque */
+  
+  /* ========================================
+     LINE HEIGHTS
+     ======================================== */
+  
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+  
+  /* ========================================
+     LETTER SPACING
+     ======================================== */
+  
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+  
+  /* ========================================
+     TEXT TRANSFORMS
+     ======================================== */
+  
+  --text-uppercase: uppercase;
+  --text-lowercase: lowercase;
+  --text-capitalize: capitalize;
+  
+  /* ========================================
+     APLICAÇÕES ESPECÍFICAS
+     ======================================== */
+  
+  /* Headings */
+  --heading-h1-size: var(--text-4xl);
+  --heading-h1-weight: var(--font-bold);
+  --heading-h1-leading: var(--leading-tight);
+  
+  --heading-h2-size: var(--text-3xl);
+  --heading-h2-weight: var(--font-bold);
+  --heading-h2-leading: var(--leading-tight);
+  
+  --heading-h3-size: var(--text-2xl);
+  --heading-h3-weight: var(--font-semibold);
+  --heading-h3-leading: var(--leading-snug);
+  
+  --heading-h4-size: var(--text-xl);
+  --heading-h4-weight: var(--font-semibold);
+  --heading-h4-leading: var(--leading-snug);
+  
+  --heading-h5-size: var(--text-lg);
+  --heading-h5-weight: var(--font-medium);
+  --heading-h5-leading: var(--leading-normal);
+  
+  --heading-h6-size: var(--text-base);
+  --heading-h6-weight: var(--font-medium);
+  --heading-h6-leading: var(--leading-normal);
+  
+  /* Body Text */
+  --body-size: var(--text-base);
+  --body-weight: var(--font-normal);
+  --body-leading: var(--leading-relaxed);
+  
+  /* Small Text */
+  --small-size: var(--text-sm);
+  --small-weight: var(--font-normal);
+  --small-leading: var(--leading-normal);
+  
+  /* Caption */
+  --caption-size: var(--text-xs);
+  --caption-weight: var(--font-normal);
+  --caption-leading: var(--leading-normal);
+  
+  /* Button Text */
+  --button-size: var(--text-base);
+  --button-weight: var(--font-medium);
+  --button-tracking: var(--tracking-wide);
+  
+  /* Link Text */
+  --link-weight: var(--font-medium);
+  --link-decoration: underline;
+  --link-decoration-hover: none;
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  :root {
+    --heading-h1-size: 2rem;      /* 32px no mobile */
+    --heading-h2-size: 1.5rem;    /* 24px no mobile */
+    --heading-h3-size: 1.25rem;   /* 20px no mobile */
+  }
+}
+
+/* Tablet (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --heading-h1-size: 2.5rem;    /* 40px no tablet */
+    --heading-h2-size: 2rem;      /* 32px no tablet */
+  }
+}
+

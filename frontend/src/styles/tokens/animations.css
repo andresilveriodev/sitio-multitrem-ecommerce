@@ -1,0 +1,253 @@
+/**
+ * Design Tokens - Animations
+ * Sistema de transições e animações
+ */
+
+:root {
+  /* ========================================
+     DURATIONS
+     ======================================== */
+  
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-moderate: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 700ms;
+  
+  /* ========================================
+     TIMING FUNCTIONS
+     ======================================== */
+  
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Custom Easing */
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-smooth: cubic-bezier(0.45, 0, 0.55, 1);
+  
+  /* ========================================
+     TRANSITIONS (compostas)
+     ======================================== */
+  
+  --transition-fast: all var(--duration-fast) var(--ease-in-out);
+  --transition-base: all var(--duration-base) var(--ease-in-out);
+  --transition-slow: all var(--duration-slow) var(--ease-in-out);
+  
+  /* Transições específicas */
+  --transition-colors: color var(--duration-base) var(--ease-in-out),
+                        background-color var(--duration-base) var(--ease-in-out),
+                        border-color var(--duration-base) var(--ease-in-out);
+  
+  --transition-transform: transform var(--duration-base) var(--ease-in-out);
+  
+  --transition-opacity: opacity var(--duration-base) var(--ease-in-out);
+  
+  --transition-shadow: box-shadow var(--duration-base) var(--ease-in-out);
+  
+  /* ========================================
+     COMPONENT TRANSITIONS
+     ======================================== */
+  
+  /* Button */
+  --transition-button: background-color var(--duration-fast) var(--ease-in-out),
+                        color var(--duration-fast) var(--ease-in-out),
+                        transform var(--duration-fast) var(--ease-in-out),
+                        box-shadow var(--duration-fast) var(--ease-in-out);
+  
+  /* Card */
+  --transition-card: transform var(--duration-base) var(--ease-in-out),
+                      box-shadow var(--duration-base) var(--ease-in-out);
+  
+  /* Input */
+  --transition-input: border-color var(--duration-base) var(--ease-in-out),
+                       box-shadow var(--duration-base) var(--ease-in-out);
+  
+  /* Link */
+  --transition-link: color var(--duration-fast) var(--ease-in-out),
+                      text-decoration var(--duration-fast) var(--ease-in-out);
+}
+
+/* ========================================
+   KEYFRAMES ANIMATIONS
+   ======================================== */
+
+/* Fade In */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade Out */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Slide Up */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide Down */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide In Left */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide In Right */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Zoom In */
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Bounce */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Pulse */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Spin */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Shimmer (skeleton loading) */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Shake */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-10px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(10px);
+  }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.animate-fadeIn {
+  animation: fadeIn var(--duration-base) var(--ease-in-out);
+}
+
+.animate-slideUp {
+  animation: slideUp var(--duration-moderate) var(--ease-in-out);
+}
+
+.animate-scaleIn {
+  animation: scaleIn var(--duration-base) var(--ease-in-out);
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s var(--ease-in-out) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s ease infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+

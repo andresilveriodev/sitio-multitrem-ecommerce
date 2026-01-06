@@ -1,0 +1,136 @@
+/**
+ * Design Tokens - Colors
+ * Baseado na identidade visual do Orgânico do Chico
+ */
+
+:root {
+  /* ========================================
+     CORES PRINCIPAIS
+     ======================================== */
+  
+  /* Verde Orgânico (Primary) */
+  --color-primary: #4CAF50;
+  --color-primary-50: #E8F5E9;
+  --color-primary-100: #C8E6C9;
+  --color-primary-200: #A5D6A7;
+  --color-primary-300: #81C784;
+  --color-primary-400: #66BB6A;
+  --color-primary-500: #4CAF50;
+  --color-primary-600: #43A047;
+  --color-primary-700: #388E3C;
+  --color-primary-800: #2E7D32;
+  --color-primary-900: #1B5E20;
+  
+  /* Verde Escuro (Primary Dark) */
+  --color-primary-dark: #2E7D32;
+  
+  /* ========================================
+     CORES DE ACENTO
+     ======================================== */
+  
+  /* Laranja (Ofertas/Destaque) */
+  --color-accent-orange: #FF9800;
+  --color-accent-orange-50: #FFF3E0;
+  --color-accent-orange-100: #FFE0B2;
+  --color-accent-orange-500: #FF9800;
+  --color-accent-orange-700: #F57C00;
+  
+  /* Vermelho (Promoções/Descontos) */
+  --color-accent-red: #F44336;
+  --color-accent-red-50: #FFEBEE;
+  --color-accent-red-100: #FFCDD2;
+  --color-accent-red-500: #F44336;
+  --color-accent-red-700: #D32F2F;
+  
+  /* ========================================
+     CORES NEUTRAS
+     ======================================== */
+  
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  
+  --color-gray-50: #FAFAFA;
+  --color-gray-100: #F5F5F5;
+  --color-gray-200: #EEEEEE;
+  --color-gray-300: #E0E0E0;
+  --color-gray-400: #BDBDBD;
+  --color-gray-500: #9E9E9E;
+  --color-gray-600: #757575;
+  --color-gray-700: #616161;
+  --color-gray-800: #424242;
+  --color-gray-900: #212121;
+  
+  /* ========================================
+     CORES DE STATUS
+     ======================================== */
+  
+  /* Sucesso */
+  --color-success: #66BB6A;
+  --color-success-light: #81C784;
+  --color-success-dark: #43A047;
+  
+  /* Aviso */
+  --color-warning: #FFA726;
+  --color-warning-light: #FFB74D;
+  --color-warning-dark: #F57C00;
+  
+  /* Erro */
+  --color-error: #EF5350;
+  --color-error-light: #E57373;
+  --color-error-dark: #C62828;
+  
+  /* Informação */
+  --color-info: #42A5F5;
+  --color-info-light: #64B5F6;
+  --color-info-dark: #1976D2;
+  
+  /* ========================================
+     CORES SEMÂNTICAS
+     ======================================== */
+  
+  /* Background */
+  --color-background: var(--color-white);
+  --color-background-alt: var(--color-gray-50);
+  --color-background-elevated: var(--color-white);
+  
+  /* Foreground (texto) */
+  --color-foreground: var(--color-gray-900);
+  --color-foreground-muted: var(--color-gray-600);
+  --color-foreground-subtle: var(--color-gray-500);
+  
+  /* Border */
+  --color-border: var(--color-gray-200);
+  --color-border-hover: var(--color-gray-300);
+  --color-border-focus: var(--color-primary-500);
+  
+  /* ========================================
+     CORES ESPECIAIS (E-COMMERCE)
+     ======================================== */
+  
+  /* Badge Orgânico */
+  --color-organic: var(--color-primary-100);
+  --color-organic-text: var(--color-primary-800);
+  
+  /* Badge Desconto */
+  --color-discount: var(--color-accent-red-500);
+  --color-discount-text: var(--color-white);
+  
+  /* Badge Novo */
+  --color-new: #FDD835;
+  --color-new-text: var(--color-gray-900);
+  
+  /* Preço */
+  --color-price: var(--color-primary-700);
+  --color-price-old: var(--color-gray-500);
+  --color-price-discount: var(--color-accent-red-500);
+  
+  /* ========================================
+     OPACIDADES
+     ======================================== */
+  
+  --opacity-disabled: 0.5;
+  --opacity-hover: 0.9;
+  --opacity-muted: 0.7;
+  --opacity-subtle: 0.4;
+}
+

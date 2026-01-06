@@ -1,0 +1,130 @@
+/**
+ * Design Tokens - Spacing
+ * Sistema de espaçamentos baseado em múltiplos de 4px
+ */
+
+:root {
+  /* ========================================
+     SPACING SCALE (múltiplos de 4px)
+     ======================================== */
+  
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;    /* 4px */
+  --spacing-2: 0.5rem;     /* 8px */
+  --spacing-3: 0.75rem;    /* 12px */
+  --spacing-4: 1rem;       /* 16px */
+  --spacing-5: 1.25rem;    /* 20px */
+  --spacing-6: 1.5rem;     /* 24px */
+  --spacing-7: 1.75rem;    /* 28px */
+  --spacing-8: 2rem;       /* 32px */
+  --spacing-9: 2.25rem;    /* 36px */
+  --spacing-10: 2.5rem;    /* 40px */
+  --spacing-11: 2.75rem;   /* 44px */
+  --spacing-12: 3rem;      /* 48px */
+  --spacing-14: 3.5rem;    /* 56px */
+  --spacing-16: 4rem;      /* 64px */
+  --spacing-20: 5rem;      /* 80px */
+  --spacing-24: 6rem;      /* 96px */
+  --spacing-28: 7rem;      /* 112px */
+  --spacing-32: 8rem;      /* 128px */
+  
+  /* ========================================
+     CONTAINER
+     ======================================== */
+  
+  --container-max-width: 1200px;
+  --container-padding-mobile: var(--spacing-4);     /* 16px */
+  --container-padding-tablet: var(--spacing-6);     /* 24px */
+  --container-padding-desktop: var(--spacing-8);    /* 32px */
+  
+  /* ========================================
+     SECTION SPACING
+     ======================================== */
+  
+  --section-spacing-mobile: var(--spacing-12);      /* 48px */
+  --section-spacing-tablet: var(--spacing-16);      /* 64px */
+  --section-spacing-desktop: var(--spacing-20);     /* 80px */
+  
+  /* ========================================
+     COMPONENT SPACING
+     ======================================== */
+  
+  /* Card */
+  --card-padding: var(--spacing-4);                 /* 16px */
+  --card-gap: var(--spacing-3);                     /* 12px */
+  
+  /* Button */
+  --button-padding-x: var(--spacing-4);             /* 16px */
+  --button-padding-y: var(--spacing-2);             /* 8px */
+  --button-gap: var(--spacing-2);                   /* 8px */
+  
+  /* Input */
+  --input-padding-x: var(--spacing-3);              /* 12px */
+  --input-padding-y: var(--spacing-2);              /* 8px */
+  
+  /* Header */
+  --header-height: 4rem;                            /* 64px */
+  --header-padding-y: var(--spacing-3);             /* 12px */
+  --header-padding-x: var(--spacing-4);             /* 16px */
+  
+  /* Footer */
+  --footer-padding-y: var(--spacing-12);            /* 48px */
+  --footer-padding-x: var(--spacing-4);             /* 16px */
+  
+  /* Modal */
+  --modal-padding: var(--spacing-6);                /* 24px */
+  
+  /* Drawer */
+  --drawer-padding: var(--spacing-4);               /* 16px */
+  
+  /* ========================================
+     GRID & LAYOUT
+     ======================================== */
+  
+  /* Grid Gap */
+  --grid-gap-sm: var(--spacing-2);                  /* 8px */
+  --grid-gap-md: var(--spacing-4);                  /* 16px */
+  --grid-gap-lg: var(--spacing-6);                  /* 24px */
+  
+  /* Stack Gap */
+  --stack-gap-xs: var(--spacing-1);                 /* 4px */
+  --stack-gap-sm: var(--spacing-2);                 /* 8px */
+  --stack-gap-md: var(--spacing-4);                 /* 16px */
+  --stack-gap-lg: var(--spacing-6);                 /* 24px */
+  
+  /* ========================================
+     RESPONSIVE OVERRIDES
+     ======================================== */
+  
+  /* Aplicar no código responsivo conforme necessário */
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  :root {
+    --container-padding: var(--container-padding-mobile);
+    --section-spacing: var(--section-spacing-mobile);
+    --header-height: 3.5rem;                        /* 56px no mobile */
+  }
+}
+
+/* Tablet (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --container-padding: var(--container-padding-tablet);
+    --section-spacing: var(--section-spacing-tablet);
+  }
+}
+
+/* Desktop (>= 1024px) */
+@media (min-width: 1024px) {
+  :root {
+    --container-padding: var(--container-padding-desktop);
+    --section-spacing: var(--section-spacing-desktop);
+  }
+}
+

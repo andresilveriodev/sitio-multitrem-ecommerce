@@ -1,0 +1,77 @@
+/**
+ * Theme - Light (Padrão)
+ * Tema claro baseado no Orgânico do Chico
+ */
+
+:root {
+  /* ========================================
+     THEME COLORS
+     ======================================== */
+  
+  /* Primary */
+  --theme-primary: var(--color-primary-500);
+  --theme-primary-hover: var(--color-primary-600);
+  --theme-primary-active: var(--color-primary-700);
+  
+  /* Background */
+  --theme-background: var(--color-white);
+  --theme-background-alt: var(--color-gray-50);
+  --theme-background-elevated: var(--color-white);
+  --theme-background-overlay: rgba(0, 0, 0, 0.5);
+  
+  /* Foreground (Text) */
+  --theme-foreground: var(--color-gray-900);
+  --theme-foreground-muted: var(--color-gray-600);
+  --theme-foreground-subtle: var(--color-gray-500);
+  --theme-foreground-inverse: var(--color-white);
+  
+  /* Border */
+  --theme-border: var(--color-gray-200);
+  --theme-border-hover: var(--color-gray-300);
+  --theme-border-focus: var(--color-primary-500);
+  
+  /* Input */
+  --theme-input-background: var(--color-white);
+  --theme-input-border: var(--color-gray-300);
+  --theme-input-border-focus: var(--color-primary-500);
+  --theme-input-text: var(--color-gray-900);
+  --theme-input-placeholder: var(--color-gray-500);
+  
+  /* Button Primary */
+  --theme-button-primary-bg: var(--color-primary-500);
+  --theme-button-primary-bg-hover: var(--color-primary-600);
+  --theme-button-primary-text: var(--color-white);
+  
+  /* Button Secondary */
+  --theme-button-secondary-bg: var(--color-white);
+  --theme-button-secondary-bg-hover: var(--color-gray-50);
+  --theme-button-secondary-border: var(--color-gray-300);
+  --theme-button-secondary-text: var(--color-gray-900);
+  
+  /* Card */
+  --theme-card-bg: var(--color-white);
+  --theme-card-border: var(--color-gray-200);
+  
+  /* Header */
+  --theme-header-bg: var(--color-white);
+  --theme-header-border: var(--color-gray-200);
+  --theme-header-text: var(--color-gray-900);
+  
+  /* Footer */
+  --theme-footer-bg: var(--color-gray-900);
+  --theme-footer-text: var(--color-gray-100);
+  --theme-footer-link: var(--color-gray-300);
+  --theme-footer-link-hover: var(--color-white);
+  
+  /* Status Colors */
+  --theme-success: var(--color-success);
+  --theme-warning: var(--color-warning);
+  --theme-error: var(--color-error);
+  --theme-info: var(--color-info);
+  
+  /* Shadows */
+  --theme-shadow-sm: var(--shadow-sm);
+  --theme-shadow-md: var(--shadow-md);
+  --theme-shadow-lg: var(--shadow-lg);
+}
+

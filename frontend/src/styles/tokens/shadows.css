@@ -1,0 +1,95 @@
+/**
+ * Design Tokens - Shadows
+ * Sistema de sombras para elevação e profundidade
+ */
+
+:root {
+  /* ========================================
+     BOX SHADOWS
+     ======================================== */
+  
+  /* None */
+  --shadow-none: none;
+  
+  /* Extra Small */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  
+  /* Small */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1),
+                0 1px 2px rgba(0, 0, 0, 0.06);
+  
+  /* Medium (padrão) */
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.06);
+  
+  /* Large */
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1),
+                0 4px 6px rgba(0, 0, 0, 0.05);
+  
+  /* Extra Large */
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15),
+                0 10px 10px rgba(0, 0, 0, 0.04);
+  
+  /* 2X Large */
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+  
+  /* Inner */
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+  
+  /* ========================================
+     COMPONENT SHADOWS
+     ======================================== */
+  
+  /* Card */
+  --shadow-card: var(--shadow-sm);
+  --shadow-card-hover: var(--shadow-md);
+  
+  /* Button */
+  --shadow-button: var(--shadow-xs);
+  --shadow-button-hover: var(--shadow-sm);
+  
+  /* Dropdown */
+  --shadow-dropdown: var(--shadow-lg);
+  
+  /* Modal */
+  --shadow-modal: var(--shadow-2xl);
+  
+  /* Drawer */
+  --shadow-drawer: var(--shadow-xl);
+  
+  /* Header */
+  --shadow-header: 0 1px 3px rgba(0, 0, 0, 0.05);
+  
+  /* Tooltip */
+  --shadow-tooltip: var(--shadow-md);
+  
+  /* ========================================
+     FOCUS SHADOWS
+     ======================================== */
+  
+  /* Primary Focus */
+  --shadow-focus-primary: 0 0 0 3px rgba(76, 175, 80, 0.25);
+  
+  /* Error Focus */
+  --shadow-focus-error: 0 0 0 3px rgba(239, 83, 80, 0.25);
+  
+  /* Warning Focus */
+  --shadow-focus-warning: 0 0 0 3px rgba(255, 167, 38, 0.25);
+  
+  /* Info Focus */
+  --shadow-focus-info: 0 0 0 3px rgba(66, 165, 245, 0.25);
+  
+  /* ========================================
+     COLORED SHADOWS (para efeitos especiais)
+     ======================================== */
+  
+  /* Green Glow */
+  --shadow-green-glow: 0 0 20px rgba(76, 175, 80, 0.3);
+  
+  /* Orange Glow */
+  --shadow-orange-glow: 0 0 20px rgba(255, 152, 0, 0.3);
+  
+  /* Red Glow */
+  --shadow-red-glow: 0 0 20px rgba(244, 67, 54, 0.3);
+}
+

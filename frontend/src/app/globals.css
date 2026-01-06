@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* ========================================
+   DESIGN TOKENS
+   ======================================== */
+@import "../styles/tokens/colors.css";
+@import "../styles/tokens/typography.css";
+@import "../styles/tokens/spacing.css";
+@import "../styles/tokens/shadows.css";
+@import "../styles/tokens/animations.css";
+
+/* ========================================
+   THEME
+   ======================================== */
+@import "../styles/themes/light.css";
+
 @theme inline {
   /* Cores primárias - Verde (natureza) */
   --color-primary-50: #f0fdf4;
