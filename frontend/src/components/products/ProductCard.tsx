@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import { Leaf, Egg, Package, Gift } from 'lucide-react'
 import type { Product, KitProduct } from '@/types'
-import { Badge, Button } from '@/components/ui'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui'
+import styles from './ProductCard.module.css'
 
 const categoryIcons = {
   hortalica: Leaf,
@@ -43,64 +43,44 @@ export function ProductCard({
   }
 
   return (
-    <div className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-background transition-all hover:shadow-xl">
+    <div className={styles.card}>
       {/* Imagem */}
-      <div className="relative aspect-square w-full overflow-hidden bg-primary-50">
+      <div className={styles.card__image}>
         {product.imageUrl ? (
-          <Image
-            src={product.imageUrl}
-            alt={product.name}
-            fill
-            className="object-cover transition-transform group-hover:scale-105"
-          />
+          <Image src={product.imageUrl} alt={product.name} fill className={styles.card__image} />
         ) : (
-          <div className="flex h-full items-center justify-center">
-            <Icon className="h-16 w-16 text-primary-300" />
+          <div className={styles.card__image_placeholder}>
+            <Icon className={styles.card__image_icon} />
           </div>
         )}
 
         {/* Badge de categoria */}
-        <div className="absolute top-3 right-3">
-          <Badge variant="default" size="sm" className="bg-white/95 backdrop-blur-sm">
-            <Icon className="mr-1 h-3 w-3" />
+        <div className={styles.card__badge}>
+          <div className={styles.card__badge_content}>
+            <Icon className={styles.card__badge_icon} />
             {categoryLabels[product.category]}
-          </Badge>
+          </div>
         </div>
       </div>
 
       {/* Conteúdo */}
-      <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
-        <div>
-          <h3 className="mb-2 text-lg sm:text-xl font-semibold text-foreground leading-snug">
-            {product.name}
-          </h3>
+      <div className={styles.card__content}>
+        <div className={styles.card__info}>
+          <h3 className={styles.card__title}>{product.name}</h3>
 
-          {product.description && (
-            <p className="mb-3 text-sm text-gray-700 leading-relaxed">
-              {product.description}
-            </p>
-          )}
+          {product.description && <p className={styles.card__description}>{product.description}</p>}
 
           {isKit && (product as KitProduct).kitSize && (
-            <p className="mb-4 text-sm text-primary-600 font-medium">
-              {(product as KitProduct).kitSize} hortaliças à escolha
-            </p>
+            <p className={styles.card__kit_info}>{(product as KitProduct).kitSize} hortaliças à escolha</p>
           )}
         </div>
 
         {/* Preço e botão */}
-        <div className="mt-auto flex items-center justify-between gap-3">
-          <div>
-            <span className="text-2xl sm:text-3xl font-bold text-primary-600">
-              R$ {product.price.toFixed(2).replace('.', ',')}
-            </span>
+        <div className={styles.card__footer}>
+          <div className={styles.card__price}>
+            <span className={styles.card__price_value}>R$ {product.price.toFixed(2).replace('.', ',')}</span>
           </div>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleClick}
-            className="flex-shrink-0"
-          >
+          <Button variant="primary" size="sm" onClick={handleClick} className={styles.card__button}>
             {isKit ? 'Escolher' : 'Adicionar'}
           </Button>
         </div>

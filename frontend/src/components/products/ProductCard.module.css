@@ -1,0 +1,169 @@
+/**
+ * ProductCard Component Styles
+ * Baseado no Design System do Orgânico do Chico
+ */
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-light);
+  background-color: var(--color-white);
+  transition: var(--transition-card);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-product-hover);
+  transform: translateY(-4px);
+  border-color: var(--color-primary-light);
+}
+
+/* ========================================
+   IMAGE
+   ======================================== */
+
+.card__image {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--color-organic-background);
+}
+
+.card__image img {
+  object-fit: cover;
+  transition: var(--transition-transform);
+}
+
+.card:hover .card__image img {
+  transform: scale(1.08);
+}
+
+.card__image_placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.card__image_icon {
+  width: 4rem;
+  height: 4rem;
+  color: var(--color-primary-light);
+}
+
+/* Badge */
+.card__badge {
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
+  z-index: 2;
+}
+
+.card__badge_content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  padding: var(--spacing-1) var(--spacing-2-5);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-foreground-secondary);
+}
+
+.card__badge_icon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* ========================================
+   CONTENT
+   ======================================== */
+
+.card__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--card-padding);
+}
+
+@media (min-width: 640px) {
+  .card__content {
+    padding: var(--card-padding-lg);
+  }
+}
+
+/* Info */
+.card__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.card__title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-foreground);
+  margin-bottom: var(--spacing-2);
+}
+
+@media (min-width: 640px) {
+  .card__title {
+    font-size: var(--text-xl);
+  }
+}
+
+.card__description {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--color-foreground-secondary);
+  margin-bottom: var(--spacing-3);
+}
+
+.card__kit_info {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-4);
+}
+
+/* ========================================
+   FOOTER (Price & Button)
+   ======================================== */
+
+.card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  margin-top: auto;
+}
+
+.card__price {
+  display: flex;
+  flex-direction: column;
+}
+
+.card__price_value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+@media (min-width: 640px) {
+  .card__price_value {
+    font-size: var(--text-3xl);
+  }
+}
+
+.card__button {
+  flex-shrink: 0;
+}
+

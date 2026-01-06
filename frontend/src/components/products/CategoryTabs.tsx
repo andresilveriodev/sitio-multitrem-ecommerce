@@ -4,6 +4,7 @@ import { Leaf, Egg, Package, Gift, Grid3x3 } from 'lucide-react'
 import type { ProductCategory } from '@/types'
 import { Button } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import styles from './CategoryTabs.module.css'
 
 const categories: Array<{
   value: ProductCategory | 'all'
@@ -22,12 +23,9 @@ export interface CategoryTabsProps {
   onCategoryChange: (category: ProductCategory | 'all') => void
 }
 
-export function CategoryTabs({
-  selectedCategory,
-  onCategoryChange,
-}: CategoryTabsProps) {
+export function CategoryTabs({ selectedCategory, onCategoryChange }: CategoryTabsProps) {
   return (
-    <div className="flex flex-wrap gap-2 justify-center mb-8">
+    <div className={styles.tabs}>
       {categories.map((category) => {
         const Icon = category.icon
         const isActive = selectedCategory === category.value
@@ -39,10 +37,7 @@ export function CategoryTabs({
             size="sm"
             onClick={() => onCategoryChange(category.value)}
             leftIcon={<Icon className="h-4 w-4" />}
-            className={cn(
-              'transition-all',
-              isActive && 'shadow-md'
-            )}
+            className={cn(styles.tab, isActive && styles['tab--active'])}
           >
             {category.label}
           </Button>

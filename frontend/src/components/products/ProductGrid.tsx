@@ -3,6 +3,7 @@
 import type { Product, KitProduct } from '@/types'
 import { ProductCard } from './ProductCard'
 import { Skeleton } from '@/components/ui'
+import styles from './ProductGrid.module.css'
 
 export interface ProductGridProps {
   products: (Product | KitProduct)[]
@@ -11,17 +12,12 @@ export interface ProductGridProps {
   onSelectKit?: (product: KitProduct) => void
 }
 
-export function ProductGrid({
-  products,
-  loading = false,
-  onAddToCart,
-  onSelectKit,
-}: ProductGridProps) {
+export function ProductGrid({ products, loading = false, onAddToCart, onSelectKit }: ProductGridProps) {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 md:gap-10">
+      <div className={styles['grid--loading']}>
         {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} variant="card" className="h-80" />
+          <Skeleton key={i} variant="card" className={styles.skeleton} />
         ))}
       </div>
     )
@@ -29,23 +25,16 @@ export function ProductGrid({
 
   if (products.length === 0) {
     return (
-      <div className="text-center py-12 sm:py-16">
-        <p className="text-lg sm:text-xl text-gray-700 leading-relaxed">
-          Nenhum produto encontrado nesta categoria.
-        </p>
+      <div className={styles.empty}>
+        <p className={styles.empty__message}>Nenhum produto encontrado nesta categoria.</p>
       </div>
     )
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 md:gap-10">
+    <div className={styles.grid}>
       {products.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          onAddToCart={onAddToCart}
-          onSelectKit={onSelectKit}
-        />
+        <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} onSelectKit={onSelectKit} />
       ))}
     </div>
   )
