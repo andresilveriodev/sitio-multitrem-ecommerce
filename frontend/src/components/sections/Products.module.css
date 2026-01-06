@@ -1,0 +1,83 @@
+/**
+ * Products Section Styles
+ * Baseado no Design System do Orgânico do Chico
+ */
+
+.products {
+  padding: var(--section-spacing-md) 0;
+  background-color: var(--color-white);
+}
+
+@media (min-width: 640px) {
+  .products {
+    padding: var(--section-spacing-lg) 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .products {
+    padding: var(--section-spacing-xl) 0;
+  }
+}
+
+/* ========================================
+   CONTAINER
+   ======================================== */
+
+.products__container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.products__header {
+  text-align: center;
+  margin-bottom: var(--spacing-12);
+}
+
+@media (min-width: 640px) {
+  .products__header {
+    margin-bottom: var(--spacing-16);
+  }
+}
+
+@media (min-width: 768px) {
+  .products__header {
+    margin-bottom: var(--spacing-20);
+  }
+}
+
+.products__title {
+  font-size: var(--heading-2-size);
+  font-weight: var(--heading-2-weight);
+  line-height: var(--heading-2-line-height);
+  letter-spacing: var(--heading-2-letter-spacing);
+  color: var(--color-foreground);
+  margin-bottom: var(--spacing-3);
+}
+
+@media (min-width: 640px) {
+  .products__title {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--spacing-4);
+  }
+}
+
+.products__subtitle {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--color-foreground-secondary);
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .products__subtitle {
+    font-size: var(--text-xl);
+  }
+}
+
