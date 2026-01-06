@@ -1,0 +1,267 @@
+/**
+ * Header Component Styles
+ * Baseado no Design System do Orgânico do Chico
+ */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  width: 100%;
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border-light);
+  transition: var(--transition-medium);
+}
+
+.header--scrolled {
+  box-shadow: var(--shadow-header);
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+/* ========================================
+   CONTAINER
+   ======================================== */
+
+.header__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height-mobile);
+  padding: 0 var(--container-padding);
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .header__container {
+    height: var(--header-height);
+  }
+}
+
+/* ========================================
+   LOGO
+   ======================================== */
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: var(--transition-colors);
+}
+
+.header__logo:hover {
+  color: var(--color-primary-hover);
+}
+
+.header__logo-icon {
+  font-size: var(--text-2xl);
+}
+
+.header__logo-text {
+  font-size: var(--text-xl);
+}
+
+@media (min-width: 640px) {
+  .header__logo-icon {
+    font-size: var(--text-3xl);
+  }
+  
+  .header__logo-text {
+    font-size: var(--text-2xl);
+  }
+}
+
+/* ========================================
+   NAVIGATION
+   ======================================== */
+
+.header__nav {
+  display: none;
+  align-items: center;
+  gap: var(--spacing-6);
+}
+
+@media (min-width: 768px) {
+  .header__nav {
+    display: flex;
+  }
+}
+
+@media (min-width: 1024px) {
+  .header__nav {
+    gap: var(--spacing-8);
+  }
+}
+
+.header__nav-link {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-foreground-secondary);
+  text-decoration: none;
+  transition: var(--transition-colors);
+  position: relative;
+  padding: var(--spacing-2) 0;
+}
+
+.header__nav-link:hover {
+  color: var(--color-primary);
+}
+
+.header__nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-primary);
+  transition: width var(--transition-fast);
+}
+
+.header__nav-link:hover::after {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .header__nav-link {
+    font-size: var(--text-base);
+  }
+}
+
+/* ========================================
+   ACTIONS
+   ======================================== */
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.header__user-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-foreground-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-colors);
+}
+
+.header__user-button:hover {
+  background-color: var(--color-organic-background);
+  color: var(--color-primary);
+}
+
+.header__user-button-text {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .header__user-button {
+    font-size: var(--text-base);
+  }
+  
+  .header__user-button-text {
+    display: inline;
+  }
+}
+
+/* Mobile Menu Button */
+.header__menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2);
+  color: var(--color-foreground-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-colors);
+}
+
+.header__menu-button:hover {
+  background-color: var(--color-organic-background);
+  color: var(--color-primary);
+}
+
+@media (min-width: 768px) {
+  .header__menu-button {
+    display: none;
+  }
+}
+
+/* ========================================
+   MOBILE MENU
+   ======================================== */
+
+.header__mobile-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.header__mobile-nav-link {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--color-foreground-secondary);
+  text-decoration: none;
+  transition: var(--transition-colors);
+}
+
+.header__mobile-nav-link:hover {
+  color: var(--color-primary);
+}
+
+.header__mobile-divider {
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.header__mobile-button {
+  margin-top: var(--spacing-2);
+  width: 100%;
+}
+
+/* ========================================
+   HIDE ON MOBILE (Cart Button)
+   ======================================== */
+
+.hide-mobile {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .hide-mobile {
+    display: flex;
+  }
+}
+
+/* ========================================
+   HIDE ON DESKTOP (Auth Button)
+   ======================================== */
+
+.hide-desktop {
+  display: flex;
+}
+
+@media (min-width: 640px) {
+  .hide-desktop {
+    display: none;
+  }
+}
+
