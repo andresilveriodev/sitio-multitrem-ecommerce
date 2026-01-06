@@ -1,0 +1,69 @@
+/**
+ * CartItemCard Component Styles
+ */
+
+.item {
+  display: flex;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.item__image {
+  position: relative;
+  height: 5rem;
+  width: 5rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-organic-background);
+}
+
+.item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.item__name {
+  font-weight: var(--font-medium);
+  color: var(--color-foreground);
+  margin-bottom: var(--spacing-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item__selected {
+  font-size: var(--text-xs);
+  color: var(--color-foreground-tertiary);
+  margin-bottom: var(--spacing-2);
+}
+
+.item__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.item__quantity {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.item__quantity_value {
+  min-width: 2rem;
+  text-align: center;
+  font-weight: var(--font-medium);
+}
+
+.item__price {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-primary);
+}
+

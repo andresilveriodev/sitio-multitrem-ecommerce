@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Plus, Minus, Trash2 } from 'lucide-react'
 import type { CartItem } from '@/types'
 import { Button } from '@/components/ui'
-import { cn } from '@/lib/utils'
+import styles from './CartItemCard.module.css'
 
 export interface CartItemCardProps {
   item: CartItem
@@ -21,33 +21,24 @@ export function CartItemCard({
     'https://placehold.co/100x100/22c55e/white?text=Produto'
 
   return (
-    <div className="flex gap-4 py-4 border-b border-foreground/10 last:border-0">
+    <div className={styles.item}>
       {/* Imagem */}
-      <div className="relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-primary-50">
-        <Image
-          src={PLACEHOLDER_IMAGE}
-          alt={item.productName}
-          fill
-          className="object-cover"
-        />
+      <div className={styles.item__image}>
+        <Image src={PLACEHOLDER_IMAGE} alt={item.productName} fill className={styles.item__image} />
       </div>
 
       {/* Conteúdo */}
-      <div className="flex-1 min-w-0">
-        <h4 className="font-medium text-foreground mb-1 truncate">
-          {item.productName}
-        </h4>
+      <div className={styles.item__content}>
+        <h4 className={styles.item__name}>{item.productName}</h4>
 
         {/* Hortaliças selecionadas (para kits) */}
         {item.selectedItems && item.selectedItems.length > 0 && (
-          <p className="text-xs text-foreground/60 mb-2">
-            {item.selectedItems.join(', ')}
-          </p>
+          <p className={styles.item__selected}>{item.selectedItems.join(', ')}</p>
         )}
 
         {/* Controles */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className={styles.item__controls}>
+          <div className={styles.item__quantity}>
             <Button
               variant="ghost"
               size="sm"
@@ -57,9 +48,7 @@ export function CartItemCard({
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <span className="w-8 text-center text-sm font-medium">
-              {item.quantity}
-            </span>
+            <span className={styles.item__quantity_value}>{item.quantity}</span>
             <Button
               variant="ghost"
               size="sm"
@@ -72,16 +61,7 @@ export function CartItemCard({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-sm font-semibold text-foreground">
-                R$ {item.subtotal.toFixed(2).replace('.', ',')}
-              </p>
-              {item.quantity > 1 && (
-                <p className="text-xs text-foreground/60">
-                  R$ {item.unitPrice.toFixed(2).replace('.', ',')} cada
-                </p>
-              )}
-            </div>
+            <p className={styles.item__price}>R$ {item.subtotal.toFixed(2).replace('.', ',')}</p>
             <Button
               variant="ghost"
               size="sm"
