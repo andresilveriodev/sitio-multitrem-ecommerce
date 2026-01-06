@@ -1,0 +1,230 @@
+/**
+ * Hero Component Styles
+ * Baseado no Design System do Orgânico do Chico
+ */
+
+.hero {
+  position: relative;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    var(--color-organic-background) 0%,
+    var(--color-white) 50%,
+    var(--color-gray-50) 100%
+  );
+}
+
+/* ========================================
+   DECORATIVE ELEMENTS
+   ======================================== */
+
+.hero__decorations {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero__decoration {
+  position: absolute;
+  opacity: 0.15;
+  animation: var(--animate-pulse);
+}
+
+.hero__decoration--1 {
+  top: 5rem;
+  left: 2.5rem;
+  width: 6rem;
+  height: 6rem;
+  color: var(--color-primary);
+}
+
+.hero__decoration--2 {
+  top: 10rem;
+  right: 5rem;
+  width: 4rem;
+  height: 4rem;
+  color: var(--color-accent-orange);
+  animation-delay: 300ms;
+}
+
+.hero__decoration--3 {
+  bottom: 5rem;
+  left: 25%;
+  width: 5rem;
+  height: 5rem;
+  color: var(--color-primary-light);
+  animation-delay: 700ms;
+}
+
+.hero__decoration--4 {
+  bottom: 10rem;
+  right: 25%;
+  width: 7rem;
+  height: 7rem;
+  color: var(--color-primary);
+  animation-delay: 1000ms;
+}
+
+@media (min-width: 768px) {
+  .hero__decoration--1 {
+    width: 8rem;
+    height: 8rem;
+  }
+  
+  .hero__decoration--2 {
+    width: 5rem;
+    height: 5rem;
+  }
+  
+  .hero__decoration--3 {
+    width: 6rem;
+    height: 6rem;
+  }
+  
+  .hero__decoration--4 {
+    width: 9rem;
+    height: 9rem;
+  }
+}
+
+/* ========================================
+   CONTENT
+   ======================================== */
+
+.hero__container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+  position: relative;
+  z-index: 10;
+}
+
+.hero__content {
+  max-width: 48rem; /* 768px */
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  animation: var(--animate-fade-in);
+}
+
+@media (min-width: 640px) {
+  .hero__content {
+    gap: var(--spacing-8);
+  }
+}
+
+/* Badge */
+.hero__badge {
+  display: flex;
+  justify-content: center;
+  animation: var(--animate-slide-down);
+}
+
+/* Title */
+.hero__title {
+  font-size: var(--heading-1-size);
+  font-weight: var(--heading-1-weight);
+  line-height: var(--heading-1-line-height);
+  letter-spacing: var(--heading-1-letter-spacing);
+  color: var(--color-foreground);
+  margin: 0;
+  animation: var(--animate-slide-up);
+  animation-delay: 150ms;
+}
+
+@media (min-width: 640px) {
+  .hero__title {
+    font-size: var(--text-5xl);
+  }
+}
+
+/* Subtitle */
+.hero__subtitle {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-foreground-secondary);
+  margin: 0;
+  animation: var(--animate-slide-up);
+  animation-delay: 300ms;
+}
+
+@media (min-width: 640px) {
+  .hero__subtitle {
+    font-size: var(--text-2xl);
+  }
+}
+
+/* Description */
+.hero__description {
+  font-size: var(--body-base-size);
+  line-height: var(--body-base-line-height);
+  color: var(--color-foreground-secondary);
+  max-width: 40rem;
+  margin: 0 auto;
+  animation: var(--animate-slide-up);
+  animation-delay: 450ms;
+}
+
+@media (min-width: 640px) {
+  .hero__description {
+    font-size: var(--text-lg);
+  }
+}
+
+/* CTAs */
+.hero__ctas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  justify-content: center;
+  align-items: center;
+  padding-top: var(--spacing-6);
+  animation: var(--animate-scale-in);
+  animation-delay: 600ms;
+}
+
+@media (min-width: 640px) {
+  .hero__ctas {
+    flex-direction: row;
+    padding-top: var(--spacing-8);
+  }
+}
+
+.hero__cta {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .hero__cta {
+    width: auto;
+  }
+}
+
+/* ========================================
+   SCROLL INDICATOR
+   ======================================== */
+
+.hero__scroll_indicator {
+  position: absolute;
+  bottom: var(--spacing-8);
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--color-foreground-tertiary);
+  animation: var(--animate-bounce);
+  z-index: 5;
+}
+
+.hero__scroll_indicator_icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+

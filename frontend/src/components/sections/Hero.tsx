@@ -4,6 +4,7 @@ import { Leaf, Egg, Carrot, ArrowDown } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui'
 import { Badge } from '@/components/ui'
+import styles from './Hero.module.css'
 
 export function Hero() {
   const scrollToProducts = () => {
@@ -12,58 +13,51 @@ export function Hero() {
   }
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-50 via-primary-100 to-secondary-50">
+    <section className={styles.hero}>
       {/* Elementos decorativos */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <Leaf className="absolute top-20 left-10 text-primary-200/30 h-24 w-24 animate-pulse" />
-        <Egg className="absolute top-40 right-20 text-secondary-200/30 h-16 w-16 animate-pulse delay-300" />
-        <Carrot className="absolute bottom-20 left-1/4 text-accent-200/30 h-20 w-20 animate-pulse delay-700" />
-        <Leaf className="absolute bottom-40 right-1/4 text-primary-200/30 h-28 w-28 animate-pulse delay-1000" />
+      <div className={styles.hero__decorations}>
+        <Leaf className={`${styles.hero__decoration} ${styles['hero__decoration--1']}`} />
+        <Egg className={`${styles.hero__decoration} ${styles['hero__decoration--2']}`} />
+        <Carrot className={`${styles.hero__decoration} ${styles['hero__decoration--3']}`} />
+        <Leaf className={`${styles.hero__decoration} ${styles['hero__decoration--4']}`} />
       </div>
 
       {/* Conteúdo */}
-      <div className="container-custom relative z-10">
-        <div className="max-w-3xl mx-auto text-center space-y-6 sm:space-y-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-700">
+      <div className={styles.hero__container}>
+        <div className={styles.hero__content}>
           {/* Badge */}
-          <div className="flex justify-center">
-            <Badge variant="success" size="md" className="text-sm">
+          <div className={styles.hero__badge}>
+            <Badge variant="organic" size="md">
               🌿 Direto do Produtor
             </Badge>
           </div>
 
           {/* Título */}
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-foreground leading-tight">
-            Sítio Multitrem
-          </h1>
+          <h1 className={styles.hero__title}>Sítio Multitrem</h1>
 
           {/* Subtítulo */}
-          <p className="text-xl sm:text-2xl text-foreground/90 font-semibold leading-snug">
+          <p className={styles.hero__subtitle}>
             Hortaliças frescas e ovos caipiras, colhidos no dia para sua mesa
           </p>
 
           {/* Descrição */}
-          <p className="text-base sm:text-lg text-gray-700 max-w-2xl mx-auto leading-relaxed">
-            Produção familiar em Terezópolis de Goiás, com todo carinho e qualidade que
-            sua família merece.
+          <p className={styles.hero__description}>
+            Produção familiar em Terezópolis de Goiás, com todo carinho e qualidade que sua
+            família merece.
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6 sm:pt-8">
+          <div className={styles.hero__ctas}>
             <Button
               variant="primary"
               size="lg"
               onClick={scrollToProducts}
               rightIcon={<ArrowDown className="h-5 w-5" />}
-              className="w-full sm:w-auto"
+              className={styles.hero__cta}
             >
               Ver Produtos
             </Button>
-            <Link
-              href="https://wa.me/5562981225993"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto"
-            >
+            <Link href="https://wa.me/5562981225993" target="_blank" rel="noopener noreferrer" className={styles.hero__cta}>
               <Button variant="outline" size="lg" className="w-full">
                 Fale Conosco
               </Button>
@@ -73,8 +67,8 @@ export function Hero() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <ArrowDown className="h-6 w-6 text-foreground/40" />
+      <div className={styles.hero__scroll_indicator}>
+        <ArrowDown className={styles.hero__scroll_indicator_icon} />
       </div>
     </section>
   )
