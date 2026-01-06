@@ -11,13 +11,16 @@
   gap: var(--spacing-1);
   
   /* Typography */
-  font-family: var(--font-family-primary);
+  font-family: var(--font-family-base);
+  font-size: var(--caption-size);
   font-weight: var(--font-medium);
   line-height: 1;
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
   
   /* Shape */
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   
   /* Transitions */
   transition: var(--transition-colors);
@@ -27,10 +30,10 @@
    VARIANTS
    ======================================== */
 
-/* Default */
+/* Default - Primary */
 .badge--default {
-  background-color: var(--color-primary-100);
-  color: var(--color-primary-800);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
 }
 
 /* Success */
@@ -57,27 +60,28 @@
   color: var(--color-info-dark);
 }
 
-/* Organic */
+/* Organic - Produto orgânico */
 .badge--organic {
-  background-color: var(--color-organic);
-  color: var(--color-organic-text);
-}
-
-/* Discount */
-.badge--discount {
-  background-color: var(--color-discount);
-  color: var(--color-discount-text);
-  font-weight: var(--font-bold);
-}
-
-/* New */
-.badge--new {
-  background-color: var(--color-new);
-  color: var(--color-new-text);
+  background-color: var(--color-organic-background);
+  color: var(--color-organic);
   font-weight: var(--font-semibold);
 }
 
-/* Neutral */
+/* Discount - Ofertas e descontos */
+.badge--discount {
+  background-color: var(--color-offer);
+  color: var(--color-white);
+  font-weight: var(--font-bold);
+}
+
+/* New - Produto novo */
+.badge--new {
+  background-color: var(--color-new-background);
+  color: var(--color-new);
+  font-weight: var(--font-semibold);
+}
+
+/* Neutral - Cinza */
 .badge--neutral {
   background-color: var(--color-gray-200);
   color: var(--color-gray-800);
@@ -88,18 +92,18 @@
    ======================================== */
 
 .badge--sm {
-  padding: var(--spacing-1) var(--spacing-2);
+  padding: var(--spacing-0-5) var(--spacing-2);
   font-size: var(--text-xs);
 }
 
 .badge--md {
-  padding: calc(var(--spacing-1) * 1.5) var(--spacing-3);
-  font-size: var(--text-sm);
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--text-xs);
 }
 
 .badge--lg {
-  padding: var(--spacing-2) var(--spacing-4);
-  font-size: var(--text-base);
+  padding: var(--spacing-1-5) var(--spacing-4);
+  font-size: var(--text-sm);
 }
 
 /* ========================================
@@ -107,7 +111,7 @@
    ======================================== */
 
 .badge--dot {
-  padding-left: var(--spacing-2);
+  padding-left: var(--spacing-5);
   position: relative;
 }
 
@@ -117,19 +121,20 @@
   left: var(--spacing-2);
   width: 6px;
   height: 6px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background-color: currentColor;
 }
 
 .badge--dot.badge--sm::before {
   width: 4px;
   height: 4px;
-  left: var(--spacing-1);
+  left: var(--spacing-1-5);
 }
 
 .badge--dot.badge--lg::before {
   width: 8px;
   height: 8px;
+  left: var(--spacing-2-5);
 }
 
 /* ========================================
@@ -138,20 +143,28 @@
 
 .badge--removable {
   padding-right: var(--spacing-1);
+  gap: var(--spacing-1-5);
 }
 
 .badge__remove {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: var(--spacing-1);
-  padding: var(--spacing-1);
-  border-radius: 50%;
+  padding: var(--spacing-0-5);
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
   cursor: pointer;
+  color: currentColor;
   transition: var(--transition-colors);
 }
 
 .badge__remove:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.badge__remove:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px currentColor;
 }
 

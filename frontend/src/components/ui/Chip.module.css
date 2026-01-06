@@ -1,5 +1,6 @@
 /**
  * Chip Component Styles
+ * Baseado no Design System do Orgânico do Chico
  * Componente para filtros, tags e seleções
  */
 
@@ -7,20 +8,21 @@
   /* Base */
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-1-5);
   
   /* Typography */
-  font-family: var(--font-family-primary);
+  font-family: var(--font-family-base);
+  font-size: var(--text-sm);
   font-weight: var(--font-medium);
   line-height: 1;
   white-space: nowrap;
   
   /* Shape */
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   border: 1px solid transparent;
   
   /* Transitions */
-  transition: var(--transition-colors);
+  transition: all var(--transition-fast);
   
   /* States */
   user-select: none;
@@ -43,29 +45,33 @@
 }
 
 .chip--clickable:hover {
-  opacity: var(--opacity-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.chip--clickable:active {
+  transform: translateY(0);
 }
 
 .chip--clickable:focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow: var(--shadow-focus-primary);
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 /* ========================================
    VARIANTS
    ======================================== */
 
-/* Default */
+/* Default - Neutro */
 .chip--default {
   background-color: var(--color-gray-100);
   color: var(--color-gray-800);
-  border-color: var(--color-gray-200);
+  border-color: var(--color-border);
 }
 
-.chip--default:hover {
+.chip--default.chip--clickable:hover {
   background-color: var(--color-gray-200);
-  border-color: var(--color-gray-300);
+  border-color: var(--color-border-dark);
 }
 
 .chip--default.chip--selected {
@@ -74,22 +80,22 @@
   border-color: var(--color-gray-800);
 }
 
-/* Primary */
+/* Primary - Verde */
 .chip--primary {
-  background-color: var(--color-primary-100);
-  color: var(--color-primary-800);
-  border-color: var(--color-primary-200);
+  background-color: var(--color-organic-background);
+  color: var(--color-primary-dark);
+  border-color: var(--color-primary-light);
 }
 
-.chip--primary:hover {
-  background-color: var(--color-primary-200);
-  border-color: var(--color-primary-300);
+.chip--primary.chip--clickable:hover {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary);
 }
 
 .chip--primary.chip--selected {
-  background-color: var(--color-primary-500);
+  background-color: var(--color-primary);
   color: var(--color-white);
-  border-color: var(--color-primary-500);
+  border-color: var(--color-primary);
 }
 
 /* Success */
@@ -99,8 +105,9 @@
   border-color: var(--color-success);
 }
 
-.chip--success:hover {
+.chip--success.chip--clickable:hover {
   background-color: var(--color-success);
+  color: var(--color-white);
 }
 
 .chip--success.chip--selected {
@@ -116,8 +123,9 @@
   border-color: var(--color-warning);
 }
 
-.chip--warning:hover {
+.chip--warning.chip--clickable:hover {
   background-color: var(--color-warning);
+  color: var(--color-white);
 }
 
 .chip--warning.chip--selected {
@@ -133,8 +141,9 @@
   border-color: var(--color-error);
 }
 
-.chip--error:hover {
+.chip--error.chip--clickable:hover {
   background-color: var(--color-error);
+  color: var(--color-white);
 }
 
 .chip--error.chip--selected {
@@ -148,19 +157,19 @@
    ======================================== */
 
 .chip--sm {
-  padding: var(--spacing-1) var(--spacing-3);
+  padding: var(--spacing-1) var(--spacing-2-5);
   font-size: var(--text-xs);
   gap: var(--spacing-1);
 }
 
 .chip--md {
-  padding: var(--spacing-2) var(--spacing-4);
+  padding: var(--spacing-1-5) var(--spacing-3);
   font-size: var(--text-sm);
-  gap: var(--spacing-2);
+  gap: var(--spacing-1-5);
 }
 
 .chip--lg {
-  padding: var(--spacing-3) var(--spacing-5);
+  padding: var(--spacing-2) var(--spacing-4);
   font-size: var(--text-base);
   gap: var(--spacing-2);
 }
@@ -173,9 +182,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-1);
+  padding: var(--spacing-0-5);
   margin-right: calc(var(--spacing-1) * -1);
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   border: none;
   background: transparent;
   color: currentColor;
@@ -184,10 +193,15 @@
 }
 
 .chip__remove:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 .chip--selected .chip__remove:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.chip__remove:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px currentColor;
 }
 

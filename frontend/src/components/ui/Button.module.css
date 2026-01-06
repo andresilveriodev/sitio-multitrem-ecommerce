@@ -9,17 +9,19 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
+  position: relative;
   
   /* Typography */
-  font-family: var(--font-family-primary);
+  font-family: var(--font-family-base);
   font-size: var(--button-size);
   font-weight: var(--button-weight);
-  letter-spacing: var(--button-tracking);
-  line-height: 1;
+  line-height: var(--button-line-height);
+  letter-spacing: var(--button-letter-spacing);
   text-decoration: none;
+  white-space: nowrap;
   
   /* Shape */
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: none;
   outline: none;
   
@@ -33,9 +35,8 @@
 }
 
 .button:focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow: var(--shadow-focus-primary);
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 .button:disabled,
@@ -49,87 +50,94 @@
    VARIANTS
    ======================================== */
 
-/* Primary */
+/* Primary - Verde (ação principal) */
 .button--primary {
-  background-color: var(--color-primary-500);
+  background-color: var(--color-primary);
   color: var(--color-white);
   box-shadow: var(--shadow-button);
 }
 
 .button--primary:hover:not(:disabled) {
-  background-color: var(--color-primary-600);
+  background-color: var(--color-primary-hover);
   box-shadow: var(--shadow-button-hover);
   transform: translateY(-1px);
 }
 
 .button--primary:active:not(:disabled) {
-  background-color: var(--color-primary-700);
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-button-active);
   transform: translateY(0);
 }
 
-/* Secondary */
+/* Secondary - Neutro */
 .button--secondary {
   background-color: var(--color-white);
   color: var(--color-gray-900);
-  border: 2px solid var(--color-gray-300);
-  box-shadow: var(--shadow-button);
+  border: 2px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .button--secondary:hover:not(:disabled) {
   background-color: var(--color-gray-50);
-  border-color: var(--color-gray-400);
-  box-shadow: var(--shadow-button-hover);
+  border-color: var(--color-border-dark);
+  box-shadow: var(--shadow-md);
 }
 
 .button--secondary:active:not(:disabled) {
   background-color: var(--color-gray-100);
+  transform: translateY(0);
 }
 
-/* Outline */
+/* Outline - Contorno */
 .button--outline {
   background-color: transparent;
-  color: var(--color-primary-600);
-  border: 2px solid var(--color-primary-500);
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
 }
 
 .button--outline:hover:not(:disabled) {
-  background-color: var(--color-primary-50);
-  border-color: var(--color-primary-600);
+  background-color: var(--color-organic-background);
+  border-color: var(--color-primary-hover);
+  color: var(--color-primary-dark);
 }
 
 .button--outline:active:not(:disabled) {
-  background-color: var(--color-primary-100);
+  background-color: var(--color-primary-light);
 }
 
-/* Ghost */
+/* Ghost - Transparente */
 .button--ghost {
   background-color: transparent;
-  color: var(--color-gray-700);
+  color: var(--color-foreground-secondary);
 }
 
 .button--ghost:hover:not(:disabled) {
-  background-color: var(--color-primary-50);
-  color: var(--color-primary-600);
+  background-color: var(--color-gray-100);
+  color: var(--color-foreground);
 }
 
 .button--ghost:active:not(:disabled) {
-  background-color: var(--color-primary-100);
+  background-color: var(--color-gray-200);
 }
 
-/* Accent (Laranja - CTAs especiais) */
+/* Accent - Laranja (CTAs e ofertas) */
 .button--accent {
-  background-color: var(--color-accent-orange-500);
+  background-color: var(--color-accent-orange);
   color: var(--color-white);
   box-shadow: var(--shadow-button);
 }
 
 .button--accent:hover:not(:disabled) {
-  background-color: var(--color-accent-orange-700);
+  background-color: var(--color-discount);
   box-shadow: var(--shadow-button-hover);
   transform: translateY(-1px);
 }
 
-/* Success */
+.button--accent:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Success - Verde de confirmação */
 .button--success {
   background-color: var(--color-success);
   color: var(--color-white);
@@ -138,10 +146,14 @@
 
 .button--success:hover:not(:disabled) {
   background-color: var(--color-success-dark);
-  box-shadow: var(--shadow-button-hover);
+  box-shadow: var(--shadow-success);
 }
 
-/* Danger */
+.button--success:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Danger - Vermelho de alerta */
 .button--danger {
   background-color: var(--color-error);
   color: var(--color-white);
@@ -150,7 +162,11 @@
 
 .button--danger:hover:not(:disabled) {
   background-color: var(--color-error-dark);
-  box-shadow: var(--shadow-button-hover);
+  box-shadow: var(--shadow-error);
+}
+
+.button--danger:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 /* ========================================
@@ -159,46 +175,38 @@
 
 .button--sm {
   height: 2.25rem; /* 36px */
-  padding-left: var(--spacing-4);
-  padding-right: var(--spacing-4);
+  padding: var(--button-padding-y-sm) var(--button-padding-x-sm);
   font-size: var(--text-sm);
+  gap: var(--spacing-1-5);
 }
 
 .button--md {
   height: 2.75rem; /* 44px */
-  padding-left: var(--spacing-6);
-  padding-right: var(--spacing-6);
+  padding: var(--button-padding-y) var(--button-padding-x);
   font-size: var(--text-base);
+  gap: var(--spacing-2);
 }
 
 .button--lg {
-  height: 3rem; /* 48px */
-  padding-left: var(--spacing-8);
-  padding-right: var(--spacing-8);
+  height: 3.25rem; /* 52px */
+  padding: var(--button-padding-y-lg) var(--button-padding-x-lg);
   font-size: var(--text-lg);
+  gap: var(--spacing-2-5);
 }
 
 /* ========================================
-   LOADING STATE
+   LOADING STATE & ICONS
    ======================================== */
 
 .button__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .button__spinner {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  animation: var(--animate-spin);
 }
 
 /* ========================================
