@@ -1,130 +1,163 @@
 /**
  * Design Tokens - Spacing
- * Sistema de espaçamentos baseado em múltiplos de 4px
+ * Baseado em: Orgânico do Chico
+ * Sistema de espaçamento e grid
  */
 
 :root {
   /* ========================================
-     SPACING SCALE (múltiplos de 4px)
+     SPACING SCALE (Base 4px)
      ======================================== */
   
   --spacing-0: 0;
-  --spacing-1: 0.25rem;    /* 4px */
-  --spacing-2: 0.5rem;     /* 8px */
-  --spacing-3: 0.75rem;    /* 12px */
-  --spacing-4: 1rem;       /* 16px */
-  --spacing-5: 1.25rem;    /* 20px */
-  --spacing-6: 1.5rem;     /* 24px */
-  --spacing-7: 1.75rem;    /* 28px */
-  --spacing-8: 2rem;       /* 32px */
-  --spacing-9: 2.25rem;    /* 36px */
-  --spacing-10: 2.5rem;    /* 40px */
-  --spacing-11: 2.75rem;   /* 44px */
-  --spacing-12: 3rem;      /* 48px */
-  --spacing-14: 3.5rem;    /* 56px */
-  --spacing-16: 4rem;      /* 64px */
-  --spacing-20: 5rem;      /* 80px */
-  --spacing-24: 6rem;      /* 96px */
-  --spacing-28: 7rem;      /* 112px */
-  --spacing-32: 8rem;      /* 128px */
+  --spacing-px: 1px;
+  --spacing-0-5: 0.125rem;  /* 2px */
+  --spacing-1: 0.25rem;     /* 4px */
+  --spacing-1-5: 0.375rem;  /* 6px */
+  --spacing-2: 0.5rem;      /* 8px */
+  --spacing-2-5: 0.625rem;  /* 10px */
+  --spacing-3: 0.75rem;     /* 12px */
+  --spacing-3-5: 0.875rem;  /* 14px */
+  --spacing-4: 1rem;        /* 16px */
+  --spacing-5: 1.25rem;     /* 20px */
+  --spacing-6: 1.5rem;      /* 24px */
+  --spacing-7: 1.75rem;     /* 28px */
+  --spacing-8: 2rem;        /* 32px */
+  --spacing-9: 2.25rem;     /* 36px */
+  --spacing-10: 2.5rem;     /* 40px */
+  --spacing-11: 2.75rem;    /* 44px */
+  --spacing-12: 3rem;       /* 48px */
+  --spacing-14: 3.5rem;     /* 56px */
+  --spacing-16: 4rem;       /* 64px */
+  --spacing-20: 5rem;       /* 80px */
+  --spacing-24: 6rem;       /* 96px */
+  --spacing-28: 7rem;       /* 112px */
+  --spacing-32: 8rem;       /* 128px */
+  --spacing-36: 9rem;       /* 144px */
+  --spacing-40: 10rem;      /* 160px */
+  --spacing-44: 11rem;      /* 176px */
+  --spacing-48: 12rem;      /* 192px */
+  --spacing-52: 13rem;      /* 208px */
+  --spacing-56: 14rem;      /* 224px */
+  --spacing-60: 15rem;      /* 240px */
+  --spacing-64: 16rem;      /* 256px */
+  --spacing-72: 18rem;      /* 288px */
+  --spacing-80: 20rem;      /* 320px */
+  --spacing-96: 24rem;      /* 384px */
   
   /* ========================================
      CONTAINER
      ======================================== */
   
   --container-max-width: 1200px;
-  --container-padding-mobile: var(--spacing-4);     /* 16px */
-  --container-padding-tablet: var(--spacing-6);     /* 24px */
-  --container-padding-desktop: var(--spacing-8);    /* 32px */
+  --container-max-width-sm: 640px;
+  --container-max-width-md: 768px;
+  --container-max-width-lg: 1024px;
+  --container-max-width-xl: 1280px;
+  --container-max-width-2xl: 1536px;
+  
+  --container-padding: var(--spacing-4);
+  --container-padding-sm: var(--spacing-6);
+  --container-padding-md: var(--spacing-8);
+  --container-padding-lg: var(--spacing-12);
   
   /* ========================================
-     SECTION SPACING
+     BORDER RADIUS
      ======================================== */
   
-  --section-spacing-mobile: var(--spacing-12);      /* 48px */
-  --section-spacing-tablet: var(--spacing-16);      /* 64px */
-  --section-spacing-desktop: var(--spacing-20);     /* 80px */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;     /* 4px - Badges, small tags */
+  --radius-base: 0.375rem;  /* 6px - Default */
+  --radius-md: 0.5rem;      /* 8px - Cards, buttons */
+  --radius-lg: 0.75rem;     /* 12px - Modals, drawers */
+  --radius-xl: 1rem;        /* 16px - Hero sections */
+  --radius-2xl: 1.5rem;     /* 24px - Large cards */
+  --radius-3xl: 2rem;       /* 32px - Extra large */
+  --radius-full: 9999px;    /* Pills, avatars, badges circulares */
   
   /* ========================================
-     COMPONENT SPACING
+     GAP (Grid/Flex spacing)
+     ======================================== */
+  
+  --gap-xs: var(--spacing-2);   /* 8px */
+  --gap-sm: var(--spacing-3);   /* 12px */
+  --gap-md: var(--spacing-4);   /* 16px */
+  --gap-lg: var(--spacing-6);   /* 24px */
+  --gap-xl: var(--spacing-8);   /* 32px */
+  --gap-2xl: var(--spacing-12); /* 48px */
+  
+  /* ========================================
+     SECTION SPACING (entre seções da página)
+     ======================================== */
+  
+  --section-spacing-xs: var(--spacing-8);   /* 32px */
+  --section-spacing-sm: var(--spacing-12);  /* 48px */
+  --section-spacing-md: var(--spacing-16);  /* 64px */
+  --section-spacing-lg: var(--spacing-20);  /* 80px */
+  --section-spacing-xl: var(--spacing-24);  /* 96px */
+  
+  /* ========================================
+     COMPONENT SPACING (interno aos componentes)
      ======================================== */
   
   /* Card */
-  --card-padding: var(--spacing-4);                 /* 16px */
-  --card-gap: var(--spacing-3);                     /* 12px */
+  --card-padding: var(--spacing-4);
+  --card-padding-sm: var(--spacing-3);
+  --card-padding-lg: var(--spacing-6);
   
   /* Button */
-  --button-padding-x: var(--spacing-4);             /* 16px */
-  --button-padding-y: var(--spacing-2);             /* 8px */
-  --button-gap: var(--spacing-2);                   /* 8px */
+  --button-padding-y: var(--spacing-2);
+  --button-padding-x: var(--spacing-4);
+  --button-padding-y-sm: var(--spacing-1-5);
+  --button-padding-x-sm: var(--spacing-3);
+  --button-padding-y-lg: var(--spacing-3);
+  --button-padding-x-lg: var(--spacing-6);
   
   /* Input */
-  --input-padding-x: var(--spacing-3);              /* 12px */
-  --input-padding-y: var(--spacing-2);              /* 8px */
-  
-  /* Header */
-  --header-height: 4rem;                            /* 64px */
-  --header-padding-y: var(--spacing-3);             /* 12px */
-  --header-padding-x: var(--spacing-4);             /* 16px */
-  
-  /* Footer */
-  --footer-padding-y: var(--spacing-12);            /* 48px */
-  --footer-padding-x: var(--spacing-4);             /* 16px */
+  --input-padding-y: var(--spacing-2-5);
+  --input-padding-x: var(--spacing-4);
   
   /* Modal */
-  --modal-padding: var(--spacing-6);                /* 24px */
+  --modal-padding: var(--spacing-6);
+  --modal-padding-sm: var(--spacing-4);
+  --modal-padding-lg: var(--spacing-8);
   
-  /* Drawer */
-  --drawer-padding: var(--spacing-4);               /* 16px */
+  /* Header */
+  --header-height: 64px;
+  --header-height-mobile: 56px;
+  --header-padding: var(--spacing-4);
   
-  /* ========================================
-     GRID & LAYOUT
-     ======================================== */
-  
-  /* Grid Gap */
-  --grid-gap-sm: var(--spacing-2);                  /* 8px */
-  --grid-gap-md: var(--spacing-4);                  /* 16px */
-  --grid-gap-lg: var(--spacing-6);                  /* 24px */
-  
-  /* Stack Gap */
-  --stack-gap-xs: var(--spacing-1);                 /* 4px */
-  --stack-gap-sm: var(--spacing-2);                 /* 8px */
-  --stack-gap-md: var(--spacing-4);                 /* 16px */
-  --stack-gap-lg: var(--spacing-6);                 /* 24px */
-  
-  /* ========================================
-     RESPONSIVE OVERRIDES
-     ======================================== */
-  
-  /* Aplicar no código responsivo conforme necessário */
+  /* Footer */
+  --footer-padding-y: var(--spacing-12);
+  --footer-padding-x: var(--spacing-4);
 }
 
 /* ========================================
    RESPONSIVE ADJUSTMENTS
    ======================================== */
 
-/* Mobile (< 768px) */
-@media (max-width: 767px) {
+/* Tablets */
+@media (min-width: 768px) {
   :root {
-    --container-padding: var(--container-padding-mobile);
-    --section-spacing: var(--section-spacing-mobile);
-    --header-height: 3.5rem;                        /* 56px no mobile */
+    --container-padding: var(--spacing-6);
+    --section-spacing-md: var(--spacing-20);
+    --section-spacing-lg: var(--spacing-24);
   }
 }
 
-/* Tablet (768px - 1024px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  :root {
-    --container-padding: var(--container-padding-tablet);
-    --section-spacing: var(--section-spacing-tablet);
-  }
-}
-
-/* Desktop (>= 1024px) */
+/* Desktops */
 @media (min-width: 1024px) {
   :root {
-    --container-padding: var(--container-padding-desktop);
-    --section-spacing: var(--section-spacing-desktop);
+    --container-padding: var(--spacing-8);
+    --section-spacing-md: var(--spacing-24);
+    --section-spacing-lg: var(--spacing-32);
+    --header-padding: var(--spacing-6);
   }
 }
 
+/* Large Desktops */
+@media (min-width: 1280px) {
+  :root {
+    --container-padding: var(--spacing-12);
+  }
+}

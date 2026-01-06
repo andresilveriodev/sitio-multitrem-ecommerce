@@ -1,6 +1,7 @@
 /**
  * Design Tokens - Typography
- * Sistema de tipografia baseado no Orgânico do Chico
+ * Baseado em: Orgânico do Chico
+ * Tipografia e escalas de texto
  */
 
 :root {
@@ -8,7 +9,8 @@
      FONT FAMILIES
      ======================================== */
   
-  --font-family-primary: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-family-base: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 
+                      'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   --font-family-heading: 'Inter', sans-serif;
   --font-family-mono: 'Fira Code', 'Courier New', monospace;
   
@@ -16,42 +18,29 @@
      FONT SIZES
      ======================================== */
   
-  /* Extra Small */
+  /* Escala mobile-first */
   --text-xs: 0.75rem;      /* 12px - Labels pequenos, badges */
-  
-  /* Small */
-  --text-sm: 0.875rem;     /* 14px - Descrições, subtextos */
-  
-  /* Base */
+  --text-sm: 0.875rem;     /* 14px - Descrições, metadados */
   --text-base: 1rem;       /* 16px - Corpo de texto padrão */
-  
-  /* Large */
-  --text-lg: 1.125rem;     /* 18px - Subtítulos, leads */
-  
-  /* Extra Large */
+  --text-lg: 1.125rem;     /* 18px - Subtítulos, destaque */
   --text-xl: 1.25rem;      /* 20px - Títulos pequenos */
-  
-  /* 2X Large */
   --text-2xl: 1.5rem;      /* 24px - Títulos médios */
-  
-  /* 3X Large */
   --text-3xl: 1.875rem;    /* 30px - Títulos grandes */
-  
-  /* 4X Large */
-  --text-4xl: 2.25rem;     /* 36px - Hero titles, displays */
-  
-  /* 5X Large */
-  --text-5xl: 3rem;        /* 48px - Hero principais */
+  --text-4xl: 2.25rem;     /* 36px - Hero titles */
+  --text-5xl: 3rem;        /* 48px - Display */
   
   /* ========================================
      FONT WEIGHTS
      ======================================== */
   
-  --font-normal: 400;      /* Texto normal */
-  --font-medium: 500;      /* Ênfase leve */
-  --font-semibold: 600;    /* Subtítulos */
-  --font-bold: 700;        /* Títulos, destaque */
-  --font-extrabold: 800;   /* Super destaque */
+  --font-thin: 100;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --font-black: 900;
   
   /* ========================================
      LINE HEIGHTS
@@ -76,86 +65,87 @@
   --tracking-widest: 0.1em;
   
   /* ========================================
-     TEXT TRANSFORMS
+     COMPOSIÇÕES (Combinações prontas)
      ======================================== */
   
-  --text-uppercase: uppercase;
-  --text-lowercase: lowercase;
-  --text-capitalize: capitalize;
+  /* Heading 1 - Hero Title */
+  --heading-1-size: var(--text-4xl);
+  --heading-1-weight: var(--font-bold);
+  --heading-1-line-height: var(--leading-tight);
+  --heading-1-letter-spacing: var(--tracking-tight);
   
-  /* ========================================
-     APLICAÇÕES ESPECÍFICAS
-     ======================================== */
+  /* Heading 2 - Page Title */
+  --heading-2-size: var(--text-3xl);
+  --heading-2-weight: var(--font-bold);
+  --heading-2-line-height: var(--leading-tight);
+  --heading-2-letter-spacing: var(--tracking-tight);
   
-  /* Headings */
-  --heading-h1-size: var(--text-4xl);
-  --heading-h1-weight: var(--font-bold);
-  --heading-h1-leading: var(--leading-tight);
+  /* Heading 3 - Section Title */
+  --heading-3-size: var(--text-2xl);
+  --heading-3-weight: var(--font-semibold);
+  --heading-3-line-height: var(--leading-snug);
+  --heading-3-letter-spacing: var(--tracking-normal);
   
-  --heading-h2-size: var(--text-3xl);
-  --heading-h2-weight: var(--font-bold);
-  --heading-h2-leading: var(--leading-tight);
+  /* Heading 4 - Subsection Title */
+  --heading-4-size: var(--text-xl);
+  --heading-4-weight: var(--font-semibold);
+  --heading-4-line-height: var(--leading-snug);
+  --heading-4-letter-spacing: var(--tracking-normal);
   
-  --heading-h3-size: var(--text-2xl);
-  --heading-h3-weight: var(--font-semibold);
-  --heading-h3-leading: var(--leading-snug);
+  /* Heading 5 - Card Title */
+  --heading-5-size: var(--text-lg);
+  --heading-5-weight: var(--font-medium);
+  --heading-5-line-height: var(--leading-normal);
+  --heading-5-letter-spacing: var(--tracking-normal);
   
-  --heading-h4-size: var(--text-xl);
-  --heading-h4-weight: var(--font-semibold);
-  --heading-h4-leading: var(--leading-snug);
+  /* Body Large */
+  --body-lg-size: var(--text-lg);
+  --body-lg-weight: var(--font-normal);
+  --body-lg-line-height: var(--leading-relaxed);
   
-  --heading-h5-size: var(--text-lg);
-  --heading-h5-weight: var(--font-medium);
-  --heading-h5-leading: var(--leading-normal);
+  /* Body Base (padrão) */
+  --body-base-size: var(--text-base);
+  --body-base-weight: var(--font-normal);
+  --body-base-line-height: var(--leading-normal);
   
-  --heading-h6-size: var(--text-base);
-  --heading-h6-weight: var(--font-medium);
-  --heading-h6-leading: var(--leading-normal);
-  
-  /* Body Text */
-  --body-size: var(--text-base);
-  --body-weight: var(--font-normal);
-  --body-leading: var(--leading-relaxed);
-  
-  /* Small Text */
-  --small-size: var(--text-sm);
-  --small-weight: var(--font-normal);
-  --small-leading: var(--leading-normal);
+  /* Body Small */
+  --body-sm-size: var(--text-sm);
+  --body-sm-weight: var(--font-normal);
+  --body-sm-line-height: var(--leading-normal);
   
   /* Caption */
   --caption-size: var(--text-xs);
   --caption-weight: var(--font-normal);
-  --caption-leading: var(--leading-normal);
+  --caption-line-height: var(--leading-normal);
   
-  /* Button Text */
+  /* Label (para inputs, etc) */
+  --label-size: var(--text-sm);
+  --label-weight: var(--font-medium);
+  --label-line-height: var(--leading-normal);
+  
+  /* Button */
   --button-size: var(--text-base);
   --button-weight: var(--font-medium);
-  --button-tracking: var(--tracking-wide);
-  
-  /* Link Text */
-  --link-weight: var(--font-medium);
-  --link-decoration: underline;
-  --link-decoration-hover: none;
+  --button-line-height: var(--leading-normal);
+  --button-letter-spacing: var(--tracking-wide);
 }
 
 /* ========================================
    RESPONSIVE ADJUSTMENTS
    ======================================== */
 
-/* Mobile (< 768px) */
-@media (max-width: 767px) {
+/* Tablets e maiores */
+@media (min-width: 768px) {
   :root {
-    --heading-h1-size: 2rem;      /* 32px no mobile */
-    --heading-h2-size: 1.5rem;    /* 24px no mobile */
-    --heading-h3-size: 1.25rem;   /* 20px no mobile */
+    --text-4xl: 2.5rem;    /* 40px */
+    --text-5xl: 3.5rem;    /* 56px */
   }
 }
 
-/* Tablet (768px - 1024px) */
-@media (min-width: 768px) and (max-width: 1023px) {
+/* Desktops e maiores */
+@media (min-width: 1024px) {
   :root {
-    --heading-h1-size: 2.5rem;    /* 40px no tablet */
-    --heading-h2-size: 2rem;      /* 32px no tablet */
+    --text-4xl: 3rem;      /* 48px */
+    --text-5xl: 4rem;      /* 64px */
   }
 }
-

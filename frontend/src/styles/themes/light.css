@@ -1,77 +1,107 @@
 /**
- * Theme - Light (Padrão)
- * Tema claro baseado no Orgânico do Chico
+ * Theme - Light Mode
+ * Tema claro baseado em Orgânico do Chico
  */
 
+[data-theme="light"],
 :root {
   /* ========================================
-     THEME COLORS
+     SEMANTIC COLORS (Valores do light theme)
      ======================================== */
   
-  /* Primary */
-  --theme-primary: var(--color-primary-500);
-  --theme-primary-hover: var(--color-primary-600);
-  --theme-primary-active: var(--color-primary-700);
+  /* Backgrounds */
+  --theme-bg-primary: var(--color-white);
+  --theme-bg-secondary: var(--color-gray-50);
+  --theme-bg-tertiary: var(--color-gray-100);
+  --theme-bg-hover: var(--color-gray-100);
+  --theme-bg-active: var(--color-gray-200);
   
-  /* Background */
-  --theme-background: var(--color-white);
-  --theme-background-alt: var(--color-gray-50);
-  --theme-background-elevated: var(--color-white);
-  --theme-background-overlay: rgba(0, 0, 0, 0.5);
+  /* Foregrounds (texto) */
+  --theme-fg-primary: var(--color-gray-900);
+  --theme-fg-secondary: var(--color-gray-700);
+  --theme-fg-tertiary: var(--color-gray-600);
+  --theme-fg-muted: var(--color-gray-500);
+  --theme-fg-inverse: var(--color-white);
   
-  /* Foreground (Text) */
-  --theme-foreground: var(--color-gray-900);
-  --theme-foreground-muted: var(--color-gray-600);
-  --theme-foreground-subtle: var(--color-gray-500);
-  --theme-foreground-inverse: var(--color-white);
+  /* Borders */
+  --theme-border-primary: var(--color-gray-300);
+  --theme-border-secondary: var(--color-gray-200);
+  --theme-border-focus: var(--color-primary);
   
-  /* Border */
-  --theme-border: var(--color-gray-200);
-  --theme-border-hover: var(--color-gray-300);
-  --theme-border-focus: var(--color-primary-500);
+  /* Interactive elements */
+  --theme-interactive-primary: var(--color-primary);
+  --theme-interactive-primary-hover: var(--color-primary-hover);
+  --theme-interactive-primary-active: var(--color-primary-dark);
   
-  /* Input */
-  --theme-input-background: var(--color-white);
-  --theme-input-border: var(--color-gray-300);
-  --theme-input-border-focus: var(--color-primary-500);
-  --theme-input-text: var(--color-gray-900);
-  --theme-input-placeholder: var(--color-gray-500);
+  --theme-interactive-secondary: var(--color-gray-700);
+  --theme-interactive-secondary-hover: var(--color-gray-800);
+  --theme-interactive-secondary-active: var(--color-gray-900);
   
-  /* Button Primary */
-  --theme-button-primary-bg: var(--color-primary-500);
-  --theme-button-primary-bg-hover: var(--color-primary-600);
-  --theme-button-primary-text: var(--color-white);
+  /* Status colors */
+  --theme-success: var(--color-success);
+  --theme-success-bg: var(--color-success-light);
   
-  /* Button Secondary */
-  --theme-button-secondary-bg: var(--color-white);
-  --theme-button-secondary-bg-hover: var(--color-gray-50);
-  --theme-button-secondary-border: var(--color-gray-300);
-  --theme-button-secondary-text: var(--color-gray-900);
+  --theme-warning: var(--color-warning);
+  --theme-warning-bg: var(--color-warning-light);
   
-  /* Card */
+  --theme-error: var(--color-error);
+  --theme-error-bg: var(--color-error-light);
+  
+  --theme-info: var(--color-info);
+  --theme-info-bg: var(--color-info-light);
+  
+  /* ========================================
+     COMPONENT-SPECIFIC (Light theme)
+     ======================================== */
+  
+  /* Cards */
   --theme-card-bg: var(--color-white);
   --theme-card-border: var(--color-gray-200);
+  --theme-card-shadow: var(--shadow-card);
   
   /* Header */
   --theme-header-bg: var(--color-white);
+  --theme-header-fg: var(--color-gray-900);
   --theme-header-border: var(--color-gray-200);
-  --theme-header-text: var(--color-gray-900);
+  --theme-header-shadow: var(--shadow-header);
   
   /* Footer */
-  --theme-footer-bg: var(--color-gray-900);
-  --theme-footer-text: var(--color-gray-100);
-  --theme-footer-link: var(--color-gray-300);
-  --theme-footer-link-hover: var(--color-white);
+  --theme-footer-bg: var(--color-gray-100);
+  --theme-footer-fg: var(--color-gray-800);
   
-  /* Status Colors */
-  --theme-success: var(--color-success);
-  --theme-warning: var(--color-warning);
-  --theme-error: var(--color-error);
-  --theme-info: var(--color-info);
+  /* Input */
+  --theme-input-bg: var(--color-white);
+  --theme-input-border: var(--color-gray-300);
+  --theme-input-border-hover: var(--color-gray-400);
+  --theme-input-border-focus: var(--color-primary);
+  --theme-input-placeholder: var(--color-gray-500);
   
-  /* Shadows */
-  --theme-shadow-sm: var(--shadow-sm);
-  --theme-shadow-md: var(--shadow-md);
-  --theme-shadow-lg: var(--shadow-lg);
+  /* Button Primary */
+  --theme-button-primary-bg: var(--color-primary);
+  --theme-button-primary-fg: var(--color-white);
+  --theme-button-primary-hover: var(--color-primary-hover);
+  --theme-button-primary-active: var(--color-primary-dark);
+  
+  /* Button Secondary */
+  --theme-button-secondary-bg: var(--color-gray-100);
+  --theme-button-secondary-fg: var(--color-gray-900);
+  --theme-button-secondary-hover: var(--color-gray-200);
+  --theme-button-secondary-active: var(--color-gray-300);
+  
+  /* Modal/Overlay */
+  --theme-modal-bg: var(--color-white);
+  --theme-modal-overlay: rgba(0, 0, 0, 0.5);
+  
+  /* Badge */
+  --theme-badge-new-bg: var(--color-new-background);
+  --theme-badge-new-fg: var(--color-new);
+  
+  --theme-badge-offer-bg: var(--color-offer-background);
+  --theme-badge-offer-fg: var(--color-offer);
+  
+  --theme-badge-organic-bg: var(--color-organic-background);
+  --theme-badge-organic-fg: var(--color-organic);
+  
+  --theme-badge-shipping-bg: var(--color-free-shipping-background);
+  --theme-badge-shipping-fg: var(--color-free-shipping);
 }
-

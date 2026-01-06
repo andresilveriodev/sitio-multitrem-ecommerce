@@ -1,77 +1,122 @@
 /**
  * Design Tokens - Animations
- * Sistema de transições e animações
+ * Baseado em: Orgânico do Chico
+ * Transições, durações e animações
  */
 
 :root {
   /* ========================================
-     DURATIONS
+     DURATIONS (Durações)
      ======================================== */
   
   --duration-instant: 0ms;
   --duration-fast: 150ms;
   --duration-base: 200ms;
-  --duration-moderate: 300ms;
+  --duration-medium: 300ms;
   --duration-slow: 500ms;
   --duration-slower: 700ms;
+  --duration-slowest: 1000ms;
   
   /* ========================================
-     TIMING FUNCTIONS
+     EASING FUNCTIONS (Curvas de animação)
      ======================================== */
   
+  /* Padrão */
   --ease-linear: linear;
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   
-  /* Custom Easing */
-  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  --ease-smooth: cubic-bezier(0.45, 0, 0.55, 1);
+  /* Suave (smooth) */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-smooth-in: cubic-bezier(0.32, 0, 0.67, 0);
+  --ease-smooth-out: cubic-bezier(0.33, 1, 0.68, 1);
+  
+  /* Spring (com bounce) */
+  --ease-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-bounce: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  
+  /* Sharp (rápido e direto) */
+  --ease-sharp: cubic-bezier(0.4, 0, 0.6, 1);
   
   /* ========================================
-     TRANSITIONS (compostas)
+     TRANSITION PRESETS (Combinações prontas)
      ======================================== */
   
-  --transition-fast: all var(--duration-fast) var(--ease-in-out);
-  --transition-base: all var(--duration-base) var(--ease-in-out);
-  --transition-slow: all var(--duration-slow) var(--ease-in-out);
+  /* Rápidas (interações imediatas) */
+  --transition-fast: var(--duration-fast) var(--ease-smooth);
+  --transition-fast-in: var(--duration-fast) var(--ease-in);
+  --transition-fast-out: var(--duration-fast) var(--ease-out);
   
-  /* Transições específicas */
-  --transition-colors: color var(--duration-base) var(--ease-in-out),
-                        background-color var(--duration-base) var(--ease-in-out),
-                        border-color var(--duration-base) var(--ease-in-out);
+  /* Base (padrão para maioria dos casos) */
+  --transition-base: var(--duration-base) var(--ease-smooth);
+  --transition-in: var(--duration-base) var(--ease-in);
+  --transition-out: var(--duration-base) var(--ease-out);
+  --transition-in-out: var(--duration-base) var(--ease-in-out);
   
-  --transition-transform: transform var(--duration-base) var(--ease-in-out);
+  /* Médias (efeitos mais perceptíveis) */
+  --transition-medium: var(--duration-medium) var(--ease-smooth);
+  --transition-medium-in: var(--duration-medium) var(--ease-in);
+  --transition-medium-out: var(--duration-medium) var(--ease-out);
   
-  --transition-opacity: opacity var(--duration-base) var(--ease-in-out);
-  
-  --transition-shadow: box-shadow var(--duration-base) var(--ease-in-out);
+  /* Lentas (animações de destaque) */
+  --transition-slow: var(--duration-slow) var(--ease-smooth);
+  --transition-slow-out: var(--duration-slow) var(--ease-out);
   
   /* ========================================
-     COMPONENT TRANSITIONS
+     PROPRIEDADES COMUNS (Por tipo)
      ======================================== */
   
-  /* Button */
-  --transition-button: background-color var(--duration-fast) var(--ease-in-out),
-                        color var(--duration-fast) var(--ease-in-out),
-                        transform var(--duration-fast) var(--ease-in-out),
-                        box-shadow var(--duration-fast) var(--ease-in-out);
+  /* Cores e opacidade */
+  --transition-colors: color var(--transition-base),
+                       background-color var(--transition-base),
+                       border-color var(--transition-base);
   
-  /* Card */
-  --transition-card: transform var(--duration-base) var(--ease-in-out),
-                      box-shadow var(--duration-base) var(--ease-in-out);
+  --transition-opacity: opacity var(--transition-base);
   
-  /* Input */
-  --transition-input: border-color var(--duration-base) var(--ease-in-out),
-                       box-shadow var(--duration-base) var(--ease-in-out);
+  /* Transformações */
+  --transition-transform: transform var(--transition-base);
+  --transition-transform-fast: transform var(--transition-fast);
+  --transition-transform-spring: transform var(--duration-medium) var(--ease-spring);
   
-  /* Link */
-  --transition-link: color var(--duration-fast) var(--ease-in-out),
-                      text-decoration var(--duration-fast) var(--ease-in-out);
+  /* Sombras */
+  --transition-shadow: box-shadow var(--transition-base);
+  
+  /* Tudo (use com moderação) */
+  --transition-all: all var(--transition-base);
+  --transition-all-fast: all var(--transition-fast);
+  
+  /* ========================================
+     COMPONENT TRANSITIONS (Contextuais)
+     ======================================== */
+  
+  /* Buttons */
+  --transition-button: background-color var(--transition-fast),
+                       transform var(--transition-fast),
+                       box-shadow var(--transition-fast);
+  
+  /* Cards */
+  --transition-card: transform var(--transition-base),
+                     box-shadow var(--transition-base);
+  
+  /* Links */
+  --transition-link: color var(--transition-fast);
+  
+  /* Inputs */
+  --transition-input: border-color var(--transition-base),
+                      box-shadow var(--transition-base);
+  
+  /* Modals/Overlays */
+  --transition-modal: opacity var(--duration-medium) var(--ease-out),
+                      transform var(--duration-medium) var(--ease-out);
+  
+  /* Dropdowns */
+  --transition-dropdown: opacity var(--transition-fast),
+                         transform var(--transition-fast);
 }
 
 /* ========================================
-   KEYFRAMES ANIMATIONS
+   KEYFRAME ANIMATIONS
    ======================================== */
 
 /* Fade In */
@@ -118,18 +163,6 @@
   }
 }
 
-/* Slide In Left */
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 /* Slide In Right */
 @keyframes slideInRight {
   from {
@@ -142,7 +175,19 @@
   }
 }
 
-/* Scale In */
+/* Slide In Left */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale In (Zoom In) */
 @keyframes scaleIn {
   from {
     opacity: 0;
@@ -154,15 +199,15 @@
   }
 }
 
-/* Zoom In */
-@keyframes zoomIn {
+/* Scale Out (Zoom Out) */
+@keyframes scaleOut {
   from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
     opacity: 1;
     transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
   }
 }
 
@@ -176,17 +221,30 @@
   }
 }
 
+/* Shake */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
 /* Pulse */
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.7;
   }
 }
 
-/* Spin */
+/* Spin (Loading) */
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -196,58 +254,31 @@
   }
 }
 
-/* Shimmer (skeleton loading) */
+/* Skeleton Shimmer */
 @keyframes shimmer {
   0% {
-    background-position: -1000px 0;
+    background-position: -200% 0;
   }
   100% {
-    background-position: 1000px 0;
-  }
-}
-
-/* Shake */
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  10%, 30%, 50%, 70%, 90% {
-    transform: translateX(-10px);
-  }
-  20%, 40%, 60%, 80% {
-    transform: translateX(10px);
+    background-position: 200% 0;
   }
 }
 
 /* ========================================
-   UTILITY CLASSES
+   ANIMATION UTILITIES (Classes helper)
    ======================================== */
 
-.animate-fadeIn {
-  animation: fadeIn var(--duration-base) var(--ease-in-out);
+:root {
+  --animate-fade-in: fadeIn var(--duration-medium) var(--ease-out);
+  --animate-fade-out: fadeOut var(--duration-medium) var(--ease-in);
+  --animate-slide-up: slideUp var(--duration-medium) var(--ease-out);
+  --animate-slide-down: slideDown var(--duration-medium) var(--ease-out);
+  --animate-slide-in-right: slideInRight var(--duration-medium) var(--ease-out);
+  --animate-slide-in-left: slideInLeft var(--duration-medium) var(--ease-out);
+  --animate-scale-in: scaleIn var(--duration-base) var(--ease-out);
+  --animate-scale-out: scaleOut var(--duration-base) var(--ease-in);
+  --animate-bounce: bounce 1s var(--ease-in-out) infinite;
+  --animate-pulse: pulse 2s var(--ease-in-out) infinite;
+  --animate-spin: spin 1s var(--ease-linear) infinite;
+  --animate-shimmer: shimmer 2s var(--ease-linear) infinite;
 }
-
-.animate-slideUp {
-  animation: slideUp var(--duration-moderate) var(--ease-in-out);
-}
-
-.animate-scaleIn {
-  animation: scaleIn var(--duration-base) var(--ease-in-out);
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-.animate-pulse {
-  animation: pulse 2s var(--ease-in-out) infinite;
-}
-
-.animate-bounce {
-  animation: bounce 1s ease infinite;
-}
-
-.animate-shimmer {
-  animation: shimmer 2s linear infinite;
-}
-
