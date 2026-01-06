@@ -1,12 +1,15 @@
-import { type ReactNode } from 'react'
+import { type ReactNode, type HTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
+import styles from './Card.module.css'
 
-export interface CardProps {
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
   className?: string
-  variant?: 'default' | 'elevated' | 'bordered'
+  variant?: 'default' | 'elevated' | 'bordered' | 'flat' | 'product'
   header?: ReactNode
   footer?: ReactNode
+  loading?: boolean
+  clickable?: boolean
 }
 
 export function Card({
@@ -15,30 +18,100 @@ export function Card({
   variant = 'default',
   header,
   footer,
+  loading = false,
+  clickable = false,
+  ...props
 }: CardProps) {
-  const baseStyles = 'rounded-lg bg-background'
-
-  const variants = {
-    default: 'border border-gray-200',
-    elevated: 'shadow-lg hover:shadow-xl transition-shadow',
-    bordered: 'border-2 border-primary-200',
-  }
-
   return (
-    <div className={cn(baseStyles, variants[variant], className)}>
+    <div
+      className={cn(
+        styles.card,
+        styles[`card--${variant}`],
+        loading && styles['card--loading'],
+        clickable && styles['card--clickable'],
+        className
+      )}
+      {...props}
+    >
       {header && (
-        <div className="border-b border-gray-200 px-6 py-5 sm:px-8 sm:py-6">
+        <div className={styles.card__header}>
           {header}
         </div>
       )}
-      <div className={cn('p-5 sm:p-6 md:p-8', header && 'pt-6 sm:pt-8', footer && 'pb-6 sm:pb-8')}>
+      <div className={styles.card__body}>
         {children}
       </div>
       {footer && (
-        <div className="border-t border-gray-200 px-6 py-5 sm:px-8 sm:py-6">
+        <div className={styles.card__footer}>
           {footer}
         </div>
       )}
+    </div>
+  )
+}
+
+// Componentes auxiliares para facilitar a composição
+Card.Image = function CardImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  return (
+    <div className={cn(styles.card__image, className)}>
+      <img src={src} alt={alt} />
+    </div>
+  )
+}
+
+Card.Badges = function CardBadges({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={cn(styles.card__badges, className)}>
+      {children}
+    </div>
+  )
+}
+
+Card.Content = function CardContent({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={cn(styles.card__content, className)}>
+      {children}
+    </div>
+  )
+}
+
+Card.Title = function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <h3 className={cn(styles.card__title, className)}>
+      {children}
+    </h3>
+  )
+}
+
+Card.Description = function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <p className={cn(styles.card__description, className)}>
+      {children}
+    </p>
+  )
+}
+
+Card.Price = function CardPrice({ 
+  current, 
+  old, 
+  className 
+}: { 
+  current: string; 
+  old?: string; 
+  className?: string 
+}) {
+  return (
+    <div className={cn(styles.card__price, className)}>
+      <span className={styles.card__price_current}>{current}</span>
+      {old && <span className={styles.card__price_old}>{old}</span>}
+    </div>
+  )
+}
+
+Card.Actions = function CardActions({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={cn(styles.card__actions, className)}>
+      {children}
     </div>
   )
 }

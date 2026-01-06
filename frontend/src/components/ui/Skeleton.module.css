@@ -1,0 +1,99 @@
+/**
+ * Skeleton Component Styles
+ * Loading states do Design System
+ */
+
+.skeleton {
+  /* Base */
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-200) 0%,
+    var(--color-gray-300) 50%,
+    var(--color-gray-200) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 8px;
+  
+  /* Animation */
+  animation: shimmer var(--duration-slower) linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ========================================
+   VARIANTS
+   ======================================== */
+
+/* Text */
+.skeleton--text {
+  height: 1rem;
+  width: 100%;
+  border-radius: 4px;
+}
+
+/* Heading */
+.skeleton--heading {
+  height: 2rem;
+  width: 70%;
+  border-radius: 6px;
+}
+
+/* Card */
+.skeleton--card {
+  height: 8rem;
+  width: 100%;
+}
+
+/* Image */
+.skeleton--image {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+}
+
+/* Avatar */
+.skeleton--avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+}
+
+/* Button */
+.skeleton--button {
+  height: 2.75rem;
+  width: 8rem;
+  border-radius: 8px;
+}
+
+/* Product */
+.skeleton--product {
+  aspect-ratio: 1 / 1.4;
+  width: 100%;
+}
+
+/* ========================================
+   SIZES
+   ======================================== */
+
+.skeleton--sm {
+  height: 0.75rem;
+}
+
+.skeleton--md {
+  height: 1rem;
+}
+
+.skeleton--lg {
+  height: 1.5rem;
+}
+
+.skeleton--xl {
+  height: 2rem;
+}
+

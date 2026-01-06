@@ -1,22 +1,21 @@
 import { cn } from '@/lib/utils'
+import styles from './Skeleton.module.css'
 
 export interface SkeletonProps {
-  variant?: 'text' | 'card' | 'image'
+  variant?: 'text' | 'heading' | 'card' | 'image' | 'avatar' | 'button' | 'product'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
   className?: string
 }
 
-export function Skeleton({ variant = 'text', className }: SkeletonProps) {
-  const baseStyles = 'animate-pulse rounded bg-foreground/10'
-
-  const variants = {
-    text: 'h-4 w-full',
-    card: 'h-32 w-full',
-    image: 'aspect-square w-full',
-  }
-
+export function Skeleton({ variant = 'text', size, className }: SkeletonProps) {
   return (
     <div
-      className={cn(baseStyles, variants[variant], className)}
+      className={cn(
+        styles.skeleton,
+        styles[`skeleton--${variant}`],
+        size && styles[`skeleton--${size}`],
+        className
+      )}
       aria-busy="true"
       aria-label="Carregando..."
     />

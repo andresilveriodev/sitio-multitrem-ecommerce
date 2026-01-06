@@ -1,0 +1,193 @@
+/**
+ * Chip Component Styles
+ * Componente para filtros, tags e seleções
+ */
+
+.chip {
+  /* Base */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  
+  /* Typography */
+  font-family: var(--font-family-primary);
+  font-weight: var(--font-medium);
+  line-height: 1;
+  white-space: nowrap;
+  
+  /* Shape */
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  
+  /* Transitions */
+  transition: var(--transition-colors);
+  
+  /* States */
+  user-select: none;
+}
+
+.chip__label {
+  flex: 1;
+}
+
+.chip__icon {
+  flex-shrink: 0;
+}
+
+/* ========================================
+   CLICKABLE STATE
+   ======================================== */
+
+.chip--clickable {
+  cursor: pointer;
+}
+
+.chip--clickable:hover {
+  opacity: var(--opacity-hover);
+}
+
+.chip--clickable:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus-primary);
+}
+
+/* ========================================
+   VARIANTS
+   ======================================== */
+
+/* Default */
+.chip--default {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-800);
+  border-color: var(--color-gray-200);
+}
+
+.chip--default:hover {
+  background-color: var(--color-gray-200);
+  border-color: var(--color-gray-300);
+}
+
+.chip--default.chip--selected {
+  background-color: var(--color-gray-800);
+  color: var(--color-white);
+  border-color: var(--color-gray-800);
+}
+
+/* Primary */
+.chip--primary {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-800);
+  border-color: var(--color-primary-200);
+}
+
+.chip--primary:hover {
+  background-color: var(--color-primary-200);
+  border-color: var(--color-primary-300);
+}
+
+.chip--primary.chip--selected {
+  background-color: var(--color-primary-500);
+  color: var(--color-white);
+  border-color: var(--color-primary-500);
+}
+
+/* Success */
+.chip--success {
+  background-color: var(--color-success-light);
+  color: var(--color-success-dark);
+  border-color: var(--color-success);
+}
+
+.chip--success:hover {
+  background-color: var(--color-success);
+}
+
+.chip--success.chip--selected {
+  background-color: var(--color-success-dark);
+  color: var(--color-white);
+  border-color: var(--color-success-dark);
+}
+
+/* Warning */
+.chip--warning {
+  background-color: var(--color-warning-light);
+  color: var(--color-warning-dark);
+  border-color: var(--color-warning);
+}
+
+.chip--warning:hover {
+  background-color: var(--color-warning);
+}
+
+.chip--warning.chip--selected {
+  background-color: var(--color-warning-dark);
+  color: var(--color-white);
+  border-color: var(--color-warning-dark);
+}
+
+/* Error */
+.chip--error {
+  background-color: var(--color-error-light);
+  color: var(--color-error-dark);
+  border-color: var(--color-error);
+}
+
+.chip--error:hover {
+  background-color: var(--color-error);
+}
+
+.chip--error.chip--selected {
+  background-color: var(--color-error-dark);
+  color: var(--color-white);
+  border-color: var(--color-error-dark);
+}
+
+/* ========================================
+   SIZES
+   ======================================== */
+
+.chip--sm {
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--text-xs);
+  gap: var(--spacing-1);
+}
+
+.chip--md {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--text-sm);
+  gap: var(--spacing-2);
+}
+
+.chip--lg {
+  padding: var(--spacing-3) var(--spacing-5);
+  font-size: var(--text-base);
+  gap: var(--spacing-2);
+}
+
+/* ========================================
+   REMOVE BUTTON
+   ======================================== */
+
+.chip__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-1);
+  margin-right: calc(var(--spacing-1) * -1);
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: currentColor;
+  cursor: pointer;
+  transition: var(--transition-colors);
+}
+
+.chip__remove:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.chip--selected .chip__remove:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
