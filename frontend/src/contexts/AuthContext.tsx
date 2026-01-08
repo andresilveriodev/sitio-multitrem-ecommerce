@@ -269,6 +269,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     clearAuthData()
     setUser(null)
+
+    // Se for logout do Keycloak, redirecionar para logout do Keycloak
+    // Isso garantirá que a sessão seja limpa no servidor Keycloak também
+    if (typeof window !== 'undefined' && window.location.pathname !== '/auth/callback') {
+      // Importar e usar a função de logout do Keycloak
+      import('@/lib/keycloak').then(({ redirectToKeycloakLogout }) => {
+        redirectToKeycloakLogout()
+      }).catch(() => {
+        // Se falhar, apenas redirecionar para a home
+        window.location.href = '/'
+      })
+    }
   }, [API_URL])
 
   const value: AuthContextType = {

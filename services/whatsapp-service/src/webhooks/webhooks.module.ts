@@ -1,23 +1,14 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigModule } from '@nestjs/config'
 import { WebhooksController } from './webhooks.controller'
 import { WebhooksService } from './webhooks.service'
 import { WhatsAppModule } from '../whatsapp/whatsapp.module'
-import { createRedisClient } from '../config/redis.config'
+import { AgnoModule } from '../agno/agno.module'
 
 @Module({
-  imports: [WhatsAppModule, ConfigModule],
+  imports: [WhatsAppModule, AgnoModule, ConfigModule],
   controllers: [WebhooksController],
-  providers: [
-    WebhooksService,
-    {
-      provide: 'REDIS_CLIENT',
-      useFactory: (configService: ConfigService) => {
-        return createRedisClient(configService)
-      },
-      inject: [ConfigService],
-    },
-  ],
+  providers: [WebhooksService],
 })
 export class WebhooksModule {}
 

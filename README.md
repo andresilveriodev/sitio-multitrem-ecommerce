@@ -213,20 +213,36 @@ sitio-multitrem/
 
 ### Keycloak
 
-1. Instale o Keycloak (Docker recomendado):
-```bash
-docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:latest start-dev
-```
+**⚠️ IMPORTANTE**: Este projeto usa o Keycloak hospedado em `https://auth.rendacontinua.com`
 
-2. Acesse http://localhost:8080
-3. Crie um realm chamado `sitio-multitrem`
-4. Crie um client chamado `sitio-app`
+Para configurar a integração completa, consulte o **[Guia de Configuração Keycloak](GUIA_KEYCLOAK_CONFIGURACAO.md)**.
 
-### Evolution API
+**Resumo rápido:**
+1. Crie o arquivo `frontend/.env.local`:
+   ```bash
+   NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=sitio-multitrem-app
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   ```
+2. Configure o Client no Keycloak Admin Console
+3. Reinicie o servidor Next.js
 
-1. Configure sua instância da Evolution API
-2. Obtenha a API Key
-3. Configure a instância com o nome `sitio-multitrem`
+**📖 Documentação completa**: [GUIA_KEYCLOAK_CONFIGURACAO.md](GUIA_KEYCLOAK_CONFIGURACAO.md)
+
+### Evolution API (WhatsApp)
+
+**⚠️ IMPORTANTE**: Este projeto usa a Evolution API para integração com WhatsApp Web.
+
+Para configurar a integração completa, consulte o **[Guia de Instalação Evolution API](GUIA_EVOLUTION_API_INSTALACAO.md)**.
+
+**Resumo rápido:**
+1. Instale Node.js v20+, PostgreSQL e Redis
+2. Clone a Evolution API em `services/evolution-api`
+3. Configure o `.env` com credenciais do banco
+4. Execute `npm run db:deploy` e `npm run start`
+5. Crie uma instância e escaneie o QR Code
+6. Configure o WhatsApp Service
+
+**📖 Documentação completa**: [GUIA_EVOLUTION_API_INSTALACAO.md](GUIA_EVOLUTION_API_INSTALACAO.md)
 
 ### Mercado Pago
 
@@ -243,7 +259,10 @@ docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin
 ## 📚 Documentação
 
 - [Variáveis de Ambiente](ENV_VARIABLES.md)
-- [Documentação Completa](docs/.md)
+- [Guia de Configuração Keycloak](GUIA_KEYCLOAK_CONFIGURACAO.md) ⭐
+- [Guia de Instalação Evolution API](GUIA_EVOLUTION_API_INSTALACAO.md) ⭐ **NOVO**
+- [Guia AgentOS (AI Service)](services/ai-service/agno-agent/GUIA_AGENTOS.md)
+- [Integração WhatsApp Service](services/whatsapp-service/INTEGRACAO_EVOLUTION.md) ⭐ **NOVO**
 - [Guia de Deploy](frontend/DEPLOY.md)
 
 ## 🛠️ Scripts Disponíveis

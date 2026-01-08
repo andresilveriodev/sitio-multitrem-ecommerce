@@ -14,15 +14,16 @@ export class WhatsAppService {
   constructor(
     @Inject('REDIS_CLIENT')
     private readonly redis: Redis,
+    @Inject('EVOLUTION_CONFIG')
+    private readonly evolutionConfig: any,
     private readonly configService: ConfigService,
   ) {
-    const config = this.configService.get('EVOLUTION_CONFIG')
-    this.baseUrl = config.baseUrl
-    this.apiKey = config.apiKey
-    this.instanceName = config.instanceName
+    this.baseUrl = this.evolutionConfig.baseUrl
+    this.apiKey = this.evolutionConfig.apiKey
+    this.instanceName = this.evolutionConfig.instanceName
 
     this.axiosInstance = axios.create({
-      baseURL: `${this.baseUrl}/instance/${this.instanceName}`,
+      baseURL: this.baseUrl,
       headers: {
         'Content-Type': 'application/json',
         apikey: this.apiKey,
@@ -32,7 +33,7 @@ export class WhatsAppService {
 
   async sendText(to: string, message: string) {
     try {
-      const response = await this.axiosInstance.post('/send-text', {
+      const response = await this.axiosInstance.post(`/message/sendText/${this.instanceName}`, {
         number: to,
         text: message,
       })
@@ -120,10 +121,26 @@ export class WhatsAppService {
 
   async handleIncomingMessage(payload: any) {
     try {
-      const message = payload.messages?.[0]
+      // Evolution API pode enviar em vários formatos:
+      // 1. payload.data.messages[0] (formato de teste)
+      // 2. payload.messages[0] (alternativo)
+      // 3. payload.data (formato real da Evolution API - sem array)
+      let message = payload.data?.messages?.[0] || payload.messages?.[0]
+      
+      // Se não encontrou em arrays, verificar se payload.data é a própria mensagem
+      if (!message && payload.data?.key && payload.data?.message) {
+        message = payload.data
+      }
+      
       if (!message) {
+        console.log('❌ [WhatsAppService] Nenhuma mensagem encontrada no payload')
         return { processed: false, reason: 'No message in payload' }
       }
+      
+      console.log('✅ [WhatsAppService] Mensagem validada:', {
+        remoteJid: message.key.remoteJid,
+        hasMessage: !!message.message
+      })
 
       const phoneNumber = message.key.remoteJid.replace('@s.whatsapp.net', '')
       const messageText = message.message?.conversation || message.message?.extendedTextMessage?.text || ''
