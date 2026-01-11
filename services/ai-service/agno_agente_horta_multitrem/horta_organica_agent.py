@@ -37,7 +37,7 @@ agente_sitio_multitrem = Agent(
     id="assistente_sitio_multitrem",  # ✅ ID explícito para acesso via API
     name="assistente_sitio_multitrem",
     model=OpenAIChat(
-        id="gpt-4o",
+        id="gpt-4o-mini",  # ✅ Modelo com limite maior e mais barato
         api_key=os.getenv("OPENAI_API_KEY")
     ),
     role="Assistente completo do Sítio Multitrem - Vendas, Suporte, Agendamento e Pagamento",
@@ -127,8 +127,8 @@ agente_sitio_multitrem = Agent(
         "   c) Mostre o subtotal",
         "   d) Informe se tem entrega grátis (acima de R$ 30)",
         "   e) PRIMEIRO: Use registrar_cliente para criar/obter o cliente_id",
-        "      - Se não tiver nome/email/telefone, peça essas informações",
-        "      - Exemplo: registrar_cliente(nome='André Silvério', email='andre@email.com', telefone='556281062311')",
+        "      - Se não tiver nome/email, peça essas informações",
+        "      - Exemplo: registrar_cliente(nome='André Silvério', email='andre@email.com',)",
         "   f) SEGUNDO: Prepare a lista de produtos no formato EXATO:",
         "      produtos = [",
         "          {'nome': 'Alface Americana', 'quantidade': 10, 'preco': 5.00},",
@@ -280,7 +280,7 @@ agente_sitio_multitrem = Agent(
     ],
     db=db,
     add_history_to_context=True,
-    num_history_runs=5,
+    num_history_runs=3,  # ✅ Reduzido de 5 para 3 para economizar tokens
     markdown=True,
 )
 
