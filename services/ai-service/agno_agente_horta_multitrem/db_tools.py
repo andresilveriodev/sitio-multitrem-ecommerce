@@ -5,7 +5,7 @@ from models import (
     Cliente, Pedido, Agendamento, Pagamento, Produto,
     init_db, get_session
 )
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List, Dict
 import os
 
@@ -18,16 +18,17 @@ init_db(DB_PATH)
 def registrar_cliente(
     nome: str,
     email: str,
-    telefone: str,
+    telefone: Optional[str] = None,
     endereco: Optional[str] = None
 ) -> dict:
     """
     Registra um novo cliente no sistema.
+    ⚠️ Telefone é opcional pois pode ser obtido do WhatsApp automaticamente.
     
     Args:
         nome: Nome completo do cliente
         email: Email do cliente
-        telefone: Telefone de contato
+        telefone: Telefone de contato (opcional - será preenchido do WhatsApp se não fornecido)
         endereco: Endereço completo (opcional)
     
     Returns:
@@ -38,11 +39,17 @@ def registrar_cliente(
         # Verificar se o email já existe
         cliente_existente = session.query(Cliente).filter_by(email=email).first()
         if cliente_existente:
+            # Retornar cliente existente (não é erro, apenas informação)
             return {
-                "success": False,
+                "success": True,
                 "message": f"Cliente com email {email} já está cadastrado.",
-                "cliente": cliente_existente.to_dict()
+                "cliente": cliente_existente.to_dict(),
+                "ja_cadastrado": True
             }
+        
+        # Se telefone não fornecido, usar placeholder (será atualizado depois com dados do WhatsApp)
+        if not telefone:
+            telefone = "A definir"  # Placeholder - será atualizado quando tiver acesso ao telefone do WhatsApp
         
         # Criar novo cliente
         cliente = Cliente(
@@ -193,13 +200,16 @@ def processar_pagamento(
     dados_pagamento: Optional[dict] = None
 ) -> dict:
     """
-    Processa o pagamento de um pedido.
+    Processa o pagamento de um pedido via PIX.
+    
+    ⚠️ IMPORTANTE: Aceitamos apenas PIX no momento.
+    Esta função deve ser chamada APENAS após receber o comprovante do cliente.
     
     Args:
         pedido_id: ID do pedido
-        metodo_pagamento: Método de pagamento (pix, cartao_credito, cartao_debito, dinheiro)
+        metodo_pagamento: Método de pagamento (deve ser 'pix')
         valor: Valor a ser pago
-        dados_pagamento: Dados adicionais do pagamento (opcional)
+        dados_pagamento: Dados adicionais do pagamento (opcional, pode incluir {'comprovante_recebido': True})
     
     Returns:
         dict: Informações do pagamento processado
@@ -217,12 +227,12 @@ def processar_pagamento(
                 "message": f"Pedido com ID {pedido_id_int} não encontrado."
             }
         
-        # Validar método de pagamento
-        metodos_validos = ["pix", "cartao_credito", "cartao_debito", "dinheiro"]
-        if metodo_pagamento.lower() not in metodos_validos:
+        # Validar método de pagamento (apenas PIX aceito no momento)
+        metodo_lower = metodo_pagamento.lower()
+        if metodo_lower != "pix":
             return {
                 "success": False,
-                "message": f"Método de pagamento inválido. Use: {', '.join(metodos_validos)}"
+                "message": f"Método de pagamento '{metodo_pagamento}' não disponível. Aceitamos apenas PIX no momento."
             }
         
         # Criar pagamento
@@ -250,6 +260,292 @@ def processar_pagamento(
         }
     finally:
         session.close()
+
+
+def buscar_cliente_por_email(email: str) -> dict:
+    """
+    Busca um cliente cadastrado pelo email.
+    
+    Args:
+        email: Email do cliente
+    
+    Returns:
+        dict: Informações do cliente se encontrado, None caso contrário
+    """
+    session = get_session(DB_PATH)
+    try:
+        cliente = session.query(Cliente).filter_by(email=email).first()
+        if cliente:
+            return {
+                "success": True,
+                "cliente": cliente.to_dict(),
+                "message": f"Cliente encontrado: {cliente.nome}"
+            }
+        else:
+            return {
+                "success": False,
+                "message": f"Cliente com email {email} não encontrado.",
+                "cliente": None
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Erro ao buscar cliente: {str(e)}",
+            "cliente": None
+        }
+    finally:
+        session.close()
+
+
+def extrair_telefone_do_user_id(user_id: str) -> str:
+    """
+    Extrai o número de telefone do user_id do WhatsApp.
+    Formato esperado: 'whatsapp_5562981062311' ou '5562981062311'
+    
+    Args:
+        user_id: ID do usuário do WhatsApp
+    
+    Returns:
+        str: Número de telefone normalizado (sem prefixo whatsapp_)
+    """
+    # Remover prefixo "whatsapp_" se existir
+    telefone = user_id.replace('whatsapp_', '')
+    return telefone
+
+
+def buscar_cliente_por_telefone(telefone: str) -> dict:
+    """
+    Busca um cliente cadastrado pelo telefone.
+    Normaliza diferentes formatos de telefone para busca.
+    
+    Args:
+        telefone: Telefone do cliente (pode vir em vários formatos)
+                  Exemplos: "5562981062311", "+55 62 981062311", "whatsapp_5562981062311", etc.
+    
+    Returns:
+        dict: Informações do cliente se encontrado
+    """
+    session = get_session(DB_PATH)
+    try:
+        # Normalizar telefone: remover espaços, +, -, (, ), e caracteres especiais
+        telefone_normalizado = telefone.replace(' ', '').replace('+', '').replace('-', '').replace('(', '').replace(')', '').replace('@s.whatsapp.net', '')
+        
+        # Remover prefixo "whatsapp_" se existir (do user_id)
+        if telefone_normalizado.startswith('whatsapp_'):
+            telefone_normalizado = telefone_normalizado.replace('whatsapp_', '')
+        
+        # Buscar no banco (pode estar em diferentes formatos)
+        # Tentar busca exata primeiro
+        cliente = session.query(Cliente).filter_by(telefone=telefone_normalizado).first()
+        
+        if not cliente:
+            # Tentar busca parcial (caso tenha formatação diferente)
+            # Buscar telefones que contenham os últimos 9 dígitos (sem DDD)
+            if len(telefone_normalizado) >= 9:
+                ultimos_digitos = telefone_normalizado[-9:]  # Últimos 9 dígitos
+                clientes = session.query(Cliente).filter(Cliente.telefone.like(f'%{ultimos_digitos}')).all()
+                if clientes:
+                    cliente = clientes[0]  # Pegar o primeiro encontrado
+        
+        if cliente:
+            return {
+                "success": True,
+                "cliente": cliente.to_dict(),
+                "message": f"Cliente encontrado: {cliente.nome}"
+            }
+        else:
+            return {
+                "success": False,
+                "message": f"Cliente com telefone {telefone} não encontrado.",
+                "cliente": None
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Erro ao buscar cliente: {str(e)}",
+            "cliente": None
+        }
+    finally:
+        session.close()
+
+
+def buscar_cliente_por_nome_email(nome: str, email: str) -> dict:
+    """
+    Busca um cliente cadastrado pelo nome e email.
+    Usado quando cliente fornece nome e email para verificar cadastro.
+    
+    Args:
+        nome: Nome completo do cliente
+        email: Email do cliente
+    
+    Returns:
+        dict: Informações do cliente se encontrado
+    """
+    session = get_session(DB_PATH)
+    try:
+        # Buscar por email (mais confiável e único)
+        cliente = session.query(Cliente).filter_by(email=email).first()
+        
+        if cliente:
+            # Verificar se o nome corresponde (case insensitive, removendo espaços extras)
+            nome_cadastrado = cliente.nome.lower().strip()
+            nome_fornecido = nome.lower().strip()
+            
+            if nome_cadastrado == nome_fornecido:
+                return {
+                    "success": True,
+                    "cliente": cliente.to_dict(),
+                    "message": f"Cliente encontrado: {cliente.nome}",
+                    "nome_confere": True
+                }
+            else:
+                # Email existe mas nome diferente - retornar mesmo assim (pode ser apelido)
+                return {
+                    "success": True,
+                    "cliente": cliente.to_dict(),
+                    "message": f"Cliente encontrado pelo email. Nome cadastrado: {cliente.nome}",
+                    "nome_confere": False,
+                    "nome_diferente": True
+                }
+        else:
+            return {
+                "success": False,
+                "message": f"Cliente com email {email} não encontrado.",
+                "cliente": None
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Erro ao buscar cliente: {str(e)}",
+            "cliente": None
+        }
+    finally:
+        session.close()
+
+
+def atualizar_cliente(
+    cliente_id: int | str,
+    nome: Optional[str] = None,
+    email: Optional[str] = None,
+    telefone: Optional[str] = None,
+    endereco: Optional[str] = None
+) -> dict:
+    """
+    Atualiza dados de um cliente existente.
+    
+    Args:
+        cliente_id: ID do cliente
+        nome: Novo nome (opcional)
+        email: Novo email (opcional)
+        telefone: Novo telefone (opcional)
+        endereco: Novo endereço (opcional)
+    
+    Returns:
+        dict: Informações do cliente atualizado
+    """
+    session = get_session(DB_PATH)
+    try:
+        cliente_id_int = int(cliente_id) if isinstance(cliente_id, str) else cliente_id
+        cliente = session.query(Cliente).filter_by(id=cliente_id_int).first()
+        
+        if not cliente:
+            return {
+                "success": False,
+                "message": f"Cliente com ID {cliente_id_int} não encontrado."
+            }
+        
+        # Atualizar apenas campos fornecidos
+        if nome:
+            cliente.nome = nome
+        if email:
+            cliente.email = email
+        if telefone:
+            cliente.telefone = telefone
+        if endereco:
+            cliente.endereco = endereco
+        
+        cliente.updated_at = datetime.now()
+        session.commit()
+        
+        return {
+            "success": True,
+            "message": f"Dados do cliente {cliente.nome} atualizados com sucesso!",
+            "cliente": cliente.to_dict()
+        }
+    except Exception as e:
+        session.rollback()
+        return {
+            "success": False,
+            "message": f"Erro ao atualizar cliente: {str(e)}"
+        }
+    finally:
+        session.close()
+
+
+def obter_datas_disponiveis_entrega(numero_semanas: int = 2) -> dict:
+    """
+    Calcula as próximas datas disponíveis para entrega.
+    Dias disponíveis: Segunda, Quarta, Sexta e Sábado (manhã).
+    Sempre começa do próximo dia disponível (não inclui o dia atual).
+    
+    Args:
+        numero_semanas: Número de semanas à frente para calcular (padrão: 2)
+    
+    Returns:
+        dict: Lista de datas disponíveis formatadas
+    """
+    try:
+        # Data atual (apenas data, sem hora)
+        hoje = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        # Dias da semana disponíveis (0=Segunda, 2=Quarta, 4=Sexta, 5=Sábado)
+        dias_disponiveis = [0, 2, 4, 5]  # Segunda, Quarta, Sexta, Sábado
+        nomes_dias = {
+            0: "Segunda-feira",
+            2: "Quarta-feira", 
+            4: "Sexta-feira",
+            5: "Sábado"
+        }
+        
+        datas_formatadas = []
+        # Começar do próximo dia (não incluir hoje)
+        data_atual = hoje + timedelta(days=1)
+        
+        # Calcular próximas datas disponíveis (máximo 2 semanas = 14 dias)
+        max_dias = numero_semanas * 7
+        dias_verificados = 0
+        
+        while len(datas_formatadas) < max_dias and dias_verificados < max_dias * 2:
+            dia_semana = data_atual.weekday()
+            
+            if dia_semana in dias_disponiveis:
+                # Formato: DD/MM/YYYY - Nome do dia
+                data_str = data_atual.strftime("%d/%m/%Y")
+                nome_dia = nomes_dias[dia_semana]
+                data_iso = data_atual.strftime("%Y-%m-%d")  # Para uso no banco
+                
+                datas_formatadas.append({
+                    "data": data_str,
+                    "data_iso": data_iso,
+                    "dia_semana": nome_dia,
+                    "horario": "manhã"
+                })
+            
+            data_atual += timedelta(days=1)
+            dias_verificados += 1
+        
+        return {
+            "success": True,
+            "datas": datas_formatadas,
+            "total": len(datas_formatadas),
+            "message": f"Encontradas {len(datas_formatadas)} datas disponíveis para as próximas {numero_semanas} semanas"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Erro ao calcular datas disponíveis: {str(e)}",
+            "datas": []
+        }
 
 
 def consultar_produtos_disponiveis(categoria: Optional[str] = None) -> dict:
@@ -298,6 +594,73 @@ def consultar_produtos_disponiveis(categoria: Optional[str] = None) -> dict:
             "success": False,
             "message": f"Erro ao consultar produtos: {str(e)}",
             "produtos": _get_produtos_padrao(categoria)
+        }
+    finally:
+        session.close()
+
+
+def buscar_pedidos_por_telefone(telefone: str) -> dict:
+    """
+    Busca todos os pedidos de um cliente pelo telefone.
+    Primeiro busca o cliente pelo telefone, depois busca seus pedidos.
+    
+    Args:
+        telefone: Telefone do cliente (pode vir em vários formatos)
+    
+    Returns:
+        dict: Lista de pedidos do cliente se encontrado
+    """
+    session = get_session(DB_PATH)
+    try:
+        # Normalizar telefone
+        telefone_normalizado = telefone.replace(' ', '').replace('+', '').replace('-', '').replace('(', '').replace(')', '').replace('@s.whatsapp.net', '')
+        if telefone_normalizado.startswith('whatsapp_'):
+            telefone_normalizado = telefone_normalizado.replace('whatsapp_', '')
+        
+        # Buscar cliente pelo telefone
+        cliente = session.query(Cliente).filter_by(telefone=telefone_normalizado).first()
+        
+        if not cliente:
+            # Tentar busca parcial
+            if len(telefone_normalizado) >= 9:
+                ultimos_digitos = telefone_normalizado[-9:]
+                clientes = session.query(Cliente).filter(Cliente.telefone.like(f'%{ultimos_digitos}')).all()
+                if clientes:
+                    cliente = clientes[0]
+        
+        if not cliente:
+            return {
+                "success": False,
+                "message": f"Cliente com telefone {telefone} não encontrado.",
+                "pedidos": []
+            }
+        
+        # Buscar pedidos do cliente
+        pedidos = session.query(Pedido).filter_by(cliente_id=cliente.id).order_by(Pedido.created_at.desc()).all()
+        
+        # Buscar agendamentos para cada pedido
+        pedidos_com_agendamentos = []
+        for pedido in pedidos:
+            pedido_dict = pedido.to_dict()
+            agendamento = session.query(Agendamento).filter_by(pedido_id=pedido.id).first()
+            if agendamento:
+                pedido_dict["agendamento"] = agendamento.to_dict()
+            else:
+                pedido_dict["agendamento"] = None
+            pedidos_com_agendamentos.append(pedido_dict)
+        
+        return {
+            "success": True,
+            "cliente": cliente.to_dict(),
+            "pedidos": pedidos_com_agendamentos,
+            "total": len(pedidos),
+            "message": f"Encontrados {len(pedidos)} pedido(s) para o cliente {cliente.nome}"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Erro ao buscar pedidos: {str(e)}",
+            "pedidos": []
         }
     finally:
         session.close()
