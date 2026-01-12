@@ -9,6 +9,8 @@
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
+  # Desabilitar checkout de submodules (não necessário para o frontend)
+  NETLIFY_SKIP_SUBMODULES = "true"
 
 # Configurações do Next.js
 [build.processing]
