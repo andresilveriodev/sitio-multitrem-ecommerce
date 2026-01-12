@@ -89,6 +89,14 @@ export class ProductsService {
       return
     }
 
+    // Helper function para gerar URL da imagem baseada no slug
+    const getImageUrl = (slug: string): string | undefined => {
+      // Tenta encontrar a imagem com diferentes extensões
+      const extensions = ['.jpg', '.jpeg', '.png', '.webp']
+      // Retorna a URL relativa - o Next.js servirá da pasta public
+      return `/images/products/${slug}.jpg` // Padrão: JPG, pode ser ajustado
+    }
+
     const products: Partial<Product>[] = [
       // HORTALIÇAS (R$ 5,00 cada)
       {
@@ -97,6 +105,7 @@ export class ProductsService {
         description: 'Alface fresca e crocante',
         price: 5.0,
         category: 'hortalica',
+        imageUrl: getImageUrl('alface-americana'),
         active: true,
       },
       {
@@ -105,6 +114,7 @@ export class ProductsService {
         description: 'Alface crespa e saborosa',
         price: 5.0,
         category: 'hortalica',
+        imageUrl: getImageUrl('alface-crespa'),
         active: true,
       },
       {
@@ -113,6 +123,7 @@ export class ProductsService {
         description: 'Coentro fresco',
         price: 5.0,
         category: 'hortalica',
+        imageUrl: getImageUrl('coentro'),
         active: true,
       },
       {
@@ -121,6 +132,7 @@ export class ProductsService {
         description: 'Cebolinha verde',
         price: 5.0,
         category: 'hortalica',
+        imageUrl: getImageUrl('cebolinha'),
         active: true,
       },
       {
@@ -129,6 +141,7 @@ export class ProductsService {
         description: 'Salsa fresca',
         price: 5.0,
         category: 'hortalica',
+        imageUrl: getImageUrl('salsa'),
         active: true,
       },
       {
@@ -137,6 +150,7 @@ export class ProductsService {
         description: 'Rúcula fresca',
         price: 5.0,
         category: 'hortalica',
+        imageUrl: getImageUrl('rucula'),
         active: true,
       },
       // OVOS CAIPIRAS
@@ -146,6 +160,7 @@ export class ProductsService {
         description: 'Dúzia de ovos caipiras frescos',
         price: 15.0,
         category: 'ovos',
+        imageUrl: getImageUrl('12-ovos-caipiras'),
         active: true,
       },
       {
@@ -154,6 +169,7 @@ export class ProductsService {
         description: 'Vinte ovos caipiras frescos',
         price: 24.0,
         category: 'ovos',
+        imageUrl: getImageUrl('20-ovos-caipiras'),
         active: true,
       },
       {
@@ -162,6 +178,7 @@ export class ProductsService {
         description: 'Trinta ovos caipiras frescos',
         price: 35.0,
         category: 'ovos',
+        imageUrl: getImageUrl('30-ovos-caipiras'),
         active: true,
       },
       // KITS
@@ -172,6 +189,7 @@ export class ProductsService {
         price: 12.0,
         category: 'kit',
         kitSize: 3,
+        imageUrl: getImageUrl('kit-1-pessoa'),
         active: true,
       },
       {
@@ -181,6 +199,7 @@ export class ProductsService {
         price: 20.0,
         category: 'kit',
         kitSize: 5,
+        imageUrl: getImageUrl('kit-2-pessoas'),
         active: true,
       },
       {
@@ -190,6 +209,7 @@ export class ProductsService {
         price: 28.0,
         category: 'kit',
         kitSize: 7,
+        imageUrl: getImageUrl('kit-3-pessoas'),
         active: true,
       },
       {
@@ -199,6 +219,7 @@ export class ProductsService {
         price: 35.0,
         category: 'kit',
         kitSize: 9,
+        imageUrl: getImageUrl('kit-4-pessoas'),
         active: true,
       },
       {
@@ -208,6 +229,7 @@ export class ProductsService {
         price: 45.0,
         category: 'kit',
         kitSize: 12,
+        imageUrl: getImageUrl('kit-5-pessoas'),
         active: true,
       },
       // COMBOS
@@ -217,6 +239,7 @@ export class ProductsService {
         description: '5 hortaliças + 20 ovos caipiras',
         price: 49.5,
         category: 'combo',
+        imageUrl: getImageUrl('combo-familia-2'),
         active: true,
       },
     ]

@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { useState } from 'react'
 import { Leaf, Egg, Package, Gift } from 'lucide-react'
 import type { Product, KitProduct } from '@/types'
 import { Button } from '@/components/ui'
@@ -33,6 +34,7 @@ export function ProductCard({
 }: ProductCardProps) {
   const Icon = categoryIcons[product.category]
   const isKit = product.category === 'kit'
+  const [imageError, setImageError] = useState(false)
 
   const handleClick = () => {
     if (isKit && onSelectKit) {
@@ -46,8 +48,19 @@ export function ProductCard({
     <div className={styles.card}>
       {/* Imagem */}
       <div className={styles.card__image}>
-        {product.imageUrl ? (
-          <Image src={product.imageUrl} alt={product.name} fill className={styles.card__image} />
+        {product.imageUrl && !imageError ? (
+          <Image 
+            src={product.imageUrl} 
+            alt={product.name} 
+            fill 
+            className={styles.card__image}
+            onError={() => {
+              console.error('Erro ao carregar imagem:', product.imageUrl)
+              setImageError(true)
+            }}
+            unoptimized={product.imageUrl?.startsWith('/images/')}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
         ) : (
           <div className={styles.card__image_placeholder}>
             <Icon className={styles.card__image_icon} />
@@ -78,7 +91,7 @@ export function ProductCard({
         {/* Preço e botão */}
         <div className={styles.card__footer}>
           <div className={styles.card__price}>
-            <span className={styles.card__price_value}>R$ {product.price.toFixed(2).replace('.', ',')}</span>
+            <span className={styles.card__price_value}>{product.price.toFixed(2).replace('.', ',')}</span>
           </div>
           <Button variant="primary" size="sm" onClick={handleClick} className={styles.card__button}>
             {isKit ? 'Escolher' : 'Adicionar'}

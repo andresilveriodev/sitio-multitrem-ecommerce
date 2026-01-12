@@ -6,6 +6,7 @@ export interface CartItem {
   unitPrice: number
   selectedItems?: string[]
   subtotal: number
+  imageUrl?: string
 }
 
 export interface Cart {

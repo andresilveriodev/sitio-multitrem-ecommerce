@@ -130,6 +130,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
               quantity: item.quantity,
               subtotal: item.subtotal || (item.product?.price || 0) * item.quantity,
               selectedItems: item.selectedItems || [],
+              imageUrl: item.product?.imageUrl || item.imageUrl,
             })),
             total: cartData.total || 0,
             itemCount: cartData.itemCount || 0,
@@ -199,6 +200,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             unitPrice: product.price,
             selectedItems,
             subtotal: product.price * quantity,
+            imageUrl: product.imageUrl,
           }
           newItems = [...currentCart.items, newItem]
         }

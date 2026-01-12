@@ -81,7 +81,7 @@ export function Modal({
       {/* Modal */}
       <div
         className={cn(
-          'relative z-50 w-full rounded-lg bg-background shadow-xl animate-in fade-in-0 zoom-in-95 duration-200',
+          'relative z-50 w-full rounded-lg bg-white shadow-xl animate-in fade-in-0 zoom-in-95 duration-200',
           sizes[size],
           className
         )}

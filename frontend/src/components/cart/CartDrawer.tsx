@@ -33,7 +33,7 @@ export function CartDrawer() {
       {/* Drawer */}
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 h-full w-full bg-background shadow-xl transition-transform duration-300 ease-in-out sm:w-96',
+          'fixed right-0 top-0 z-50 h-full w-full bg-white shadow-xl transition-transform duration-300 ease-in-out sm:w-96',
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
         role="dialog"
@@ -102,7 +102,7 @@ export function CartDrawer() {
 
           {/* Footer (fixo) */}
           {!isEmpty && (
-            <div className="border-t border-foreground/10 bg-background p-6">
+            <div className="border-t border-foreground/10 bg-white p-6">
               <div className="mb-4 flex items-center justify-between">
                 <span className="text-base font-medium text-foreground">
                   Subtotal:

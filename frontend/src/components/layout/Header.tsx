@@ -96,7 +96,7 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className={styles.header__menu_button}
+              className={cn(styles.header__menu_button, 'block md:hidden')}
               aria-label="Abrir menu"
             >
               <Menu className="h-6 w-6" />
@@ -113,18 +113,9 @@ export function Header() {
 
       {/* Mobile Menu */}
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)}>
-        <div className={styles.header__mobile_menu_content}>
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={styles.header__mobile_nav_link}
-            >
-              {item.name}
-            </Link>
-          ))}
-          <div className={styles.header__mobile_divider}>
+        <div className="flex flex-col gap-4">
+          {/* Botões no topo */}
+          <div className="flex flex-col gap-2 pb-4 border-b border-foreground/10">
             <CartButton
               itemCount={itemCount}
               onClick={() => {
@@ -137,7 +128,7 @@ export function Header() {
               <Button
                 variant="outline"
                 size="sm"
-                className={styles.header__mobile_button}
+                className="w-full"
                 onClick={() => {
                   setIsLoginModalOpen(true)
                   setIsMobileMenuOpen(false)
@@ -150,7 +141,7 @@ export function Header() {
               <Button
                 variant="outline"
                 size="sm"
-                className={styles.header__mobile_button}
+                className="w-full"
                 onClick={() => {
                   logout()
                   setIsMobileMenuOpen(false)
@@ -159,6 +150,20 @@ export function Header() {
                 Sair
               </Button>
             )}
+          </div>
+
+          {/* Links de navegação */}
+          <div className="flex flex-col gap-3">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-base font-medium text-foreground hover:text-primary transition-colors py-2"
+              >
+                {item.name}
+              </Link>
+            ))}
           </div>
         </div>
       </MobileMenu>

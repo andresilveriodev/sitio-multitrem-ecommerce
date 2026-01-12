@@ -17,14 +17,21 @@ export function CartItemCard({
   onUpdateQuantity,
   onRemove,
 }: CartItemCardProps) {
-  const PLACEHOLDER_IMAGE =
-    'https://placehold.co/100x100/22c55e/white?text=Produto'
+  const getImageUrl = (slug?: string): string => {
+    if (item.imageUrl) return item.imageUrl
+    if (slug) return `/images/products/${slug}.jpg`
+    return 'https://placehold.co/100x100/22c55e/white?text=Produto'
+  }
+
+  // Tentar extrair slug do nome do produto para fallback
+  const slug = item.productName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+  const imageUrl = getImageUrl(slug)
 
   return (
     <div className={styles.item}>
       {/* Imagem */}
       <div className={styles.item__image}>
-        <Image src={PLACEHOLDER_IMAGE} alt={item.productName} fill className={styles.item__image} />
+        <Image src={imageUrl} alt={item.productName} fill className={styles.item__image} />
       </div>
 
       {/* Conteúdo */}

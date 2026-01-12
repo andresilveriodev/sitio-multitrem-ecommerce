@@ -1,6 +1,9 @@
 import type { Product, KitProduct, ProductCategory } from '@/types'
 
-const PLACEHOLDER_IMAGE = 'https://placehold.co/400x400/22c55e/white?text=Produto'
+// Helper function para gerar URL da imagem baseada no slug
+const getImageUrl = (slug: string): string => {
+  return `/images/products/${slug}.jpg`
+}
 
 export const AVAILABLE_VEGETABLES = [
   'Alface Americana',
@@ -19,7 +22,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     slug: 'alface-americana',
     price: 5.0,
     category: 'hortalica',
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('alface-americana'),
     active: true,
   },
   {
@@ -28,7 +31,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     slug: 'alface-crespa',
     price: 5.0,
     category: 'hortalica',
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('alface-crespa'),
     active: true,
   },
   {
@@ -37,7 +40,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     slug: 'coentro',
     price: 5.0,
     category: 'hortalica',
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('coentro'),
     active: true,
   },
   {
@@ -46,7 +49,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     slug: 'cebolinha',
     price: 5.0,
     category: 'hortalica',
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('cebolinha'),
     active: true,
   },
   {
@@ -55,7 +58,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     slug: 'salsa',
     price: 5.0,
     category: 'hortalica',
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('salsa'),
     active: true,
   },
   {
@@ -64,35 +67,35 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     slug: 'rucula',
     price: 5.0,
     category: 'hortalica',
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('rucula'),
     active: true,
   },
   // OVOS
   {
     id: 7,
-    name: 'Ovos Caipiras - 12 unidades',
-    slug: 'ovos-caipiras-12',
+    name: '12 Ovos Caipiras',
+    slug: '12-ovos-caipiras',
     price: 15.0,
     category: 'ovos',
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('12-ovos-caipiras'),
     active: true,
   },
   {
     id: 8,
-    name: 'Ovos Caipiras - 20 unidades',
-    slug: 'ovos-caipiras-20',
+    name: '20 Ovos Caipiras',
+    slug: '20-ovos-caipiras',
     price: 24.0,
     category: 'ovos',
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('20-ovos-caipiras'),
     active: true,
   },
   {
     id: 9,
-    name: 'Ovos Caipiras - 30 unidades',
-    slug: 'ovos-caipiras-30',
+    name: '30 Ovos Caipiras',
+    slug: '30-ovos-caipiras',
     price: 35.0,
     category: 'ovos',
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('30-ovos-caipiras'),
     active: true,
   },
   // KITS
@@ -105,7 +108,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     category: 'kit',
     kitSize: 3,
     availableItems: AVAILABLE_VEGETABLES,
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('kit-1-pessoa'),
     active: true,
   } as KitProduct,
   {
@@ -117,7 +120,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     category: 'kit',
     kitSize: 5,
     availableItems: AVAILABLE_VEGETABLES,
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('kit-2-pessoas'),
     active: true,
   } as KitProduct,
   {
@@ -129,7 +132,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     category: 'kit',
     kitSize: 7,
     availableItems: AVAILABLE_VEGETABLES,
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('kit-3-pessoas'),
     active: true,
   } as KitProduct,
   {
@@ -141,7 +144,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     category: 'kit',
     kitSize: 9,
     availableItems: AVAILABLE_VEGETABLES,
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('kit-4-pessoas'),
     active: true,
   } as KitProduct,
   {
@@ -153,7 +156,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     category: 'kit',
     kitSize: 12,
     availableItems: AVAILABLE_VEGETABLES,
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('kit-5-pessoas'),
     active: true,
   } as KitProduct,
   // COMBOS
@@ -164,7 +167,7 @@ export const PRODUCTS: (Product | KitProduct)[] = [
     description: '5 hortaliças + 20 ovos caipiras',
     price: 49.5,
     category: 'combo',
-    imageUrl: PLACEHOLDER_IMAGE,
+    imageUrl: getImageUrl('combo-familia-2'),
     active: true,
   },
 ]

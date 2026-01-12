@@ -44,9 +44,7 @@ export function HowItWorks() {
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 sm:mb-4 leading-tight">
             Como Funciona
           </h2>
-          <p className="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto leading-relaxed">
-            Receba produtos frescos em 4 passos simples
-          </p>
+
         </div>
 
         {/* Steps Grid */}

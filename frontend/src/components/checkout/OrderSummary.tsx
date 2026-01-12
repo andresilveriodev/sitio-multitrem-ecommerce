@@ -4,11 +4,15 @@ import { useCart } from '@/hooks/useCart'
 import { Card } from '@/components/ui'
 import Image from 'next/image'
 
-const PLACEHOLDER_IMAGE =
-  'https://placehold.co/60x60/22c55e/white?text=Produto'
-
 export function OrderSummary() {
   const { items, total } = useCart()
+
+  const getImageUrl = (item: typeof items[0]): string => {
+    if (item.imageUrl) return item.imageUrl
+    // Tentar extrair slug do nome do produto para fallback
+    const slug = item.productName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+    return `/images/products/${slug}.jpg`
+  }
 
   return (
     <Card variant="elevated" className="sticky top-24">
@@ -23,7 +27,7 @@ export function OrderSummary() {
           >
             <div className="relative h-16 w-16 flex-shrink-0 rounded overflow-hidden bg-primary-50">
               <Image
-                src={PLACEHOLDER_IMAGE}
+                src={getImageUrl(item)}
                 alt={item.productName}
                 fill
                 className="object-cover"
