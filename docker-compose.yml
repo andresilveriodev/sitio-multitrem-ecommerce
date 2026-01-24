@@ -1,0 +1,448 @@
+version: '3.8'
+
+services:
+  # ================================
+  # BANCOS DE DADOS
+  # ================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: sitio_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sitio_multitrem
+      POSTGRES_USER: sitio_user
+      POSTGRES_PASSWORD: sitio_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sitio_user -d sitio_multitrem"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: sitio_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass sitio_redis_pass
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "sitio_redis_pass", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ================================
+  # SHARED PACKAGE
+  # ================================
+  shared:
+    build:
+      context: .
+      dockerfile: docker/shared.Dockerfile
+    container_name: sitio_shared
+    volumes:
+      - shared_dist:/app/shared/dist
+
+  # ================================
+  # MICROSERVIÇOS BACKEND
+  # ================================
+  product-service:
+    build:
+      context: .
+      dockerfile: docker/nestjs.Dockerfile
+      args:
+        SERVICE_PATH: services/product-service
+        SERVICE_PORT: 3001
+    container_name: sitio_product_service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      shared:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://sitio_user:sitio_password@postgres:5432/sitio_multitrem
+    volumes:
+      - shared_dist:/app/node_modules/@sitio/shared/dist
+    ports:
+      - "3001:3001"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  cart-service:
+    build:
+      context: .
+      dockerfile: docker/nestjs.Dockerfile
+      args:
+        SERVICE_PATH: services/cart-service
+        SERVICE_PORT: 3002
+    container_name: sitio_cart_service
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      shared:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      REDIS_URL: redis://:sitio_redis_pass@redis:6379
+    volumes:
+      - shared_dist:/app/node_modules/@sitio/shared/dist
+    ports:
+      - "3002:3002"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  order-service:
+    build:
+      context: .
+      dockerfile: docker/nestjs.Dockerfile
+      args:
+        SERVICE_PATH: services/order-service
+        SERVICE_PORT: 3003
+    container_name: sitio_order_service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      shared:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+      DATABASE_URL: postgresql://sitio_user:sitio_password@postgres:5432/sitio_multitrem
+    volumes:
+      - shared_dist:/app/node_modules/@sitio/shared/dist
+    ports:
+      - "3003:3003"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: docker/nestjs.Dockerfile
+      args:
+        SERVICE_PATH: services/payment-service
+        SERVICE_PORT: 3004
+    container_name: sitio_payment_service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      shared:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      PORT: 3004
+      DATABASE_URL: postgresql://sitio_user:sitio_password@postgres:5432/sitio_multitrem
+      MERCADOPAGO_ACCESS_TOKEN: ${MERCADOPAGO_ACCESS_TOKEN}
+    volumes:
+      - shared_dist:/app/node_modules/@sitio/shared/dist
+    ports:
+      - "3004:3004"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: docker/nestjs.Dockerfile
+      args:
+        SERVICE_PATH: services/auth-service
+        SERVICE_PORT: 3005
+    container_name: sitio_auth_service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      shared:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      PORT: 3005
+      DATABASE_URL: postgresql://sitio_user:sitio_password@postgres:5432/sitio_multitrem
+      JWT_SECRET: ${JWT_SECRET}
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://localhost:8080}
+    volumes:
+      - shared_dist:/app/node_modules/@sitio/shared/dist
+    ports:
+      - "3005:3005"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  whatsapp-service:
+    build:
+      context: .
+      dockerfile: docker/nestjs.Dockerfile
+      args:
+        SERVICE_PATH: services/whatsapp-service
+        SERVICE_PORT: 3006
+    container_name: sitio_whatsapp_service
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      shared:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      PORT: 3006
+      REDIS_URL: redis://:sitio_redis_pass@redis:6379
+      EVOLUTION_API_URL: http://evolution-api:8080
+      EVOLUTION_API_TOKEN: ${EVOLUTION_API_TOKEN}
+    volumes:
+      - shared_dist:/app/node_modules/@sitio/shared/dist
+    ports:
+      - "3006:3006"
+    networks:
+      - sitio-network
+      - evolution-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  ai-service:
+    build:
+      context: .
+      dockerfile: docker/nestjs.Dockerfile
+      args:
+        SERVICE_PATH: services/ai-service
+        SERVICE_PORT: 3007
+    container_name: sitio_ai_service
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      shared:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      PORT: 3007
+      REDIS_URL: redis://:sitio_redis_pass@redis:6379
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    volumes:
+      - shared_dist:/app/node_modules/@sitio/shared/dist
+    ports:
+      - "3007:3007"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ================================
+  # AI AGENT PYTHON
+  # ================================
+  ai-agent-python:
+    build:
+      context: services/ai-service/agno_agente_horta_multitrem
+      dockerfile: Dockerfile
+    container_name: sitio_ai_agent_python
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DATABASE_URL: postgresql://sitio_user:sitio_password@postgres:5432/sitio_multitrem
+    ports:
+      - "3008:8000"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ================================
+  # GATEWAY
+  # ================================
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/nestjs.Dockerfile
+      args:
+        SERVICE_PATH: services/gateway
+        SERVICE_PORT: 8000
+    container_name: sitio_gateway
+    restart: unless-stopped
+    depends_on:
+      product-service:
+        condition: service_healthy
+      cart-service:
+        condition: service_healthy
+      order-service:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      whatsapp-service:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 8000
+      PRODUCT_SERVICE_URL: http://product-service:3001
+      CART_SERVICE_URL: http://cart-service:3002
+      ORDER_SERVICE_URL: http://order-service:3003
+      PAYMENT_SERVICE_URL: http://payment-service:3004
+      AUTH_SERVICE_URL: http://auth-service:3005
+      WHATSAPP_SERVICE_URL: http://whatsapp-service:3006
+      AI_SERVICE_URL: http://ai-service:3007
+    ports:
+      - "8000:8000"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ================================
+  # FRONTEND
+  # ================================
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    container_name: sitio_frontend
+    restart: unless-stopped
+    depends_on:
+      gateway:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_WS_URL: ws://localhost:8000
+    ports:
+      - "3000:3000"
+    networks:
+      - sitio-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ================================
+  # EVOLUTION API (Já configurado)
+  # ================================
+  evolution-api:
+    image: evoapicloud/evolution-api:latest
+    container_name: evolution_api
+    restart: unless-stopped
+    depends_on:
+      evolution-redis:
+        condition: service_healthy
+      evolution-postgres:
+        condition: service_healthy
+    ports:
+      - "8081:8080"
+    volumes:
+      - evolution_instances:/evolution/instances
+    networks:
+      - evolution-net
+    environment:
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_URI=redis://evolution-redis:6379/6
+      - DATABASE_CONNECTION_URI=postgresql://evolution:evolution123@evolution-postgres:5432/evolution
+      - DATABASE_PROVIDER=postgresql
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/manager"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  evolution-redis:
+    image: redis:7-alpine
+    container_name: evolution_redis
+    restart: unless-stopped
+    command: redis-server --port 6379 --appendonly yes
+    volumes:
+      - evolution_redis:/data
+    networks:
+      - evolution-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  evolution-postgres:
+    image: postgres:15-alpine
+    container_name: evolution_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: evolution
+      POSTGRES_USER: evolution
+      POSTGRES_PASSWORD: evolution123
+    volumes:
+      - evolution_postgres_data:/var/lib/postgresql/data
+    networks:
+      - evolution-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evolution -d evolution"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
+  shared_dist:
+  evolution_instances:
+  evolution_redis:
+  evolution_postgres_data:
+
+networks:
+  sitio-network:
+    driver: bridge
+  evolution-net:
+    driver: bridge

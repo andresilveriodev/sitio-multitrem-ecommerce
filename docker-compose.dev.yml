@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # Sobrescrever para desenvolvimento
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend/src:/app/src:cached
+      - ./frontend/public:/app/public:cached
+      - ./frontend/package.json:/app/package.json:ro
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    command: npm run dev
+
+  # Bancos expostos para acesso local
+  postgres:
+    ports:
+      - "5432:5432"
+    
+  redis:
+    ports:
+      - "6379:6379"
+
+  # Services com hot reload
+  product-service:
+    volumes:
+      - ./services/product-service/src:/app/src:cached
+    environment:
+      NODE_ENV: development
+    command: npm run start:dev
+
+  cart-service:
+    volumes:
+      - ./services/cart-service/src:/app/src:cached
+    environment:
+      NODE_ENV: development
+    command: npm run start:dev
+
+  order-service:
+    volumes:
+      - ./services/order-service/src:/app/src:cached
+    environment:
+      NODE_ENV: development
+    command: npm run start:dev
+
+  payment-service:
+    volumes:
+      - ./services/payment-service/src:/app/src:cached
+    environment:
+      NODE_ENV: development
+    command: npm run start:dev
+
+  auth-service:
+    volumes:
+      - ./services/auth-service/src:/app/src:cached
+    environment:
+      NODE_ENV: development
+    command: npm run start:dev
+
+  whatsapp-service:
+    volumes:
+      - ./services/whatsapp-service/src:/app/src:cached
+    environment:
+      NODE_ENV: development
+    command: npm run start:dev
+
+  ai-service:
+    volumes:
+      - ./services/ai-service/src:/app/src:cached
+    environment:
+      NODE_ENV: development
+    command: npm run start:dev
+
+  gateway:
+    volumes:
+      - ./services/gateway/src:/app/src:cached
+    environment:
+      NODE_ENV: development
+    command: npm run start:dev
+
+  # AI Agent Python com hot reload
+  ai-agent-python:
+    volumes:
+      - ./services/ai-service/agno_agente_horta_multitrem:/app:cached
+    environment:
+      PYTHONPATH: /app
+      ENVIRONMENT: development
+    command: uv run uvicorn horta_organica_agent:app --host 0.0.0.0 --port 8000 --reload
