@@ -2,6 +2,12 @@
 .env
 .env.local
 
+# Google OAuth Tokens
+token.json
+*.json
+!pyproject.toml
+!package*.json
+
 # Database
 tmp/
 *.db

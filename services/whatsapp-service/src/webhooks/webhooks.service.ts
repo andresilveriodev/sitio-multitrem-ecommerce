@@ -12,6 +12,7 @@ export class WebhooksService {
   private readonly aiServiceUrl: string
   private readonly rateLimiter: RateLimiter
   private readonly useAgno: boolean
+  private readonly allowedPhoneNumbers: Set<string>
 
   constructor(
     @Inject('REDIS_CLIENT')
@@ -31,8 +32,43 @@ export class WebhooksService {
       windowMs: 60000, // 1 minuto
     })
 
+    // Configurar números permitidos para teste da IA
+    // Pode ser configurado via variável de ambiente ou usar os padrões
+    const allowedNumbersEnv = configService.get<string>(
+      'AI_ALLOWED_PHONE_NUMBERS',
+      '+5562981062311,+55 62 8141-2139,+556281062311',
+    )
+
+    const allowedNumbers = allowedNumbersEnv
+      .split(',')
+      .map((num) => num.trim())
+      .filter((num) => num.length > 0)
+
+    this.allowedPhoneNumbers = new Set(
+      allowedNumbers.map((num) => this.normalizePhoneNumber(num)),
+    )
+
     console.log(`🤖 [Webhooks] AI Service: ${this.aiServiceUrl}`)
     console.log(`🤖 [Webhooks] Usando Agno: ${this.useAgno ? 'SIM' : 'NÃO'}`)
+    console.log(
+      `📱 [Webhooks] Números permitidos para IA: ${Array.from(this.allowedPhoneNumbers).join(', ')}`,
+    )
+  }
+
+  /**
+   * Normaliza número de telefone removendo espaços, hífens e o sinal +
+   * Exemplo: "+55 62 8141-2139" -> "556281412139"
+   */
+  private normalizePhoneNumber(phoneNumber: string): string {
+    return phoneNumber.replace(/[\s\-+]/g, '')
+  }
+
+  /**
+   * Verifica se o número está na lista de permitidos para usar IA
+   */
+  private isPhoneNumberAllowed(phoneNumber: string): boolean {
+    const normalized = this.normalizePhoneNumber(phoneNumber)
+    return this.allowedPhoneNumbers.has(normalized)
   }
 
   async handleIncomingMessage(payload: any) {
@@ -97,6 +133,29 @@ export class WebhooksService {
       return result
     }
 
+    // Verificar se o número está permitido para usar IA
+    const normalizedPhone = this.normalizePhoneNumber(result.phoneNumber)
+    const isAllowed = this.isPhoneNumberAllowed(result.phoneNumber)
+
+    if (!isAllowed) {
+      console.log(
+        `🚫 [Webhooks] Número ${result.phoneNumber} (normalizado: ${normalizedPhone}) não está na lista de permitidos para IA`,
+      )
+
+      // Enviar mensagem padrão sem usar IA
+      await this.whatsappService.sendText(
+        result.phoneNumber,
+        'Olá! Obrigado por entrar em contato. Nossa equipe entrará em contato em breve. 😊',
+      )
+
+      return {
+        ...result,
+        aiResponse: null,
+        aiBlocked: true,
+        reason: 'Phone number not in allowed list for AI testing',
+      }
+    }
+
     // Rate limiting
     const rateLimit = await this.rateLimiter.checkLimit(result.phoneNumber)
     if (!rateLimit.allowed) {
@@ -112,6 +171,11 @@ export class WebhooksService {
 
     try {
       let responseText = ''
+
+      // ✅ Apenas números permitidos chegam aqui
+      console.log(
+        `✅ [Webhooks] Número ${result.phoneNumber} autorizado para usar IA`,
+      )
 
       // Usar Agno AgentOS ou AI Service legado
       if (this.useAgno) {

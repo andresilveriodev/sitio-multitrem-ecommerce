@@ -65,6 +65,10 @@ Thumbs.db
 # Docker (se usar)
 docker-compose.override.yml
 
+# Repositórios embarcados (submodules)
+services/ai-service/agno-agent/agent-ui/
+services/evolution-api/
+
 # vercel
 .vercel
 

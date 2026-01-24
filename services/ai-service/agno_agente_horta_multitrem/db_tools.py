@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 from typing import Optional, List, Dict
 import os
 
-
 # Inicializar banco de dados
 DB_PATH = os.getenv("DATABASE_PATH", "tmp/data.db")
 init_db(DB_PATH)
@@ -178,11 +177,12 @@ def agendar_entrega(
         session.add(agendamento)
         session.commit()
         
-        return {
+        resultado = {
             "success": True,
             "message": f"Entrega agendada para {data_entrega} às {horario}",
             "agendamento": agendamento.to_dict()
         }
+        return resultado
     except Exception as e:
         session.rollback()
         return {
@@ -317,6 +317,7 @@ def buscar_cliente_por_telefone(telefone: str) -> dict:
     """
     Busca um cliente cadastrado pelo telefone.
     Normaliza diferentes formatos de telefone para busca.
+    PRIORIZA BUSCA EXATA para evitar confusão entre números similares.
     
     Args:
         telefone: Telefone do cliente (pode vir em vários formatos)
@@ -334,18 +335,8 @@ def buscar_cliente_por_telefone(telefone: str) -> dict:
         if telefone_normalizado.startswith('whatsapp_'):
             telefone_normalizado = telefone_normalizado.replace('whatsapp_', '')
         
-        # Buscar no banco (pode estar em diferentes formatos)
-        # Tentar busca exata primeiro
+        # PRIORIDADE 1: Busca exata (mais confiável)
         cliente = session.query(Cliente).filter_by(telefone=telefone_normalizado).first()
-        
-        if not cliente:
-            # Tentar busca parcial (caso tenha formatação diferente)
-            # Buscar telefones que contenham os últimos 9 dígitos (sem DDD)
-            if len(telefone_normalizado) >= 9:
-                ultimos_digitos = telefone_normalizado[-9:]  # Últimos 9 dígitos
-                clientes = session.query(Cliente).filter(Cliente.telefone.like(f'%{ultimos_digitos}')).all()
-                if clientes:
-                    cliente = clientes[0]  # Pegar o primeiro encontrado
         
         if cliente:
             return {
@@ -353,12 +344,39 @@ def buscar_cliente_por_telefone(telefone: str) -> dict:
                 "cliente": cliente.to_dict(),
                 "message": f"Cliente encontrado: {cliente.nome}"
             }
-        else:
-            return {
-                "success": False,
-                "message": f"Cliente com telefone {telefone} não encontrado.",
-                "cliente": None
-            }
+        
+        # PRIORIDADE 2: Tentar com/sem código do país (55)
+        # Se o telefone começa com 55, tentar sem ele
+        if telefone_normalizado.startswith('55') and len(telefone_normalizado) > 11:
+            telefone_sem_55 = telefone_normalizado[2:]  # Remove "55"
+            cliente = session.query(Cliente).filter_by(telefone=telefone_sem_55).first()
+            if cliente:
+                return {
+                    "success": True,
+                    "cliente": cliente.to_dict(),
+                    "message": f"Cliente encontrado: {cliente.nome}"
+                }
+            # Tentar também adicionando 55 se não tinha
+            telefone_com_55 = '55' + telefone_normalizado
+            cliente = session.query(Cliente).filter_by(telefone=telefone_com_55).first()
+            if cliente:
+                return {
+                    "success": True,
+                    "cliente": cliente.to_dict(),
+                    "message": f"Cliente encontrado: {cliente.nome}"
+                }
+        
+        # ❌ REMOVIDO: Busca parcial foi removida para evitar matches incorretos
+        # A busca parcial usando LIKE pode retornar resultados errados quando números
+        # são similares (ex: 556281062311 vs 556299753008)
+        # Agora apenas buscas exatas são permitidas para garantir precisão
+        
+        # Não encontrado
+        return {
+            "success": False,
+            "message": f"Cliente com telefone {telefone} não encontrado. Verifique se o número está cadastrado corretamente no banco de dados.",
+            "cliente": None
+        }
     except Exception as e:
         return {
             "success": False,
@@ -617,16 +635,19 @@ def buscar_pedidos_por_telefone(telefone: str) -> dict:
         if telefone_normalizado.startswith('whatsapp_'):
             telefone_normalizado = telefone_normalizado.replace('whatsapp_', '')
         
-        # Buscar cliente pelo telefone
+        # Buscar cliente pelo telefone (busca exata)
         cliente = session.query(Cliente).filter_by(telefone=telefone_normalizado).first()
         
-        if not cliente:
-            # Tentar busca parcial
-            if len(telefone_normalizado) >= 9:
-                ultimos_digitos = telefone_normalizado[-9:]
-                clientes = session.query(Cliente).filter(Cliente.telefone.like(f'%{ultimos_digitos}')).all()
-                if clientes:
-                    cliente = clientes[0]
+        # Tentar com/sem código do país (55) se não encontrou
+        if not cliente and telefone_normalizado.startswith('55') and len(telefone_normalizado) > 11:
+            telefone_sem_55 = telefone_normalizado[2:]  # Remove "55"
+            cliente = session.query(Cliente).filter_by(telefone=telefone_sem_55).first()
+            if not cliente:
+                telefone_com_55 = '55' + telefone_normalizado
+                cliente = session.query(Cliente).filter_by(telefone=telefone_com_55).first()
+        
+        # ❌ REMOVIDO: Busca parcial foi removida para evitar matches incorretos
+        # Apenas buscas exatas são permitidas para garantir precisão
         
         if not cliente:
             return {

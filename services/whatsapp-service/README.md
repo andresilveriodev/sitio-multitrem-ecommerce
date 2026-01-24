@@ -31,9 +31,13 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=
 AI_SERVICE_URL=http://localhost:3007
+AI_ALLOWED_PHONE_NUMBERS=+5562981062311,+55 62 8141-2139
 PORT=3006
 NODE_ENV=development
 ```
+
+**Variáveis importantes:**
+- `AI_ALLOWED_PHONE_NUMBERS`: Lista de números permitidos para usar IA (separados por vírgula). Números não autorizados recebem mensagem padrão sem IA. Padrão: `+5562981062311,+55 62 8141-2139`
 
 3. Configure a Evolution API:
    - Instale e configure a Evolution API
@@ -74,6 +78,7 @@ O serviço roda na porta **3006** por padrão.
 - Recebimento de mensagens via webhook
 - Histórico de conversas no Redis (últimas 20 mensagens, TTL 24h)
 - Integração automática com AI Service para respostas inteligentes
+- **Controle de acesso à IA**: Apenas números autorizados podem interagir com a IA. Números não autorizados recebem mensagem padrão
 
 ## Fluxo de Mensagens Recebidas
 
