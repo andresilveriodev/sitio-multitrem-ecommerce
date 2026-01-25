@@ -71,13 +71,18 @@ services:
       shared:
         condition: service_completed_successfully
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 3001
       DATABASE_URL: postgresql://sitio_user:sitio_password@postgres:5432/sitio_multitrem
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: sitio_user
+      DB_PASSWORD: sitio_password
+      DB_NAME: sitio_multitrem
     volumes:
       - shared_dist:/app/node_modules/@sitio/shared/dist
     ports:
-      - "3001:3001"
+      - "3009:3001"
     networks:
       - sitio-network
     healthcheck:
@@ -101,9 +106,12 @@ services:
       shared:
         condition: service_completed_successfully
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 3002
       REDIS_URL: redis://:sitio_redis_pass@redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: sitio_redis_pass
     volumes:
       - shared_dist:/app/node_modules/@sitio/shared/dist
     ports:
@@ -131,9 +139,14 @@ services:
       shared:
         condition: service_completed_successfully
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 3003
       DATABASE_URL: postgresql://sitio_user:sitio_password@postgres:5432/sitio_multitrem
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: sitio_user
+      DB_PASSWORD: sitio_password
+      DB_NAME: sitio_multitrem
     volumes:
       - shared_dist:/app/node_modules/@sitio/shared/dist
     ports:
@@ -161,9 +174,14 @@ services:
       shared:
         condition: service_completed_successfully
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 3004
       DATABASE_URL: postgresql://sitio_user:sitio_password@postgres:5432/sitio_multitrem
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: sitio_user
+      DB_PASSWORD: sitio_password
+      DB_NAME: sitio_multitrem
       MERCADOPAGO_ACCESS_TOKEN: ${MERCADOPAGO_ACCESS_TOKEN}
     volumes:
       - shared_dist:/app/node_modules/@sitio/shared/dist
@@ -192,9 +210,14 @@ services:
       shared:
         condition: service_completed_successfully
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 3005
       DATABASE_URL: postgresql://sitio_user:sitio_password@postgres:5432/sitio_multitrem
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: sitio_user
+      DB_PASSWORD: sitio_password
+      DB_NAME: sitio_multitrem
       JWT_SECRET: ${JWT_SECRET}
       KEYCLOAK_URL: ${KEYCLOAK_URL:-http://localhost:8080}
     volumes:
@@ -224,11 +247,15 @@ services:
       shared:
         condition: service_completed_successfully
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 3006
       REDIS_URL: redis://:sitio_redis_pass@redis:6379
-      EVOLUTION_API_URL: http://evolution-api:8080
-      EVOLUTION_API_TOKEN: ${EVOLUTION_API_TOKEN}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: sitio_redis_pass
+      EVOLUTION_API_URL: http://evolution_api:8080
+      EVOLUTION_API_KEY: ${EVOLUTION_API_TOKEN}
+      AI_SERVICE_URL: http://ai-agent-python:8000
     volumes:
       - shared_dist:/app/node_modules/@sitio/shared/dist
     ports:
@@ -257,9 +284,12 @@ services:
       shared:
         condition: service_completed_successfully
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 3007
       REDIS_URL: redis://:sitio_redis_pass@redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: sitio_redis_pass
       OPENAI_API_KEY: ${OPENAI_API_KEY}
     volumes:
       - shared_dist:/app/node_modules/@sitio/shared/dist
@@ -362,7 +392,7 @@ services:
       NEXT_PUBLIC_API_URL: http://localhost:8000
       NEXT_PUBLIC_WS_URL: ws://localhost:8000
     ports:
-      - "3000:3000"
+      - "3001:3000"
     networks:
       - sitio-network
     healthcheck:
@@ -394,6 +424,7 @@ services:
       - CACHE_REDIS_URI=redis://evolution-redis:6379/6
       - DATABASE_CONNECTION_URI=postgresql://evolution:evolution123@evolution-postgres:5432/evolution
       - DATABASE_PROVIDER=postgresql
+      - AUTHENTICATION_API_KEY=${AUTHENTICATION_API_KEY}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/manager"]
       interval: 30s

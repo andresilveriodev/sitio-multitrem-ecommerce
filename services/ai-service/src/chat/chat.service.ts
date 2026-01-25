@@ -59,12 +59,32 @@ export class ChatService {
     const systemPrompt = buildSystemPrompt(products)
 
     // Montar mensagens para OpenAI
+    // Mapear histórico: pode vir do Redis (com role) ou do WhatsApp (com from/text/type)
+    const mappedHistory = history.slice(-10).map((msg: any) => {
+      // Se já tem role (formato do Redis), usar diretamente
+      if (msg.role && msg.content) {
+        return {
+          role: msg.role,
+          content: msg.content,
+        }
+      }
+      // Se vem do WhatsApp (formato from/text/type), mapear
+      if (msg.text) {
+        return {
+          role: msg.type === 'incoming' ? 'user' : 'assistant',
+          content: msg.text,
+        }
+      }
+      // Fallback: tentar usar como está
+      return {
+        role: msg.role || 'user',
+        content: msg.content || msg.text || '',
+      }
+    })
+
     const messages: any[] = [
       { role: 'system', content: systemPrompt },
-      ...history.slice(-10).map((msg: any) => ({
-        role: msg.role,
-        content: msg.content,
-      })),
+      ...mappedHistory,
       { role: 'user', content: message },
     ]
 

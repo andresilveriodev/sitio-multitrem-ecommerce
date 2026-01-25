@@ -35,12 +35,22 @@ describe('OrdersService', () => {
   const mockOrder: Order = {
     id: 1,
     visitorId: 'visitor123',
+    customerId: 1,
     status: 'pending',
     total: 10.0,
-    deliveryDate: new Date('2024-12-04'),
+    deliveryDate: '2024-12-04',
+    deliveryPeriod: 'manha',
+    paymentMethod: 'pix',
+    paymentStatus: 'pending',
+    customerName: 'João Silva',
+    customerPhone: '62999999999',
+    customerAddress: 'Rua das Flores, 123',
+    customerCep: '72000-000',
+    customerCity: 'Brasília',
+    customerState: 'DF',
     items: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date('2024-12-04T10:00:00Z'),
+    updatedAt: new Date('2024-12-04T10:00:00Z'),
   } as Order
 
   const mockOrderRepository = {
@@ -121,9 +131,8 @@ describe('OrdersService', () => {
 
       const dto: CreateOrderDto = {
         visitorId: 'visitor123',
-        items: mockCart.items,
         deliveryDate: '2024-12-04',
-        deliveryPeriod: 'morning',
+        deliveryPeriod: 'manha',
         paymentMethod: 'pix',
         customerName: 'João Silva',
         customerPhone: '62999999999',
@@ -150,9 +159,8 @@ describe('OrdersService', () => {
 
       const dto: CreateOrderDto = {
         visitorId: 'visitor123',
-        items: mockCart.items,
         deliveryDate: '2024-12-01', // Domingo
-        deliveryPeriod: 'morning',
+        deliveryPeriod: 'manha',
         paymentMethod: 'pix',
         customerName: 'João Silva',
         customerPhone: '62999999999',
@@ -188,9 +196,8 @@ describe('OrdersService', () => {
 
       const dto: CreateOrderDto = {
         visitorId: 'visitor123',
-        items: mockCart.items,
         deliveryDate: '2024-12-04', // Quarta-feira
-        deliveryPeriod: 'morning',
+        deliveryPeriod: 'manha',
         paymentMethod: 'pix',
         customerName: 'João Silva',
         customerPhone: '62999999999',

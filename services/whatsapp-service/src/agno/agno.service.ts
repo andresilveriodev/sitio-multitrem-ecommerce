@@ -43,7 +43,7 @@ export class AgnoService {
         console.log(`📝 [Agno] User ID: ${userId}`)
         console.log(`📝 [Agno] Mensagem: ${message.substring(0, 50)}...`)
 
-        const FormData = FormDataLib.default || FormDataLib
+        const FormData = FormDataLib
         const formData = new FormData()
         formData.append('message', message)
         formData.append('stream', 'false')

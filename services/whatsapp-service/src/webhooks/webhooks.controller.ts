@@ -10,25 +10,35 @@ export class WebhooksController {
   @Post('whatsapp')
   @HttpCode(HttpStatus.OK)
   async handleWhatsAppWebhook(@Body() payload: any) {
-    // Log TODAS as requisições recebidas
-    this.logger.log('🔔 WEBHOOK RECEBIDO!')
-    this.logger.log(`📋 Event: ${payload.event}`)
-    this.logger.log(`📱 Instance: ${payload.instance}`)
-    
-    if (payload.data) {
-      const msg = payload.data
-      if (msg.key) {
-        this.logger.log(`📞 De: ${msg.key.remoteJid}`)
-        this.logger.log(`👤 Nome: ${msg.pushName || 'N/A'}`)
+    try {
+      // Log TODAS as requisições recebidas
+      this.logger.log('🔔 WEBHOOK RECEBIDO!')
+      this.logger.log(`📋 Event: ${payload.event}`)
+      this.logger.log(`📱 Instance: ${payload.instance}`)
+      
+      if (payload.data) {
+        const msg = payload.data
+        if (msg.key) {
+          this.logger.log(`📞 De: ${msg.key.remoteJid}`)
+          this.logger.log(`👤 Nome: ${msg.pushName || 'N/A'}`)
+        }
+        if (msg.message) {
+          this.logger.log(`💬 Mensagem: ${JSON.stringify(msg.message)}`)
+        }
       }
-      if (msg.message) {
-        this.logger.log(`💬 Mensagem: ${JSON.stringify(msg.message)}`)
-      }
+      
+      this.logger.log(`📦 Payload completo: ${JSON.stringify(payload).substring(0, 500)}...`)
+      
+      const result = await this.webhooksService.handleIncomingMessage(payload)
+      
+      // Retornar resposta simples para Evolution API
+      return { success: true, processed: result.processed || false }
+    } catch (error: any) {
+      this.logger.error(`❌ [WebhooksController] Erro ao processar webhook: ${error.message}`)
+      this.logger.error(error.stack)
+      // Retornar sucesso mesmo em caso de erro para evitar retentativas infinitas
+      return { success: false, error: error.message }
     }
-    
-    this.logger.log(`📦 Payload completo: ${JSON.stringify(payload).substring(0, 500)}...`)
-    
-    return this.webhooksService.handleIncomingMessage(payload)
   }
 }
 

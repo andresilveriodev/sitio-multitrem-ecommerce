@@ -28,7 +28,7 @@ export class CartController {
   @Get(':visitorId')
   @ApiOperation({ summary: 'Obter carrinho do visitante' })
   @ApiParam({ name: 'visitorId', description: 'ID do visitante', type: String })
-  @ApiResponse({ status: 200, description: 'Carrinho encontrado', type: Cart })
+  @ApiResponse({ status: 200, description: 'Carrinho encontrado' })
   async getCart(@Param('visitorId') visitorId: string): Promise<Cart> {
     return this.cartService.getCart(visitorId)
   }
@@ -38,7 +38,7 @@ export class CartController {
   @ApiOperation({ summary: 'Adicionar item ao carrinho' })
   @ApiParam({ name: 'visitorId', description: 'ID do visitante', type: String })
   @ApiBody({ type: AddToCartDto })
-  @ApiResponse({ status: 200, description: 'Item adicionado ao carrinho', type: Cart })
+  @ApiResponse({ status: 200, description: 'Item adicionado ao carrinho' })
   async addItem(
     @Param('visitorId') visitorId: string,
     @Body() dto: AddToCartDto,
@@ -51,7 +51,7 @@ export class CartController {
   @ApiParam({ name: 'visitorId', description: 'ID do visitante', type: String })
   @ApiParam({ name: 'productId', description: 'ID do produto', type: Number })
   @ApiBody({ type: UpdateCartItemDto })
-  @ApiResponse({ status: 200, description: 'Item atualizado', type: Cart })
+  @ApiResponse({ status: 200, description: 'Item atualizado' })
   async updateItem(
     @Param('visitorId') visitorId: string,
     @Param('productId', ParseIntPipe) productId: number,
@@ -65,7 +65,7 @@ export class CartController {
   @ApiOperation({ summary: 'Remover item do carrinho' })
   @ApiParam({ name: 'visitorId', description: 'ID do visitante', type: String })
   @ApiParam({ name: 'productId', description: 'ID do produto', type: Number })
-  @ApiResponse({ status: 200, description: 'Item removido', type: Cart })
+  @ApiResponse({ status: 200, description: 'Item removido' })
   async removeItem(
     @Param('visitorId') visitorId: string,
     @Param('productId', ParseIntPipe) productId: number,

@@ -15,7 +15,7 @@ describe('ProductsService', () => {
     slug: 'alface-americana',
     description: 'Alface fresca',
     price: 5.0,
-    category: 'hortalicas',
+    category: 'hortalica',
     active: true,
     createdAt: new Date(),
     updatedAt: new Date(),

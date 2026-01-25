@@ -23,10 +23,14 @@ export class WebhooksService {
   ) {
     this.aiServiceUrl = configService.get<string>(
       'AI_SERVICE_URL',
-      'http://localhost:7777',
+      'http://localhost:8000',
     )
-    // Usar Agno se a URL for porta 7777 (padrão do AgentOS)
-    this.useAgno = this.aiServiceUrl.includes(':7777')
+    // Usar Agno se a URL for porta 7777 ou 8000 (padrões do AgentOS)
+    // Ou se contiver 'ai-agent-python' (nome do container Docker)
+    this.useAgno = 
+      this.aiServiceUrl.includes(':7777') || 
+      this.aiServiceUrl.includes(':8000') ||
+      this.aiServiceUrl.includes('ai-agent-python')
     this.rateLimiter = new RateLimiter(redis, {
       maxRequests: 20,
       windowMs: 60000, // 1 minuto
