@@ -1452,3 +1452,6 @@ docker-compose up -d
 **Última atualização**: Janeiro 2026
 
 Este guia fornece uma base sólida para containerizar completamente sua aplicação. Ajuste conforme necessário para suas especificidades!
+
+---
+*Teste de commit na branch prod - 2026-01-27*
