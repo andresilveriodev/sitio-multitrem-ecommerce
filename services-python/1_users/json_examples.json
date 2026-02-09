@@ -1,0 +1,79 @@
+{
+  "user_create": {
+    "username": "teste_usuario",
+    "email": "teste@exemplo.com",
+    "first_name": "João",
+    "last_name": "Silva",
+    "password": "senha123"
+  },
+  "user_update": {
+    "first_name": "João Pedro",
+    "last_name": "Silva Santos",
+    "is_active": true
+  },
+  "profile_data_create": {
+    "full_name": "João Pedro Silva Santos",
+    "date_of_birth": "1990-05-15",
+    "cpf": "123.456.789-01",
+    "phone": "+55-11-99999-9999",
+    "address": "Rua das Flores, 123",
+    "city": "São Paulo",
+    "state": "SP",
+    "country": "Brasil",
+    "postal_code": "01234-567",
+    "bio": "Desenvolvedor apaixonado por tecnologia"
+  },
+  "profile_data_update": {
+    "full_name": "João Pedro Silva Santos",
+    "phone": "+55-11-88888-8888",
+    "address": "Av. Paulista, 1000",
+    "city": "São Paulo",
+    "state": "SP"
+  },
+  "preferences_create": {
+    "language": "pt-BR",
+    "timezone": "America/Sao_Paulo",
+    "theme": "dark",
+    "notifications_enabled": true,
+    "email_notifications": true,
+    "push_notifications": false,
+    "sms_notifications": false,
+    "sound_enabled": true,
+    "auto_refresh": true,
+    "refresh_interval": 10000
+  },
+  "preferences_update": {
+    "theme": "light",
+    "notifications_enabled": false,
+    "refresh_interval": 5000
+  },
+  "settings_create": {
+    "two_factor_enabled": true,
+    "privacy_level": "private",
+    "data_sharing": false,
+    "marketing_emails": false,
+    "newsletter_subscription": true
+  },
+  "settings_update": {
+    "two_factor_enabled": false,
+    "privacy_level": "public",
+    "data_sharing": true
+  },
+  "activity_log": {
+    "activity_type": "LOGIN",
+    "description": "Login realizado com sucesso",
+    "metadata": {
+      "ip_address": "192.168.1.100",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      "login_method": "password"
+    },
+    "ip_address": "192.168.1.100",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  },
+  "acl_check": {
+    "user_id": 1,
+    "resource": "trading",
+    "action": "write",
+    "scope": "own"
+  }
+}

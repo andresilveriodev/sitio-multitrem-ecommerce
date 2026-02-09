@@ -1,0 +1,66 @@
+https://platform.openai.com/docs/pricing
+https://api-docs.deepseek.com/quick_start/pricing/
+
+
+Model	            Input	Cached input	Output
+gpt-5	            $1.25	$0.125	        $10.00
+gpt-5-mini	        $0.25	$0.025	        $2.00
+gpt-5-nano	        $0.05	$0.005	        $0.40
+gpt-5-chat-latest	$1.25	$0.125	        $10.00
+
+GPT-5
+O melhor modelo para tarefas agênticas e de programação em diferentes setores
+Preço
+Entrada:
+US$ 1,250 / 1 milhão de tokens
+Entrada em cache:
+US$ 0,125 / 1 milhão de tokens
+Resultado:
+US$ 10,000 / 1 milhão de tokens
+
+
+GPT-5 mini
+Versão mais rápida e mais barata do GPT-5, para tarefas bem delimitadas
+Preço
+Entrada:
+US$ 0,250 / 1 milhão de tokens
+Entrada em cache:
+US$ 0,025 / 1 milhão de tokens
+Resultado:
+US$ 2,000 / 1 milhão de tokens
+
+
+
+GPT-5 nano
+A versão mais rápida e mais barata do GPT-5, perfeita para tarefas de resumo e classificação
+Preço
+Entrada:
+US$ 0,050 / 1 milhão de tokens
+Entrada em cache:
+US$ 0,005 / 1 milhão de tokens
+Resultado:
+US$ 0,400 / 1 milhão de tokens
+
+
+
+
+
+https://api-docs.deepseek.com/quick_start/pricing/
+
+MODEL(1)	deepseek-chat	deepseek-reasoner
+CONTEXT LENGTH	64K	64K(2)
+MAX OUTPUT(3)	DEFAULT: 4K
+MAXIMUM: 8K	DEFAULT: 32K
+MAXIMUM: 64K
+FEATURES	Json Output	✓	✓
+Function Calling	✓	✓
+Chat Prefix Completion（Beta）	✓	✓
+FIM Completion（Beta）	✓	✗
+STANDARD PRICE
+（UTC 00:30-16:30）	1M TOKENS INPUT (CACHE HIT)(4)	$0.07	$0.14
+1M TOKENS INPUT (CACHE MISS)	$0.27	$0.55
+1M TOKENS OUTPUT(5)	$1.10	$2.19
+DISCOUNT PRICE(6)
+（UTC 16:30-00:30）	1M TOKENS INPUT (CACHE HIT)	$0.035（50% OFF）	$0.035（75% OFF）
+1M TOKENS INPUT (CACHE MISS)	$0.135（50% OFF）	$0.135（75% OFF）
+1M TOKENS OUTPUT	$0.550（50% OFF）	$0.550（75% OFF）

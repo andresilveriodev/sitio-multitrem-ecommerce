@@ -1,0 +1,10 @@
+# Exemplo de configuração local
+# Copie este arquivo para local.properties e preencha com seus valores
+
+# Keycloak Configuration
+# KEYCLOAK_ISSUER=https://seu-keycloak.com/realms/seu-realm
+# KEYCLOAK_CLIENT_ID=multitrem-mobile
+# KEYCLOAK_REDIRECT_URI=com.multitrem.app://oauth/callback
+
+# Nota: Atualmente, os valores são configurados diretamente no build.gradle.kts
+# Para usar este arquivo, você precisaria modificar o build.gradle.kts para ler de local.properties

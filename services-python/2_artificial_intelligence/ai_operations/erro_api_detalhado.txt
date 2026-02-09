@@ -1,0 +1,7 @@
+﻿=== ERRO DA API ===
+Status: 500
+Headers: {'date': 'Wed, 19 Nov 2025 02:28:43 GMT', 'server': 'uvicorn', 'content-length': '21', 'content-type': 'text/plain; charset=utf-8'}
+Response: Internal Server Error
+Response JSON: {
+  "text": "Internal Server Error"
+}

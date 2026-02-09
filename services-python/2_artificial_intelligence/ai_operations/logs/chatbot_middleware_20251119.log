@@ -1,0 +1,1663 @@
+2025-11-19 00:34:36 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:34:36 - uvicorn.error - INFO - _serve:82 - Started server process [26376]
+2025-11-19 00:34:36 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:34:36 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:34:36 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:34:36 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:34:36 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:34:36 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:36:54 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 00:36:54 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 00:36:54 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:36:54 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 00:36:54 - uvicorn.error - INFO - _serve:92 - Finished server process [26376]
+2025-11-19 00:37:01 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:37:01 - uvicorn.error - INFO - _serve:82 - Started server process [31756]
+2025-11-19 00:37:01 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:37:01 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:37:01 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:37:01 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:37:01 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:37:01 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:46:14 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:46:14 - uvicorn.error - INFO - _serve:82 - Started server process [33016]
+2025-11-19 00:46:14 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:46:14 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:46:14 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:46:14 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:46:14 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:46:14 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:46:14 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:46:14 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 00:46:17 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:46:18 - uvicorn.error - INFO - _serve:82 - Started server process [9400]
+2025-11-19 00:46:18 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:46:18 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:46:18 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:46:18 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:46:18 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:46:18 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:46:18 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:46:18 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 00:46:20 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:46:20 - uvicorn.error - INFO - _serve:82 - Started server process [23620]
+2025-11-19 00:46:20 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:46:20 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:46:20 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:46:20 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:46:20 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:46:20 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:46:54 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 00:46:54 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 00:46:54 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:46:54 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 00:46:54 - uvicorn.error - INFO - _serve:92 - Finished server process [31756]
+2025-11-19 00:46:59 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:46:59 - uvicorn.error - INFO - _serve:82 - Started server process [20444]
+2025-11-19 00:46:59 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:46:59 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:46:59 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:46:59 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:46:59 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:46:59 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:46:59 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:46:59 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Adriano\AppData\Roaming\Python\Python313\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "C:\Users\Adriano\AppData\Roaming\Python\Python313\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 00:47:03 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:47:03 - uvicorn.error - INFO - _serve:82 - Started server process [6824]
+2025-11-19 00:47:03 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:47:03 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:47:03 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:47:03 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:47:03 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:47:03 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:47:03 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:47:03 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Adriano\AppData\Roaming\Python\Python313\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "C:\Users\Adriano\AppData\Roaming\Python\Python313\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 00:47:07 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:47:07 - uvicorn.error - INFO - _serve:82 - Started server process [31400]
+2025-11-19 00:47:07 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:47:07 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:47:07 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:47:07 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:47:07 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:47:07 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:51:18 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 00:51:18 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 00:51:18 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:51:18 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 00:51:18 - uvicorn.error - INFO - _serve:92 - Finished server process [23620]
+2025-11-19 00:51:20 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:51:20 - uvicorn.error - INFO - _serve:82 - Started server process [24452]
+2025-11-19 00:51:20 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:51:20 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:51:20 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:51:21 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:51:21 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:51:21 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:51:21 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:51:21 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 00:51:23 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:51:23 - uvicorn.error - INFO - _serve:82 - Started server process [28884]
+2025-11-19 00:51:23 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:51:23 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:51:23 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:51:23 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:51:23 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:51:23 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:52:03 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 00:52:03 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 00:52:03 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:52:03 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 00:52:03 - uvicorn.error - INFO - _serve:92 - Finished server process [31400]
+2025-11-19 00:52:07 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:52:07 - uvicorn.error - INFO - _serve:82 - Started server process [9520]
+2025-11-19 00:52:07 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:52:07 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:52:07 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:52:07 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:52:07 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:52:07 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:52:07 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:52:07 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Adriano\AppData\Roaming\Python\Python313\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "C:\Users\Adriano\AppData\Roaming\Python\Python313\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 00:52:10 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:52:10 - uvicorn.error - INFO - _serve:82 - Started server process [26292]
+2025-11-19 00:52:10 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:52:10 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:52:10 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:52:10 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:52:10 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:52:10 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:56:21 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 00:56:21 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 00:56:21 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:56:21 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 00:56:21 - uvicorn.error - INFO - _serve:92 - Finished server process [28884]
+2025-11-19 00:56:24 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:56:24 - uvicorn.error - INFO - _serve:82 - Started server process [31832]
+2025-11-19 00:56:24 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:56:24 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:56:24 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:56:24 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:56:24 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:56:24 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:56:24 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:56:24 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 00:56:26 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:56:26 - uvicorn.error - INFO - _serve:82 - Started server process [22484]
+2025-11-19 00:56:26 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:56:26 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:56:26 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:56:26 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:56:26 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:56:26 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:57:07 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 00:57:07 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 00:57:07 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:57:07 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 00:57:07 - uvicorn.error - INFO - _serve:92 - Finished server process [26292]
+2025-11-19 00:57:11 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:57:11 - uvicorn.error - INFO - _serve:82 - Started server process [23492]
+2025-11-19 00:57:11 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:57:11 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:57:11 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:57:11 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:57:11 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:57:11 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 00:58:01 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 00:58:01 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 00:58:01 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 00:58:01 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 00:58:01 - uvicorn.error - INFO - _serve:92 - Finished server process [23492]
+2025-11-19 00:58:09 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 00:58:09 - uvicorn.error - INFO - _serve:82 - Started server process [20248]
+2025-11-19 00:58:09 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 00:58:09 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 00:58:09 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 00:58:10 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 00:58:10 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 00:58:10 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:01:24 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:01:24 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:01:24 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:01:24 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:01:24 - uvicorn.error - INFO - _serve:92 - Finished server process [22484]
+2025-11-19 01:01:27 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:01:27 - uvicorn.error - INFO - _serve:82 - Started server process [5448]
+2025-11-19 01:01:27 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:01:27 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:01:27 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:01:27 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:01:27 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:01:27 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:01:27 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:01:27 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 01:01:29 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:01:29 - uvicorn.error - INFO - _serve:82 - Started server process [15072]
+2025-11-19 01:01:29 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:01:29 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:01:29 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:01:30 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:01:30 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:01:30 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:03:06 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:03:06 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:03:06 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:03:06 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:03:06 - uvicorn.error - INFO - _serve:92 - Finished server process [20248]
+2025-11-19 01:03:10 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:03:10 - uvicorn.error - INFO - _serve:82 - Started server process [9996]
+2025-11-19 01:03:10 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:03:10 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:03:10 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:03:10 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:03:10 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:03:10 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:06:27 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:06:27 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:06:27 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:06:27 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:06:27 - uvicorn.error - INFO - _serve:92 - Finished server process [15072]
+2025-11-19 01:06:31 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:06:31 - uvicorn.error - INFO - _serve:82 - Started server process [32584]
+2025-11-19 01:06:31 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:06:31 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:06:31 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:06:31 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:06:31 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:06:31 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:06:31 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:06:31 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 01:06:34 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:06:34 - uvicorn.error - INFO - _serve:82 - Started server process [5968]
+2025-11-19 01:06:34 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:06:34 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:06:34 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:06:34 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:06:34 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:06:34 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:08:06 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:08:06 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:08:06 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:08:06 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:08:06 - uvicorn.error - INFO - _serve:92 - Finished server process [9996]
+2025-11-19 01:08:13 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:08:13 - uvicorn.error - INFO - _serve:82 - Started server process [2384]
+2025-11-19 01:08:13 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:08:13 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:08:13 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:08:13 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:08:13 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:08:13 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:11:31 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:11:31 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:11:31 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:11:31 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:11:31 - uvicorn.error - INFO - _serve:92 - Finished server process [5968]
+2025-11-19 01:11:34 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:11:34 - uvicorn.error - INFO - _serve:82 - Started server process [4144]
+2025-11-19 01:11:34 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:11:34 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:11:34 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:11:34 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:11:34 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:11:34 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:11:34 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:11:34 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 01:11:37 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:11:37 - uvicorn.error - INFO - _serve:82 - Started server process [28220]
+2025-11-19 01:11:37 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:11:37 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:11:37 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:11:37 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:11:37 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:11:37 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:13:07 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:13:08 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:13:08 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:13:08 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:13:08 - uvicorn.error - INFO - _serve:92 - Finished server process [2384]
+2025-11-19 01:13:12 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:13:12 - uvicorn.error - INFO - _serve:82 - Started server process [8864]
+2025-11-19 01:13:12 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:13:12 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:13:12 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:13:12 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:13:12 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:13:12 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:13:56 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:13:56 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:13:56 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:13:56 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:13:56 - uvicorn.error - INFO - _serve:92 - Finished server process [28220]
+2025-11-19 01:14:00 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:14:00 - uvicorn.error - INFO - _serve:82 - Started server process [18160]
+2025-11-19 01:14:00 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:14:00 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:14:00 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:14:00 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:14:00 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:14:00 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:14:00 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:14:00 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 01:14:02 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:14:02 - uvicorn.error - INFO - _serve:82 - Started server process [9052]
+2025-11-19 01:14:02 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:14:02 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:14:02 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:14:02 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:14:02 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:14:02 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:17:06 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:17:06 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:17:06 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:17:06 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:17:06 - uvicorn.error - INFO - _serve:92 - Finished server process [8864]
+2025-11-19 01:17:10 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:17:10 - uvicorn.error - INFO - _serve:82 - Started server process [12312]
+2025-11-19 01:17:10 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:17:10 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:17:10 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:17:10 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:17:10 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:17:10 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:19:00 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:19:00 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:19:00 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:19:00 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:19:00 - uvicorn.error - INFO - _serve:92 - Finished server process [9052]
+2025-11-19 01:19:03 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:19:03 - uvicorn.error - INFO - _serve:82 - Started server process [33684]
+2025-11-19 01:19:03 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:19:03 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:19:03 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:19:03 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:19:03 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:19:03 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:19:03 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:19:03 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 01:19:05 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:19:05 - uvicorn.error - INFO - _serve:82 - Started server process [29192]
+2025-11-19 01:19:05 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:19:05 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:19:05 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:19:05 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:19:05 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:19:05 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:20:37 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:20:37 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:20:37 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:20:37 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:20:37 - uvicorn.error - INFO - _serve:92 - Finished server process [29192]
+2025-11-19 01:20:40 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:20:40 - uvicorn.error - INFO - _serve:82 - Started server process [15064]
+2025-11-19 01:20:40 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:20:40 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:20:40 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:20:40 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:20:40 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:20:40 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:22:06 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:22:07 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:22:07 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:22:07 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:22:07 - uvicorn.error - INFO - _serve:92 - Finished server process [12312]
+2025-11-19 01:22:11 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:22:11 - uvicorn.error - INFO - _serve:82 - Started server process [19352]
+2025-11-19 01:22:11 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:22:11 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:22:11 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:22:11 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:22:11 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:22:11 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:49:16 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 01:53:31 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:53:31 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:53:31 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:53:31 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:53:31 - uvicorn.error - INFO - _serve:92 - Finished server process [19352]
+2025-11-19 01:53:36 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:53:36 - uvicorn.error - INFO - _serve:82 - Started server process [20368]
+2025-11-19 01:53:36 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:53:36 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:53:36 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:53:36 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:53:36 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:53:36 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:53:36 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:53:36 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 712, in run_until_complete
+    self.run_forever()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 683, in run_forever
+    self._run_once()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 2040, in _run_once
+    handle._run()
+    ~~~~~~~~~~~^^
+  File "C:\Python313\Lib\asyncio\events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Adriano\AppData\Roaming\Python\Python313\site-packages\uvicorn\server.py", line 68, in serve
+    with self.capture_signals():
+         ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 148, in __exit__
+    next(self.gen)
+    ~~~~^^^^^^^^^^
+  File "C:\Users\Adriano\AppData\Roaming\Python\Python313\site-packages\uvicorn\server.py", line 328, in capture_signals
+    signal.raise_signal(captured_signal)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 157, in _on_sigint
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Adriano\AppData\Roaming\Python\Python313\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "C:\Users\Adriano\AppData\Roaming\Python\Python313\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 01:53:44 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:53:44 - uvicorn.error - INFO - _serve:82 - Started server process [20208]
+2025-11-19 01:53:44 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:53:44 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:53:44 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:53:44 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:53:44 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:53:44 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:53:48 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 01:54:46 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 01:57:08 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:57:08 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:57:08 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:57:08 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:57:08 - uvicorn.error - INFO - _serve:92 - Finished server process [20208]
+2025-11-19 01:57:13 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:57:13 - uvicorn.error - INFO - _serve:82 - Started server process [2464]
+2025-11-19 01:57:13 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:57:13 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:57:13 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:57:13 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:57:13 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:57:13 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 01:57:20 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 01:57:36 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 01:57:58 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 01:58:00 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 01:58:40 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 01:58:40 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 01:58:40 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 01:58:40 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 01:58:40 - uvicorn.error - INFO - _serve:92 - Finished server process [2464]
+2025-11-19 01:58:45 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 01:58:45 - uvicorn.error - INFO - _serve:82 - Started server process [21084]
+2025-11-19 01:58:45 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 01:58:45 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 01:58:45 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 01:58:45 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 01:58:45 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 01:58:45 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 02:02:14 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 02:02:39 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 02:03:40 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 02:03:40 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 02:03:40 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 02:03:40 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 02:03:40 - uvicorn.error - INFO - _serve:92 - Finished server process [21084]
+2025-11-19 02:03:45 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 02:03:45 - uvicorn.error - INFO - _serve:82 - Started server process [18852]
+2025-11-19 02:03:45 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 02:03:45 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 02:03:45 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 02:03:45 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 02:03:45 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 02:03:45 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 02:04:02 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 02:04:05 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 02:04:20 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 02:04:20 - uvicorn.error - INFO - _wait_tasks_to_complete:303 - Waiting for background tasks to complete. (CTRL+C to force quit)
+2025-11-19 02:04:20 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 02:04:20 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 02:04:20 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 02:04:20 - uvicorn.error - INFO - _serve:92 - Finished server process [15064]
+2025-11-19 02:04:23 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 02:04:23 - uvicorn.error - INFO - _serve:82 - Started server process [29920]
+2025-11-19 02:04:23 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 02:04:23 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 02:04:23 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 02:04:23 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 02:04:23 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 02:04:23 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 02:04:23 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 02:04:23 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 02:04:27 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 02:04:27 - uvicorn.error - INFO - _serve:82 - Started server process [25616]
+2025-11-19 02:04:27 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 02:04:27 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 02:04:27 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 02:04:27 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 02:04:27 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 02:04:27 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 02:05:19 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    db = next(get_db())
+    
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    )
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 02:05:22 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 52, in dispatch
+    db = next(get_db())
+    
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 68, in dispatch
+    )
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value
+2025-11-19 02:08:41 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 02:08:41 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 02:08:41 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 02:08:41 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 02:08:41 - uvicorn.error - INFO - _serve:92 - Finished server process [18852]
+2025-11-19 02:08:46 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 02:08:46 - uvicorn.error - INFO - _serve:82 - Started server process [13260]
+2025-11-19 02:08:46 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 02:08:46 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 02:08:46 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 02:08:46 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 02:08:46 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 02:08:46 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 02:09:24 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 02:09:24 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 02:09:24 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 02:09:24 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 02:09:24 - uvicorn.error - INFO - _serve:92 - Finished server process [25616]
+2025-11-19 02:09:27 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 02:09:27 - uvicorn.error - INFO - _serve:82 - Started server process [7908]
+2025-11-19 02:09:27 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 02:09:27 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 02:09:27 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 02:09:27 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 02:09:27 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 02:09:27 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 02:09:27 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 02:09:27 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 02:09:30 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 02:09:30 - uvicorn.error - INFO - _serve:82 - Started server process [22868]
+2025-11-19 02:09:30 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 02:09:30 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 02:09:30 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 02:09:30 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 02:09:30 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 02:09:30 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 02:09:30 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 02:09:30 - uvicorn.error - ERROR - send:134 - Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\routing.py", line 741, in lifespan
+    await receive()
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-11-19 02:09:33 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 02:09:33 - uvicorn.error - INFO - _serve:82 - Started server process [14904]
+2025-11-19 02:09:33 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 02:09:33 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 02:09:33 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 02:09:34 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 02:09:34 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 02:09:34 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 02:13:42 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 02:13:42 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 02:13:42 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 02:13:42 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 02:13:42 - uvicorn.error - INFO - _serve:92 - Finished server process [13260]
+2025-11-19 02:13:46 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 02:13:46 - uvicorn.error - INFO - _serve:82 - Started server process [5608]
+2025-11-19 02:13:46 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 02:13:46 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 02:13:46 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 02:13:46 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 02:13:46 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 02:13:46 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 02:14:30 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-19 02:14:30 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-19 02:14:30 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-19 02:14:30 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-19 02:14:30 - uvicorn.error - INFO - _serve:92 - Finished server process [14904]
+2025-11-19 02:14:33 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-19 02:14:33 - uvicorn.error - INFO - _serve:82 - Started server process [26144]
+2025-11-19 02:14:33 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-19 02:14:33 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-19 02:14:33 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-19 02:14:33 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-19 02:14:33 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-19 02:14:33 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-19 02:21:34 - uvicorn.error - ERROR - run_asgi:416 - Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 53, in dispatch
+    should_block, reason = alert_service.should_block_request(user_id, db)
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 280, in should_block_request
+    alerts = self.check_user_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 47, in check_user_limits
+    monthly_alerts = self._check_monthly_limits(user_id, db)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\services\alert_service.py", line 117, in _check_monthly_limits
+    func.sum(Transaction.total_tokens).label('total_tokens'),
+             ^^^^^^^^^^^
+NameError: name 'Transaction' is not defined. Did you mean: 'AITransaction'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 69, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\engineio\async_drivers\asgi.py", line 75, in __call__
+    await self.other_asgi_app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projetos_repositorio\gitLabRepo\homebroker2025\homebroker-python\services\7_artificial_intelligence_service\middleware\tracking_middleware.py", line 72, in dispatch
+    except HTTPException:
+           ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'HTTPException' where it is not associated with a value

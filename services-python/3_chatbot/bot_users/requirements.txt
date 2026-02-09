@@ -1,0 +1,36 @@
+# Dependências específicas do chatbot_service
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+structlog==23.2.0
+prometheus-client==0.19.0
+
+# Dependências para cache e sessões
+redis>=5.0
+
+# Dependências para banco de dados (apenas para contexto)
+asyncpg==0.29.0
+sqlalchemy[asyncio]==2.0.23
+alembic==1.13.1
+
+# Dependências para HTTP client
+httpx==0.25.2
+aiohttp==3.9.1
+
+# Dependências para processamento de texto
+nltk==3.8.1
+textblob==0.17.1
+
+# Dependências para cache e otimização
+cachetools==5.3.2
+
+# Dependências para validação e segurança
+email-validator==2.1.0
+phonenumbers==8.13.27
+
+# Dependências para testes
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2

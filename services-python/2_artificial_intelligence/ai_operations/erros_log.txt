@@ -1,0 +1,200 @@
+﻿2025-08-23 12:27:26 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:27:26 - chatbot_middleware - INFO - <module>:94 - Iniciando servidor na porta 8012
+2025-08-23 12:27:30 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:27:30 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:27:30 - uvicorn.error - INFO - _serve:82 - Started server process [2824]
+2025-08-23 12:27:30 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 12:27:30 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 12:27:30 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 12:27:30 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 12:27:30 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 12:27:30 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 12:27:30 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 12:27:30 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 12:27:45 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-23 12:27:45 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-23 12:27:45 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 12:27:45 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 12:27:45 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-23 12:27:45 - uvicorn.error - INFO - _serve:92 - Finished server process [2824]
+2025-08-23 12:27:50 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:27:50 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:27:50 - uvicorn.error - INFO - _serve:82 - Started server process [26088]
+2025-08-23 12:27:50 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 12:27:50 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 12:27:51 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 12:27:51 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 12:27:51 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 12:27:51 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 12:27:51 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 12:27:51 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 12:27:58 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:28:25 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:28:25 - chatbot_middleware - INFO - <module>:94 - Iniciando servidor na porta 8012
+2025-08-23 12:28:29 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:28:29 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:28:29 - uvicorn.error - INFO - _serve:82 - Started server process [19704]
+2025-08-23 12:28:29 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 12:28:29 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 12:28:29 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 12:28:29 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 12:28:29 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 12:28:29 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 12:28:29 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 12:28:29 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 12:30:57 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-23 12:30:57 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-23 12:30:57 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 12:30:57 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 12:30:57 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-23 12:30:57 - uvicorn.error - INFO - _serve:92 - Finished server process [19704]
+2025-08-23 12:31:01 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:31:01 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 12:31:02 - uvicorn.error - INFO - _serve:82 - Started server process [27892]
+2025-08-23 12:31:02 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 12:31:02 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 12:31:02 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 12:31:02 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 12:31:02 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 12:31:02 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 12:31:02 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 12:31:02 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 13:23:51 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-23 13:23:51 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-23 13:23:51 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 13:23:51 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 13:23:51 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-23 13:23:51 - uvicorn.error - INFO - _serve:92 - Finished server process [27892]
+2025-08-23 13:23:56 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 13:23:57 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 13:23:57 - uvicorn.error - INFO - _serve:82 - Started server process [18028]
+2025-08-23 13:23:57 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 13:23:57 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 13:23:57 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 13:23:57 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 13:23:57 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 13:23:57 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 13:23:57 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 13:23:57 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 13:51:28 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-23 13:51:28 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-23 13:51:28 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 13:51:28 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 13:51:28 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-23 13:51:28 - uvicorn.error - INFO - _serve:92 - Finished server process [18028]
+2025-08-23 13:51:33 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:05:51 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:05:51 - chatbot_middleware - INFO - <module>:94 - Iniciando servidor na porta 8012
+2025-08-23 14:05:55 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:05:55 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:05:55 - uvicorn.error - INFO - _serve:82 - Started server process [15600]
+2025-08-23 14:05:55 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 14:05:55 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:05:55 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:05:55 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:05:55 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:05:55 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:05:55 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:05:55 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 14:06:09 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-23 14:06:09 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-23 14:06:09 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:06:09 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:06:09 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-23 14:06:09 - uvicorn.error - INFO - _serve:92 - Finished server process [15600]
+2025-08-23 14:06:13 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:06:14 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:06:14 - uvicorn.error - INFO - _serve:82 - Started server process [8984]
+2025-08-23 14:06:14 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 14:06:14 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:06:14 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:06:14 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:06:14 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:06:14 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:06:14 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:06:14 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 14:06:31 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-23 14:06:31 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-23 14:06:31 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:06:31 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:06:31 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-23 14:06:31 - uvicorn.error - INFO - _serve:92 - Finished server process [8984]
+2025-08-23 14:06:36 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:06:36 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:06:36 - uvicorn.error - INFO - _serve:82 - Started server process [26812]
+2025-08-23 14:06:36 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 14:06:36 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:06:36 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:06:36 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:06:36 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:06:36 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:06:36 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:06:36 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 14:06:45 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-23 14:06:45 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-23 14:06:45 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:06:45 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:06:45 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-23 14:06:45 - uvicorn.error - INFO - _serve:92 - Finished server process [26812]
+2025-08-23 14:06:49 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:06:49 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:06:49 - uvicorn.error - INFO - _serve:82 - Started server process [27752]
+2025-08-23 14:06:49 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 14:06:49 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:06:49 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:06:49 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:06:49 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:06:49 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:06:49 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:06:49 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 14:07:10 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-23 14:07:10 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-23 14:07:10 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:07:10 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:07:10 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-23 14:07:10 - uvicorn.error - INFO - _serve:92 - Finished server process [27752]
+2025-08-23 14:07:15 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:07:15 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:07:15 - uvicorn.error - INFO - _serve:82 - Started server process [16000]
+2025-08-23 14:07:15 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 14:07:15 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:07:15 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:07:15 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:07:15 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:07:15 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:07:15 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:07:15 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 14:08:22 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-23 14:08:22 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-23 14:08:22 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:08:22 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:08:22 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-23 14:08:22 - uvicorn.error - INFO - _serve:92 - Finished server process [16000]
+2025-08-23 14:08:26 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:08:26 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:08:26 - uvicorn.error - INFO - _serve:82 - Started server process [28600]
+2025-08-23 14:08:26 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 14:08:26 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:08:27 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:08:27 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:08:27 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:08:27 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:08:27 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:08:27 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-23 14:57:03 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-23 14:57:04 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-23 14:57:04 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:57:04 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-23 14:57:04 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-23 14:57:04 - uvicorn.error - INFO - _serve:92 - Finished server process [28600]
+2025-08-23 14:57:07 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:57:07 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nÃ­vel: INFO
+2025-08-23 14:57:07 - uvicorn.error - INFO - _serve:82 - Started server process [11940]
+2025-08-23 14:57:07 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-23 14:57:07 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:57:07 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:57:07 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:57:07 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-23 14:57:07 - chatbot_middleware - INFO - startup_event:74 - Banco de dados inicializado com sucesso
+2025-08-23 14:57:07 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-23 14:57:07 - uvicorn.error - INFO - startup:62 - Application startup complete.

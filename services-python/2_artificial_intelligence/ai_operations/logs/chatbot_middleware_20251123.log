@@ -1,0 +1,13 @@
+2025-11-23 19:25:37 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-11-23 19:25:37 - uvicorn.error - INFO - _serve:82 - Started server process [28580]
+2025-11-23 19:25:37 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-11-23 19:25:37 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-11-23 19:25:37 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2025-11-23 19:25:37 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2025-11-23 19:25:37 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2025-11-23 19:25:37 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-11-23 22:28:36 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-11-23 22:28:36 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-11-23 22:28:36 - chatbot_middleware - INFO - shutdown_event:93 - Encerrando Chatbot Middleware API...
+2025-11-23 22:28:36 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-11-23 22:28:36 - uvicorn.error - INFO - _serve:92 - Finished server process [28580]

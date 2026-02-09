@@ -1,0 +1,94 @@
+{
+  "endpoints": {
+    "health_check": "GET http://localhost:8001/health",
+    "user_registration": "POST http://localhost:8001/api/v1/auth/register",
+    "user_login": "POST http://localhost:8001/api/v1/auth/login",
+    "get_current_user": "GET http://localhost:8001/api/v1/auth/user",
+    "get_user_data": "GET http://localhost:8001/api/v1/auth/user-data",
+    "create_profile": "POST http://localhost:8001/api/v1/users/{user_id}/profile",
+    "get_profile": "GET http://localhost:8001/api/v1/users/{user_id}/profile",
+    "update_preferences": "PUT http://localhost:8001/api/v1/users/{user_id}/preferences",
+    "get_preferences": "GET http://localhost:8001/api/v1/users/{user_id}/preferences",
+    "update_settings": "PUT http://localhost:8001/api/v1/users/{user_id}/settings",
+    "get_settings": "GET http://localhost:8001/api/v1/users/{user_id}/settings",
+    "get_complete_profile": "GET http://localhost:8001/api/v1/users/{user_id}/complete",
+    "get_activities": "GET http://localhost:8001/api/v1/users/{user_id}/activities",
+    "acl_check": "POST http://localhost:8001/api/v1/acl/check",
+    "user_logout": "POST http://localhost:8001/api/v1/auth/logout"
+  },
+  "request_examples": {
+    "user_registration": {
+      "username": "teste_api",
+      "email": "teste_api@exemplo.com",
+      "first_name": "João",
+      "last_name": "Silva",
+      "password": "senha123"
+    },
+    "user_login": {
+      "username": "teste_api",
+      "password": "senha123"
+    },
+    "profile_data": {
+      "full_name": "João Silva",
+      "date_of_birth": "1990-05-15",
+      "cpf": "123.456.789-01",
+      "phone": "+55-11-99999-9999",
+      "address": "Rua das Flores, 123",
+      "city": "São Paulo",
+      "state": "SP",
+      "country": "Brasil",
+      "postal_code": "01234-567",
+      "bio": "Desenvolvedor de software"
+    },
+    "preferences": {
+      "language": "pt-BR",
+      "timezone": "America/Sao_Paulo",
+      "theme": "dark",
+      "notifications_enabled": true,
+      "email_notifications": true,
+      "push_notifications": false,
+      "sms_notifications": false,
+      "sound_enabled": true,
+      "auto_refresh": true,
+      "refresh_interval": 10000
+    },
+    "settings": {
+      "two_factor_enabled": true,
+      "privacy_level": "private",
+      "data_sharing": false,
+      "marketing_emails": false,
+      "newsletter_subscription": true
+    },
+    "acl_check": {
+      "user_id": 1,
+      "resource": "trading",
+      "action": "write",
+      "scope": "own"
+    }
+  },
+  "headers": {
+    "content_type": "Content-Type: application/json",
+    "authorization": "Authorization: Bearer {access_token}"
+  },
+  "response_examples": {
+    "user_data": {
+      "keycloak_id": "12345678-1234-1234-1234-123456789012",
+      "username": "adriano.santos",
+      "email": "adriano.santos.bm@gmail.com",
+      "first_name": "Adriano",
+      "last_name": "Lourenco dos Santos",
+      "roles": ["user", "trader"],
+      "exp": 1703123456,
+      "iat": 1703120000,
+      "id": null,
+      "is_active": null,
+      "is_verified": null,
+      "last_login": null,
+      "created_at": null,
+      "updated_at": null,
+      "profiles": [],
+      "permissions": [],
+      "session_info": null
+    }
+  }
+}

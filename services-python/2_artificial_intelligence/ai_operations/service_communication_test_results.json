@@ -1,0 +1,158 @@
+{
+  "timestamp": 59095.7510816,
+  "ai_service_url": "http://localhost:8012",
+  "tests": {
+    "health": {
+      "status": "success",
+      "message": "AI Service is healthy"
+    },
+    "analytics": {
+      "user_stats": {
+        "status": "success",
+        "code": 200,
+        "data": {
+          "user_id": 1,
+          "username": "user_1",
+          "total_requests": 0,
+          "total_tokens_used": 0,
+          "total_cost_spent": 0.0,
+          "total_conversations": 0,
+          "avg_cost_per_request": 0.0,
+          "avg_tokens_per_request": 0.0,
+          "avg_cost_per_conversation": 0.0
+        }
+      },
+      "cost_analysis": {
+        "status": "success",
+        "code": 200,
+        "data": {
+          "user_id": 1,
+          "total_cost": 0.0,
+          "cost_by_provider": {},
+          "cost_by_model": {},
+          "monthly_breakdown": [
+            {
+              "month": "2025-08",
+              "cost": 0,
+              "transactions": 0
+            },
+            {
+              "month": "2025-07",
+              "cost": 0,
+              "transactions": 0
+            },
+            {
+              "month": "2025-06",
+              "cost": 0,
+              "transactions": 0
+            },
+            {
+              "month": "2025-05",
+              "cost": 0,
+              "transactions": 0
+            },
+            {
+              "month": "2025-04",
+              "cost": 0,
+              "transactions": 0
+            },
+            {
+              "month": "2025-03",
+              "cost": 0,
+              "transactions": 0
+            }
+          ],
+          "total_transactions": 0
+        }
+      }
+    },
+    "chatbot": {
+      "user_conversations": {
+        "status": "success",
+        "code": 200,
+        "data": []
+      }
+    },
+    "ai": {
+      "available_models": {
+        "status": "success",
+        "code": 200,
+        "data": {
+          "providers": {
+            "openai": {
+              "models": [
+                "gpt-5-nano",
+                "gpt-4.1-nano",
+                "gpt-5-mini",
+                "gpt-4o-mini"
+              ],
+              "default_model": "gpt-5-nano"
+            },
+            "deepseek": {
+              "models": [
+                "deepseek-chat",
+                "deepseek-coder"
+              ],
+              "default_model": "deepseek-chat"
+            },
+            "ollama": {
+              "models": [
+                "llama2",
+                "codellama",
+                "mistral",
+                "neural-chat"
+              ],
+              "default_model": "llama3.1"
+            }
+          },
+          "default_provider": "openai"
+        }
+      },
+      "providers": {
+        "status": "success",
+        "code": 200,
+        "data": {
+          "providers": [
+            {
+              "name": "openai",
+              "available": true,
+              "models": [
+                "gpt-5-nano",
+                "gpt-4.1-nano",
+                "gpt-5-mini",
+                "gpt-4o-mini"
+              ],
+              "description": "OpenAI GPT - Modelos avan\u00e7ados de linguagem natural"
+            },
+            {
+              "name": "deepseek",
+              "available": true,
+              "models": [
+                "deepseek-chat",
+                "deepseek-coder"
+              ],
+              "description": "DeepSeek - Modelos especializados em c\u00f3digo e chat"
+            },
+            {
+              "name": "ollama",
+              "available": true,
+              "models": [
+                "llama2",
+                "codellama",
+                "mistral",
+                "neural-chat"
+              ],
+              "description": "Ollama - Modelos locais de c\u00f3digo aberto"
+            }
+          ],
+          "default_provider": "openai",
+          "supported_providers": [
+            "openai",
+            "deepseek",
+            "ollama"
+          ]
+        }
+      }
+    }
+  }
+}

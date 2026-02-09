@@ -1,0 +1,108 @@
+2025-08-20 13:36:01 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 13:36:01 - chatbot_middleware - INFO - <module>:94 - Iniciando servidor na porta 5001
+2025-08-20 13:36:05 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 13:36:05 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 13:36:05 - uvicorn.error - INFO - _serve:82 - Started server process [15796]
+2025-08-20 13:36:05 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-20 13:36:05 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 13:36:05 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 13:36:05 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 13:36:05 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 13:36:05 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 13:36:05 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 13:36:05 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-20 13:36:11 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-20 13:36:11 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-20 13:36:11 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 13:36:11 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 13:36:11 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-20 13:36:11 - uvicorn.error - INFO - _serve:92 - Finished server process [15796]
+2025-08-20 13:36:17 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 13:36:17 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 13:36:17 - uvicorn.error - INFO - _serve:82 - Started server process [13500]
+2025-08-20 13:36:17 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-20 13:36:17 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 13:36:18 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 13:36:18 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 13:36:18 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 13:36:18 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 13:36:18 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 13:36:18 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-20 13:37:00 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 13:37:00 - chatbot_middleware - INFO - <module>:94 - Iniciando servidor na porta 5001
+2025-08-20 13:37:03 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 13:37:03 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 13:37:03 - uvicorn.error - INFO - _serve:82 - Started server process [4928]
+2025-08-20 13:37:03 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-20 13:37:03 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 13:37:04 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 13:37:04 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 13:37:04 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 13:37:04 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 13:37:04 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 13:37:04 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-20 13:56:41 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-20 13:56:42 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-20 13:56:42 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 13:56:42 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 13:56:42 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-20 13:56:42 - uvicorn.error - INFO - _serve:92 - Finished server process [13500]
+2025-08-20 13:57:08 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-20 13:57:08 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-20 13:57:08 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 13:57:08 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 13:57:08 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-20 13:57:08 - uvicorn.error - INFO - _serve:92 - Finished server process [4928]
+2025-08-20 14:57:44 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 14:57:44 - chatbot_middleware - INFO - <module>:94 - Iniciando servidor na porta 5001
+2025-08-20 14:57:47 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 14:57:47 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 14:57:47 - uvicorn.error - INFO - _serve:82 - Started server process [9080]
+2025-08-20 14:57:47 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-20 14:57:47 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 14:57:47 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 14:57:47 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 14:57:47 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 14:57:47 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 14:57:47 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 14:57:47 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-20 14:58:05 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-20 14:58:05 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-20 14:58:05 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 14:58:05 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 14:58:05 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-20 14:58:05 - uvicorn.error - INFO - _serve:92 - Finished server process [9080]
+2025-08-20 14:58:08 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 14:58:08 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 14:58:08 - uvicorn.error - INFO - _serve:82 - Started server process [8960]
+2025-08-20 14:58:08 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-20 14:58:08 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 14:58:08 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 14:58:08 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 14:58:08 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 14:58:08 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 14:58:08 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 14:58:08 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-20 14:58:48 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-20 14:58:48 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-20 14:58:48 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 14:58:48 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 14:58:48 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-20 14:58:48 - uvicorn.error - INFO - _serve:92 - Finished server process [8960]
+2025-08-20 14:58:52 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 14:58:52 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-20 14:58:52 - uvicorn.error - INFO - _serve:82 - Started server process [12964]
+2025-08-20 14:58:52 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-20 14:58:52 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 14:58:52 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 14:58:52 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 14:58:52 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2025-08-20 14:58:52 - chatbot_middleware - ERROR - startup_event:76 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-20 14:58:52 - chatbot_middleware - INFO - startup_event:78 - Chatbot Middleware API iniciada com sucesso!
+2025-08-20 14:58:52 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-20 14:59:16 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-20 14:59:16 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-20 14:59:16 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 14:59:16 - chatbot_middleware - INFO - shutdown_event:85 - Encerrando Chatbot Middleware API...
+2025-08-20 14:59:16 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-20 14:59:16 - uvicorn.error - INFO - _serve:92 - Finished server process [12964]

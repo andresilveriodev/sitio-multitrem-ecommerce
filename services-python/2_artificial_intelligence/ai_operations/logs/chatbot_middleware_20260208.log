@@ -1,0 +1,15 @@
+2026-02-08 21:48:58 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2026-02-08 21:48:58 - chatbot_middleware - INFO - <module>:102 - Iniciando servidor na porta 8003
+2026-02-08 21:49:00 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2026-02-08 21:49:00 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2026-02-08 21:49:00 - uvicorn.error - INFO - _serve:82 - Started server process [10568]
+2026-02-08 21:49:00 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2026-02-08 21:49:00 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2026-02-08 21:49:00 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2026-02-08 21:49:01 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2026-02-08 21:49:01 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2026-02-08 21:49:01 - chatbot_middleware - INFO - startup_event:69 - Iniciando Chatbot Middleware API...
+2026-02-08 21:49:01 - chatbot_middleware - INFO - startup_event:74 - Versão do openai: 1.0.1
+2026-02-08 21:49:01 - chatbot_middleware - INFO - startup_event:82 - Banco de dados inicializado com sucesso
+2026-02-08 21:49:01 - chatbot_middleware - INFO - startup_event:86 - Chatbot Middleware API iniciada com sucesso!
+2026-02-08 21:49:01 - uvicorn.error - INFO - startup:62 - Application startup complete.

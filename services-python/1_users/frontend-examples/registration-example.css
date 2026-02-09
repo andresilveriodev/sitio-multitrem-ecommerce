@@ -1,0 +1,351 @@
+/* Container principal */
+.registration-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Card do formulário */
+.registration-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  overflow: hidden;
+}
+
+.registration-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+/* Título e subtítulo */
+.registration-card h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #666;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 16px;
+}
+
+/* Formulário */
+.registration-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Grupos de campos */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Campos de input */
+.form-input {
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input.error {
+  border-color: #e74c3c;
+  background: #fdf2f2;
+}
+
+.form-input.error:focus {
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.form-input.valid {
+  border-color: #27ae60;
+  background: #f8fff9;
+}
+
+.form-input.valid:focus {
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
+.form-input::placeholder {
+  color: #999;
+}
+
+/* Mensagens de erro */
+.error-message {
+  color: #e74c3c;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.error-message::before {
+  content: '⚠️';
+  font-size: 12px;
+}
+
+/* Texto de ajuda */
+.help-text {
+  color: #666;
+  font-size: 12px;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Botão de submit */
+.submit-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Spinner de loading */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mensagem de sucesso */
+.success-message {
+  background: #f8fff9;
+  border: 2px solid #27ae60;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 20px;
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.success-message h3 {
+  color: #27ae60;
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+.success-message p {
+  color: #666;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* Link para login */
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e1e5e9;
+}
+
+.login-link p {
+  color: #666;
+  font-size: 14px;
+}
+
+.login-link a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .registration-container {
+    padding: 10px;
+  }
+  
+  .registration-card {
+    padding: 30px 20px;
+  }
+  
+  .registration-card h2 {
+    font-size: 24px;
+  }
+  
+  .form-input {
+    font-size: 16px; /* Evita zoom no iOS */
+  }
+}
+
+/* Estados de foco para acessibilidade */
+.form-input:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.submit-button:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* Animações suaves */
+.form-group {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilo para campos obrigatórios */
+.form-group label::after {
+  content: ' *';
+  color: #e74c3c;
+}
+
+.form-group label[for="password"]::after {
+  content: ''; /* Remove asterisco do campo opcional */
+}
+
+/* Hover states */
+.form-input:hover:not(:focus) {
+  border-color: #bdc3c7;
+}
+
+/* Estados de loading */
+.registration-form.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Feedback visual para validação em tempo real */
+.form-input.validating {
+  border-color: #f39c12;
+  background: #fef9e7;
+}
+
+/* Tooltip para campos com validação complexa */
+.form-group {
+  position: relative;
+}
+
+.form-group:hover .help-text {
+  opacity: 1;
+}
+
+.help-text {
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+/* Estilo para mensagens de erro específicas */
+.error-message.field-error {
+  background: #fdf2f2;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border-left: 3px solid #e74c3c;
+}
+
+/* Animações de entrada para o card */
+.registration-card {
+  animation: cardSlideIn 0.6s ease;
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Multitrem</string>
+    <string name="login_online">Login Online</string>
+    <string name="login_offline">Login Offline</string>
+    <string name="logout">Sair</string>
+    <string name="orders">Pedidos</string>
+    <string name="new_order">Novo Pedido</string>
+    <string name="settings">Configurações</string>
+    <string name="biometric_prompt_title">Autenticação Biométrica</string>
+    <string name="biometric_prompt_subtitle">Use sua biometria para continuar</string>
+    <string name="biometric_prompt_description">Toque no sensor biométrico</string>
+    <string name="biometric_prompt_negative">Cancelar</string>
+    <string name="pin_offline">PIN Offline</string>
+    <string name="enter_pin">Digite seu PIN</string>
+    <string name="pin_incorrect">PIN incorreto</string>
+    <string name="pin_locked">PIN bloqueado. Tente novamente mais tarde.</string>
+    <string name="offline_expired">Sessão offline expirada. Faça login online novamente.</string>
+    <string name="share_order">Compartilhar Pedido</string>
+</resources>

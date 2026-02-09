@@ -1,0 +1,10 @@
+﻿============================================================
+TESTE DIRETO DO SERVICO DE IA
+============================================================
+
+[*] Chamando ai_service.generate_response...
+Modelo: gpt-4.1-nano
+Provider: openai
+
+[OK] SUCESSO!
+Resposta: OK

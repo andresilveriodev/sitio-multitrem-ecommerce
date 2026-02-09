@@ -1,0 +1,190 @@
+2025-08-19 00:03:37 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:03:37 - chatbot_middleware - INFO - <module>:92 - Iniciando servidor na porta 5001
+2025-08-19 00:03:39 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:03:39 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:03:39 - uvicorn.error - INFO - _serve:82 - Started server process [27936]
+2025-08-19 00:03:39 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-19 00:03:39 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:03:39 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:03:39 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:03:39 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:03:39 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:03:39 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:03:39 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-19 00:05:05 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-19 00:05:05 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-19 00:05:05 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:05:05 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:05:05 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-19 00:05:05 - uvicorn.error - INFO - _serve:92 - Finished server process [27936]
+2025-08-19 00:05:09 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:05:09 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:05:09 - uvicorn.error - INFO - _serve:82 - Started server process [25256]
+2025-08-19 00:05:09 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-19 00:05:09 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:05:09 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:05:09 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:05:09 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:05:09 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:05:09 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:05:09 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-19 00:10:12 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-19 00:10:12 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-19 00:10:12 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:10:12 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:10:12 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-19 00:10:12 - uvicorn.error - INFO - _serve:92 - Finished server process [25256]
+2025-08-19 00:10:17 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:10:17 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:10:17 - uvicorn.error - INFO - _serve:82 - Started server process [6636]
+2025-08-19 00:10:17 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-19 00:10:17 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:10:17 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:10:17 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:10:17 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:10:17 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:10:17 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:10:17 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-19 00:22:00 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-19 00:22:00 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-19 00:22:00 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:22:00 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:22:00 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-19 00:22:00 - uvicorn.error - INFO - _serve:92 - Finished server process [6636]
+2025-08-19 00:22:04 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:22:04 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:22:04 - uvicorn.error - INFO - _serve:82 - Started server process [27020]
+2025-08-19 00:22:04 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-19 00:22:04 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:22:04 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:22:04 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:22:04 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:22:04 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:22:04 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:22:04 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-19 00:23:49 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-19 00:23:49 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-19 00:23:49 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:23:49 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:23:49 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-19 00:23:49 - uvicorn.error - INFO - _serve:92 - Finished server process [27020]
+2025-08-19 00:23:53 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:23:53 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:23:53 - uvicorn.error - INFO - _serve:82 - Started server process [1844]
+2025-08-19 00:23:53 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-19 00:23:53 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:23:53 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:23:53 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:23:53 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:23:53 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:23:53 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:23:53 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-19 00:24:18 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-19 00:24:18 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-19 00:24:18 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:24:18 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:24:18 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-19 00:24:18 - uvicorn.error - INFO - _serve:92 - Finished server process [1844]
+2025-08-19 00:24:23 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:24:23 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:24:23 - uvicorn.error - INFO - _serve:82 - Started server process [28508]
+2025-08-19 00:24:23 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-19 00:24:23 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:24:23 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:24:23 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:24:23 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:24:23 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:24:23 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:24:23 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-19 00:25:13 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-19 00:25:13 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-19 00:25:13 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:25:13 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:25:13 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-19 00:25:13 - uvicorn.error - INFO - _serve:92 - Finished server process [28508]
+2025-08-19 00:25:17 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:25:17 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:25:17 - uvicorn.error - INFO - _serve:82 - Started server process [17300]
+2025-08-19 00:25:17 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-19 00:25:17 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:25:17 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:25:17 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:25:17 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:25:17 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5434 failed: FATAL:  database "chatbot_middleware" does not exist
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-19 00:25:17 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:25:17 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-19 00:29:52 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:29:52 - chatbot_middleware - INFO - <module>:92 - Iniciando servidor na porta 5001
+2025-08-19 00:29:54 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:29:54 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:29:54 - uvicorn.error - INFO - _serve:82 - Started server process [21612]
+2025-08-19 00:29:54 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-19 00:29:54 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:29:55 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-19 00:29:55 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:29:55 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:29:55 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-19 00:29:55 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:29:55 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-19 00:30:18 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-19 00:30:18 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-19 00:30:18 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:30:18 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:30:18 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-19 00:30:18 - uvicorn.error - INFO - _serve:92 - Finished server process [21612]
+2025-08-19 00:30:21 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:30:21 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:30:22 - uvicorn.error - INFO - _serve:82 - Started server process [29952]
+2025-08-19 00:30:22 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-19 00:30:22 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:30:22 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-19 00:30:22 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:30:22 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:30:22 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-19 00:30:22 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:30:22 - uvicorn.error - INFO - startup:62 - Application startup complete.
+2025-08-19 00:32:27 - uvicorn.error - INFO - shutdown:258 - Shutting down
+2025-08-19 00:32:27 - uvicorn.error - INFO - shutdown:67 - Waiting for application shutdown.
+2025-08-19 00:32:27 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:32:27 - chatbot_middleware - INFO - shutdown_event:83 - Encerrando Chatbot Middleware API...
+2025-08-19 00:32:27 - uvicorn.error - INFO - shutdown:76 - Application shutdown complete.
+2025-08-19 00:32:27 - uvicorn.error - INFO - _serve:92 - Finished server process [29952]
+2025-08-19 00:32:29 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:32:30 - chatbot_middleware - INFO - configure_logging:91 - Sistema de logging configurado com nível: INFO
+2025-08-19 00:32:30 - uvicorn.error - INFO - _serve:82 - Started server process [29460]
+2025-08-19 00:32:30 - uvicorn.error - INFO - startup:48 - Waiting for application startup.
+2025-08-19 00:32:30 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:32:30 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-19 00:32:30 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:32:30 - chatbot_middleware - INFO - startup_event:67 - Iniciando Chatbot Middleware API...
+2025-08-19 00:32:30 - chatbot_middleware - ERROR - startup_event:74 - Erro ao inicializar banco de dados: Foreign key associated with column 'usage_summary.user_id' could not find table 'chatbot.users' with which to generate a foreign key to target column 'id'
+2025-08-19 00:32:30 - chatbot_middleware - INFO - startup_event:76 - Chatbot Middleware API iniciada com sucesso!
+2025-08-19 00:32:30 - uvicorn.error - INFO - startup:62 - Application startup complete.
