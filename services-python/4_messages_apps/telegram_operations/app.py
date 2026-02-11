@@ -14,6 +14,7 @@ from config import settings
 from routers import telegram_router
 from services.telegram_service import TelegramService
 from services.polling_service import PollingService
+from services.keycloak_auth_service import keycloak_auth_service
 
 # Configuração de logging
 logging.basicConfig(
@@ -77,6 +78,9 @@ async def startup_event():
     """Evento de inicialização"""
     logger.info("Iniciando Telegram Service...")
     logger.info(f"Chatbot Service URL: {settings.CHATBOT_SERVICE_URL}")
+    logger.info(f"Keycloak Auth Server: {settings.KEYCLOAK_AUTH_SERVER_URL}")
+    logger.info(f"Keycloak Realm: {settings.KEYCLOAK_REALM}")
+    logger.info(f"Keycloak Client ID: {settings.KEYCLOAK_CLIENT_ID}")
     
     # Injetar serviços nos routers (já feito antes, mas garantindo)
     telegram_router.telegram_service = telegram_service
@@ -88,7 +92,8 @@ async def startup_event():
         logger.info("Telegram Service iniciado com sucesso (modo polling)")
     except Exception as e:
         logger.error(f"Erro ao iniciar polling: {e}", exc_info=True)
-        raise
+        logger.warning("Servidor continuará rodando mesmo sem polling ativo. Configure o TELEGRAM_BOT_TOKEN no .env")
+        # Não lançar exceção para permitir que o servidor inicie mesmo sem token configurado
 
 
 @app.on_event("shutdown")
