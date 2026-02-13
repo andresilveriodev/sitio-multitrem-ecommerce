@@ -23,7 +23,7 @@ load_dotenv()
 
 # Configuração
 BASE_URL = "http://localhost:8012"
-DATABASE_URI = os.getenv("DATABASE_URI", 'postgresql://postgres:123456@localhost:5434/sitio_multitrem')
+DATABASE_URI = os.getenv("DATABASE_URI", 'postgresql://postgres:123456@localhost:5434/b3_trader')
 
 def get_db_connection():
     """Conecta ao banco de dados"""

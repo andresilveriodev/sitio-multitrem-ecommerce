@@ -7,7 +7,7 @@ headers = {"Content-Type": "application/json"}
 
 # Teste com gpt-4.1-nano
 data = {
-    "message": "Analise um produto de e-commerce: Produto XYZ com preço de R$ 35,50",
+    "message": "Analise a seguinte operação de homebroker: Compra de 100 ações PETR4 a R$ 35,50",
     "provider": "openai",
     "model": "gpt-4.1-nano",
     "max_tokens": 150,

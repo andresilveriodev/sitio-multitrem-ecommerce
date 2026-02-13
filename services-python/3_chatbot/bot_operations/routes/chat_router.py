@@ -15,12 +15,12 @@ from services.cache_service import cache_service
 from services.context_service import context_service
 from services.ai_integration import ai_integration
 from services.filters.message_filters import message_filters
-from services.filters.intent_classifier import Intent, intent_classifier
-from services.filters.intent_router import intent_router
-from services.filters.rate_limiter import rate_limiter
 from services.security import input_validator, ValidationLevel
 from services.commands import CommandAnalyzer, CommandExecutor, CommandRequest
-from services.order_service import order_service
+from services.investment_processor import investment_processor
+from services.market_service import market_service
+from services.investment_context_builder import investment_context_builder
+from auth.dependencies import require_colaborador_role
 
 logger = structlog.get_logger(__name__)
 
@@ -100,7 +100,10 @@ async def get_chat_request_with_context(request: Request) -> tuple:
 
 
 @router.post("/process-message")
-async def process_message(request: Request):
+async def process_message(
+    request: Request,
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Processa mensagem do usuário com validação de segurança e contexto opcional do frontend"""
     start_time = time.time()
     
@@ -148,174 +151,22 @@ async def process_message(request: Request):
         # Usar conteúdo sanitizado se disponível
         sanitized_message = security_validation.sanitized_content or chat_request.message
         
-        # ============================================================
-        # FIREWALL DE CONVERSA - Pipeline de Filtros
-        # ============================================================
-        
-        # 1. RATE LIMITING (Anti-Spam)
-        from services.filters.rate_limiter import rate_limiter
-        from services.classification_logger import classification_logger
-        
-        rate_allowed, rate_reason = rate_limiter.check_rate_limit(
-            chat_request.user_id,
-            sanitized_message
-        )
-        
-        if not rate_allowed:
+        # Validação de filtros (após segurança)
+        validation = message_filters.validate_message(sanitized_message)
+        if not validation["valid"]:
             return {
                 "success": False,
-                "error": rate_reason,
+                "error": validation["reason"],
                 "response": None,
                 "metadata": {
                     "processing_time": time.time() - start_time,
                     "requires_ai": False,
                     "cache_hit": False,
-                    "rate_limited": True,
                     "security_validation": security_validation.details
                 }
             }
         
-        # 2. NORMALIZAÇÃO
-        normalized = intent_classifier.normalize_message(sanitized_message)
-        
-        # 3. CLASSIFICAÇÃO DE INTENTS (sem IA - barato)
-        intent, intent_metadata = intent_classifier.classify_intent(sanitized_message)
-        score = intent_metadata.get("score", 0)
-        rules_hit = intent_metadata.get("rules_hit", [])
-        
-        logger.info(
-            "Intent classificado",
-            user_id=chat_request.user_id,
-            intent=intent.value,
-            score=score,
-            rules_hit_count=len(rules_hit)
-        )
-        
-        # 4. ROTEAMENTO BASEADO EM INTENT
-        logger.info(
-            "Roteando intent",
-            intent=intent.value,
-            method=intent_metadata.get("method", "unknown"),
-            metadata_keys=list(intent_metadata.keys())
-        )
-        
-        routing_result = await intent_router.route(
-            intent,
-            sanitized_message,
-            intent_metadata,
-            chat_request.user_id
-        )
-        
-        decision = routing_result.get("decision", "ALLOW_AI")
-        requires_ai = routing_result.get("requires_ai", False)
-        router_response = routing_result.get("response")
-        
-        logger.info(
-            "Roteamento concluído",
-            decision=decision,
-            requires_ai=requires_ai,
-            has_response=bool(router_response)
-        )
-        
-        # 5. LOG DE CLASSIFICAÇÃO (para auditoria e melhoria)
-        conversation_id = chat_request.session_id or f"conv_{chat_request.user_id}"
-        await classification_logger.log_classification(
-            conversation_id=conversation_id,
-            inbound_message_id=None,  # Pode ser obtido do request
-            message=sanitized_message,
-            intent=intent.value,
-            score=score,
-            rules_hit=rules_hit,
-            decision=decision,
-            requires_ai=requires_ai,
-            user_id=chat_request.user_id
-        )
-        
-        # 6. PROCESSAMENTO BASEADO NA DECISÃO
-        
-        # DECISÃO: BLOCK (DANGEROUS/ABUSE)
-        if decision == "BLOCK":
-            return {
-                "success": False,
-                "error": router_response or "Mensagem bloqueada",
-                "response": None,
-                "metadata": {
-                    "processing_time": time.time() - start_time,
-                    "requires_ai": False,
-                    "cache_hit": False,
-                    "intent": intent.value,
-                    "blocked": True,
-                    "security_validation": security_validation.details
-                }
-            }
-        
-        # DECISÃO: NO_AI_TEMPLATE (OFFTOPIC, UNKNOWN, SUPPORT, etc)
-        if decision == "NO_AI_TEMPLATE":
-            # Se não tem resposta do router, usa escape do classifier
-            if not router_response:
-                router_response = intent_classifier.get_escape_response(intent)
-            
-            if router_response:
-                response_data = {
-                    "response": router_response,
-                    "confidence": intent_metadata.get("confidence", 0.8),
-                    "category": f"intent_{intent.value.lower()}"
-                }
-                
-                # Cache da resposta
-                context_hash = await _get_context_hash(chat_request.user_id)
-                await cache_service.cache_response(
-                    chat_request.user_id,
-                    sanitized_message,
-                    response_data,
-                    context_hash,
-                    ttl=3600  # 1 hora
-                )
-                
-                logger.info(
-                    "Resposta de template enviada (sem IA)",
-                    user_id=chat_request.user_id,
-                    intent=intent.value,
-                    decision=decision
-                )
-                
-                return {
-                    "success": True,
-                    "response": response_data,
-                    "metadata": {
-                        "processing_time": time.time() - start_time,
-                        "requires_ai": False,  # NÃO chama IA
-                        "cache_hit": False,
-                        "intent": intent.value,
-                        "decision": decision,
-                        "score": score,
-                        "security_validation": security_validation.details
-                    }
-                }
-        
-        # DECISÃO: ASK_CLARIFY (UNKNOWN)
-        if decision == "ASK_CLARIFY" and router_response:
-            response_data = {
-                "response": router_response,
-                "confidence": 0.5,
-                "category": "clarification_needed"
-            }
-            
-            return {
-                "success": True,
-                "response": response_data,
-                "metadata": {
-                    "processing_time": time.time() - start_time,
-                    "requires_ai": False,
-                    "cache_hit": False,
-                    "intent": intent.value,
-                    "decision": decision,
-                    "security_validation": security_validation.details
-                }
-            }
-        
-        # DECISÃO: ALLOW_AI (continua para processamento com IA)
-        # Verifica cache antes de chamar IA
+        # Verifica cache primeiro
         context_hash = await _get_context_hash(chat_request.user_id)
         cached_response = await cache_service.get_cached_response(
             chat_request.user_id, 
@@ -333,41 +184,48 @@ async def process_message(request: Request):
                     "requires_ai": False,
                     "cache_hit": True,
                     "cached_at": cached_response.get("cached_at"),
-                    "intent": intent.value,
                     "security_validation": security_validation.details
                 }
             }
         
-        # Se chegou aqui, a decisão foi ALLOW_AI
-        # Continua para processamento com IA (apenas se realmente necessário)
-        if not requires_ai:
-            # Se o roteador disse que não precisa de IA, mas chegou aqui,
-            # algo deu errado - retorna resposta padrão
-            logger.warning(
-                "Decisão ALLOW_AI mas requires_ai=False - usando fallback",
-                user_id=chat_request.user_id,
-                intent=intent.value
+        # Verifica resposta automática
+        if validation["auto_respond"]:
+            auto_response = validation["auto_response"]
+            response_data = {
+                "response": auto_response["response"],
+                "confidence": auto_response["confidence"],
+                "category": auto_response["category"]
+            }
+            
+            # Cache da resposta automática
+            await cache_service.cache_response(
+                chat_request.user_id,
+                sanitized_message,
+                response_data,
+                context_hash,
+                ttl=3600  # 1 hora
             )
+            
+            # Adiciona mensagem ao contexto
+            await _add_message_to_context(chat_request, False, None, sanitized_message)
+            
             return {
                 "success": True,
-                "response": {
-                    "response": "Não entendi completamente. Você quer fazer um pedido ou ver o cardápio? Digite *cardapio* ou *pedido*.",
-                    "confidence": 0.5
-                },
+                "response": response_data,
                 "metadata": {
                     "processing_time": time.time() - start_time,
                     "requires_ai": False,
                     "cache_hit": False,
-                    "intent": intent.value,
-                    "decision": "FALLBACK",
+                    "auto_response": True,
                     "security_validation": security_validation.details
                 }
             }
         
-        # Verifica se a mensagem é um comando do e-commerce
+        # Verifica se a mensagem é um comando do homebroker
         # Permissões padrão para usuário anônimo/teste (pode ser ajustado)
-        user_permissions = ["view_orders", "view_products", "view_cart", 
-                          "create_order", "modify_cart", "view_history"]
+        user_permissions = ["view_positions", "view_book", "view_watchlist", 
+                          "create_multibox", "modify_watchlist", "create_analysis",
+                          "prepare_orders"]
         
         try:
             command_analysis = await command_analyzer.analyze_message(
@@ -471,78 +329,13 @@ async def process_message(request: Request):
             # Continua para processar com IA como fallback
             pass
         
-        # Continua para processamento com IA (já validado pelo firewall de intents acima)
-        
-        # Verifica se a mensagem está relacionada a pedidos
-        # Palavras-chave que indicam interesse em pedidos
-        order_keywords = ["pedido", "entrega", "rastrear", "acompanhar", "status", 
-                         "colheita", "separação", "envio", "pagamento", "compra"]
-        message_lower = sanitized_message.lower()
-        is_order_related = any(keyword in message_lower for keyword in order_keywords)
-        
-        # Se relacionado a pedidos, tenta processar com serviço de pedidos
-        if is_order_related:
-            try:
-                # Busca pedidos recentes do usuário
-                recent_orders = await order_service.get_user_orders(
-                    user_id=chat_request.user_id,
-                    limit=1
-                )
-                
-                if recent_orders:
-                    # Processa com IA usando o pedido mais recente
-                    order = recent_orders[0]
-                    order_result = await order_service.process_order_with_ai(
-                        order_id=order.id,
-                        user_message=sanitized_message,
-                        context={
-                            "intent": intent.value,
-                            "frontend_context": frontend_context
-                        }
-                    )
-                    
-                    if order_result.get("success"):
-                        # Executa ações sugeridas pela IA
-                        actions = order_result.get("actions", [])
-                        for action in actions:
-                            if action.get("type") == "update_stage":
-                                await order_service.advance_order_stage(
-                                    order.id,
-                                    action.get("stage")
-                                )
-                        
-                        # Retorna resposta da IA sobre o pedido
-                        response_data = {
-                            "response": order_result.get("response", ""),
-                            "order": order_result.get("order"),
-                            "actions": actions,
-                            "order_related": True
-                        }
-                        
-                        await cache_service.cache_response(
-                            chat_request.user_id,
-                            sanitized_message,
-                            response_data,
-                            await _get_context_hash(chat_request.user_id),
-                            ttl=1800
-                        )
-                        
-                        return {
-                            "success": True,
-                            "response": response_data,
-                            "metadata": {
-                                "processing_time": time.time() - start_time,
-                                "requires_ai": True,
-                                "cache_hit": False,
-                                "intent": intent.value,
-                                "order_processed": True,
-                                "order_id": order.id,
-                                "security_validation": security_validation.details
-                            }
-                        }
-            except Exception as e:
-                logger.warning(f"Erro ao processar pedido com IA: {e}", exc_info=True)
-                # Continua para processamento normal com IA
+        # Se não precisa de IA mas não tem resposta automática,
+        # ainda assim tenta processar com IA para dar uma resposta apropriada
+        # (mensagens válidas que não foram capturadas pelos filtros de resposta automática)
+        if not validation["requires_ai"] and not validation.get("auto_respond"):
+            logger.info(f"Mensagem válida sem resposta automática detectada, enviando para IA: {sanitized_message[:50]}")
+            # Força requires_ai para True para continuar o processamento
+            validation["requires_ai"] = True
         
         # VALIDAÇÃO DE ASSINATURA DESABILITADA TEMPORARIAMENTE
         # Verifica limites do usuário
@@ -568,13 +361,28 @@ async def process_message(request: Request):
         user_preferences = await context_service.get_user_preferences(chat_request.user_id)
         user_preferences_dict = _convert_user_preferences_to_dict(user_preferences)
         
-        # Atualiza conversation_metadata com contexto do frontend (se houver)
+        # Prepara contexto de investimentos
+        # Prioridade: contexto do frontend > contexto armazenado
         if frontend_context:
+            # Usa contexto enviado pelo frontend
+            investment_context = investment_context_builder.build_investment_context(
+                plan_id=frontend_context.get("current_plan_id"),
+                periodo_id=frontend_context.get("current_periodo_id"),
+                investment_categories=frontend_context.get("investment_categories"),
+                available_investment_types=frontend_context.get("available_investment_types"),
+                current_investments=frontend_context.get("current_investments")
+            )
+            # Atualiza conversation_metadata com contexto do frontend
             if frontend_context.get("current_plan_id"):
                 context.conversation_metadata["current_plan_id"] = frontend_context.get("current_plan_id")
             if frontend_context.get("current_periodo_id"):
                 context.conversation_metadata["current_periodo_id"] = frontend_context.get("current_periodo_id")
             await context_service.save_conversation_context(context)
+        else:
+            # Usa contexto armazenado (se houver)
+            investment_context = investment_context_builder.build_context_from_conversation_metadata(
+                conversation_metadata=context.conversation_metadata
+            )
         
         # Gera resposta da IA (usando mensagem sanitizada)
         ai_response = await ai_integration.generate_response(
@@ -582,7 +390,8 @@ async def process_message(request: Request):
             message=sanitized_message,
             conversation_id=context.conversation_metadata.get("conversation_id"),
             context_summary=context.context_summary,
-            user_preferences=user_preferences_dict
+            user_preferences=user_preferences_dict,
+            investment_context=investment_context
         )
         
         if not ai_response:
@@ -621,7 +430,41 @@ async def process_message(request: Request):
                 }
             }
         
-        # Retornar resposta normal da IA
+        # PROCESSAR COMANDOS DE INVESTIMENTO
+        # Verifica se a mensagem é um comando de investimento
+        ai_response_text = ai_response.get("response", "")
+        investment_result = await investment_processor.process_investment_command(
+            message=sanitized_message,
+            ai_response=ai_response_text,
+            user_id=chat_request.user_id,
+            plan_id=context.conversation_metadata.get("current_plan_id"),
+            periodo_id=context.conversation_metadata.get("current_periodo_id")
+        )
+        
+        # Se processou comando de investimento, usar resultado
+        if investment_result:
+            response_data = investment_result.get("response", {})
+            
+            # Adicionar metadados da IA
+            response_data["provider"] = ai_response.get("provider")
+            response_data["conversation_id"] = ai_response.get("conversation_id")
+            response_data["tokens_used"] = ai_response.get("tokens_used", 0)
+            
+            return {
+                "success": True,
+                "response": response_data,
+                "metadata": {
+                    "processing_time": time.time() - start_time,
+                    "requires_ai": True,
+                    "cache_hit": False,
+                    "command_type": "investment",
+                    "urgency": validation["urgency"],
+                    "keywords": validation["keywords"],
+                    "security_validation": security_validation.details
+                }
+            }
+        
+        # Se não é comando de investimento, retornar resposta normal da IA
         # Cache da resposta
         response_data = {
             "response": ai_response.get("response", ""),
@@ -645,9 +488,8 @@ async def process_message(request: Request):
                 "processing_time": time.time() - start_time,
                 "requires_ai": True,
                 "cache_hit": False,
-                "intent": intent.value,
-                "score": score,
-                "decision": decision,
+                "urgency": validation["urgency"],
+                "keywords": validation["keywords"],
                 "security_validation": security_validation.details
             }
         }
@@ -660,7 +502,10 @@ async def process_message(request: Request):
 
 
 @router.post("/process-message/stream")
-async def process_message_stream(chat_request: ChatRequest = Depends(get_chat_request)):
+async def process_message_stream(
+    chat_request: ChatRequest = Depends(get_chat_request),
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Processa mensagem em streaming com validação de segurança"""
     
     async def generate_stream():
@@ -684,37 +529,16 @@ async def process_message_stream(chat_request: ChatRequest = Depends(get_chat_re
             # Usar conteúdo sanitizado
             sanitized_message = security_validation.sanitized_content or chat_request.message
             
-            # FIREWALL DE CONVERSA (mesmo pipeline do endpoint não-streaming)
-            # Rate limiting
-            rate_allowed, rate_reason = rate_limiter.check_rate_limit(
-                chat_request.user_id,
-                sanitized_message
-            )
-            if not rate_allowed:
-                yield f"data: {_format_sse_error(rate_reason)}\n\n"
+            # Validação de filtros
+            validation = message_filters.validate_message(sanitized_message)
+            if not validation["valid"]:
+                yield f"data: {_format_sse_error(validation['reason'])}\n\n"
                 return
             
-            # Classificação de intents
-            intent, intent_metadata = intent_classifier.classify_intent(sanitized_message)
-            routing_result = await intent_router.route(
-                intent,
-                sanitized_message,
-                intent_metadata,
-                chat_request.user_id
-            )
-            
-            decision = routing_result.get("decision", "ALLOW_AI")
-            requires_ai = routing_result.get("requires_ai", False)
-            router_response = routing_result.get("response")
-            
-            # Se não precisa de IA, retorna resposta de template
-            if decision in ["NO_AI_TEMPLATE", "ASK_CLARIFY"] and router_response:
-                yield f"data: {_format_sse_response(router_response, {'category': f'intent_{intent.value.lower()}'})}\n\n"
-                return
-            
-            # Se bloqueado, retorna erro
-            if decision == "BLOCK":
-                yield f"data: {_format_sse_error(router_response or 'Mensagem bloqueada')}\n\n"
+            # Verifica resposta automática
+            if validation["auto_respond"]:
+                auto_response = validation["auto_response"]
+                yield f"data: {_format_sse_response(auto_response['response'], auto_response)}\n\n"
                 return
             
             # VALIDAÇÃO DE ASSINATURA DESABILITADA TEMPORARIAMENTE
@@ -754,7 +578,10 @@ async def process_message_stream(chat_request: ChatRequest = Depends(get_chat_re
 
 
 @router.post("/validate-input")
-async def validate_input(request: Request):
+async def validate_input(
+    request: Request,
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Endpoint para validar entrada sem processar"""
     try:
         body = await request.json()
@@ -789,7 +616,10 @@ async def validate_input(request: Request):
 
 
 @router.get("/conversation/{user_id}")
-async def get_conversation_context(user_id: str):
+async def get_conversation_context(
+    user_id: str,
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Busca contexto da conversa do usuário"""
     try:
         context = await context_service.get_conversation_context(user_id)
@@ -818,7 +648,10 @@ async def get_conversation_context(user_id: str):
 
 
 @router.post("/update-context")
-async def update_context(request: Request):
+async def update_context(
+    request: Request,
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Atualiza contexto da conversa"""
     try:
         body = await request.json()
@@ -840,7 +673,10 @@ async def update_context(request: Request):
 
 
 @router.post("/chat")
-async def chat(request: Request):
+async def chat(
+    request: Request,
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Endpoint simplificado para chat com suporte a provider e model"""
     try:
         body = await request.json()

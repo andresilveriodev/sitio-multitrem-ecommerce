@@ -123,3 +123,120 @@ class ChatbotClient:
                 "success": False,
                 "error": f"Erro ao processar mensagem: {str(e)}"
             }
+    
+    async def process_message_authenticated(
+        self,
+        user_id: str,
+        message: str,
+        token: str,
+        session_id: Optional[str] = None,
+        conversation_id: Optional[int] = None,
+        provider: Optional[str] = None,
+        model: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Processa mensagem através do endpoint autenticado do Chatbot Service
+        Requer token JWT válido e perfil "colaborador"
+        
+        CORRIGIDO: Usa o endpoint /chatbot/process-message que já requer autenticação JWT
+        
+        Args:
+            user_id: ID do usuário
+            message: Texto da mensagem
+            token: Token JWT do Keycloak (obrigatório)
+            session_id: ID da sessão (opcional)
+            conversation_id: ID da conversa (opcional)
+            provider: Provedor de IA (opcional)
+            model: Modelo de IA (opcional)
+            
+        Returns:
+            Resposta do chatbot service
+        """
+        try:
+            client = await self._get_client()
+            # CORRIGIDO: Usar endpoint /chatbot/process-message que já requer autenticação
+            url = f"{self.base_url}/chatbot/process-message"
+            
+            payload = {
+                "user_id": user_id,
+                "message": message,
+                "content_type": "text/plain"
+            }
+            
+            if session_id:
+                payload["session_id"] = session_id
+            
+            if conversation_id:
+                payload["conversation_id"] = conversation_id
+            
+            if provider:
+                payload["provider"] = provider
+            
+            if model:
+                payload["model"] = model
+            
+            # IMPORTANTE: Token JWT no header Authorization
+            headers = {
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json"
+            }
+            
+            logger.info(
+                "Enviando mensagem para chatbot (autenticado)",
+                user_id=user_id,
+                message_preview=message[:50],
+                has_token=bool(token),
+                endpoint="process-message"
+            )
+            
+            response = await client.post(url, json=payload, headers=headers)
+            response.raise_for_status()
+            
+            result = response.json()
+            
+            logger.info(
+                "Resposta recebida do chatbot (autenticado)",
+                user_id=user_id,
+                success=result.get("success")
+            )
+            
+            return result
+            
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 401:
+                logger.warning("Token inválido ou expirado", user_id=user_id)
+                return {
+                    "success": False,
+                    "error": "Token de autenticação inválido ou expirado",
+                    "status_code": 401
+                }
+            elif e.response.status_code == 403:
+                logger.warning("Usuário sem perfil colaborador", user_id=user_id)
+                return {
+                    "success": False,
+                    "error": "Acesso negado. Apenas usuários com perfil 'colaborador' podem conversar com a IA.",
+                    "status_code": 403
+                }
+            else:
+                logger.error(f"Erro HTTP ao chamar chatbot: {e.response.status_code}")
+                try:
+                    error_detail = e.response.json().get("detail", str(e))
+                except:
+                    error_detail = str(e)
+                return {
+                    "success": False,
+                    "error": f"Erro de comunicação com chatbot: {error_detail}",
+                    "status_code": e.response.status_code
+                }
+        except httpx.HTTPError as e:
+            logger.error(f"Erro HTTP ao chamar chatbot: {e}")
+            return {
+                "success": False,
+                "error": f"Erro de comunicação com chatbot: {str(e)}"
+            }
+        except Exception as e:
+            logger.error(f"Erro ao processar mensagem no chatbot: {e}", exc_info=True)
+            return {
+                "success": False,
+                "error": f"Erro ao processar mensagem: {str(e)}"
+            }

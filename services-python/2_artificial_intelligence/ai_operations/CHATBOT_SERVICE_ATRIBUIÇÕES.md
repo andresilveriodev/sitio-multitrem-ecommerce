@@ -36,14 +36,14 @@ Este documento descreve as atribuições principais do Chatbot Service e a separ
 - **Enriquece prompts** com informações relevantes do histórico
 - **Persiste contexto** entre interações (via Redis)
 
-### **5. Sistema de Comandos do E-commerce**
-- **Detecta intenções** de comandos do e-commerce na mensagem do usuário
+### **5. Sistema de Comandos do Homebroker**
+- **Detecta intenções** de comandos do homebroker na mensagem do usuário
 - **Valida comandos** antes de executar
 - **Executa ações** como:
-  - Mostrar carrinho atual
-  - Adicionar produtos ao carrinho
-  - Preparar pedidos de compra
-  - Consultar histórico de pedidos
+  - Mostrar posição atual
+  - Adicionar ativos à watchlist
+  - Preparar ordens de compra/venda
+  - Consultar histórico de transações
 - **Confirmação para ações críticas**: Solicita confirmação antes de executar operações importantes
 - **Formata respostas** de forma amigável para o usuário
 
@@ -170,7 +170,7 @@ Frontend
 | **Filtros e validações** | ✅ Faz | ❌ Não faz |
 | **Cache de respostas** | ✅ Faz | ❌ Não faz |
 | **Respostas automáticas** | ✅ Faz | ❌ Não faz |
-| **Comandos do e-commerce** | ✅ Faz | ❌ Não faz |
+| **Comandos do homebroker** | ✅ Faz | ❌ Não faz |
 | **Gestão de contexto** | ✅ Faz (em Redis) | ❌ Não faz |
 | **Rate limiting** | ✅ Faz | ❌ Não faz |
 | **Chamadas aos providers** | ❌ Não faz | ✅ Faz |
@@ -206,7 +206,7 @@ Frontend
 - ✅ **Gerenciar apenas** contexto temporário em Redis
 - ✅ **Implementar** filtros e cache para otimização
 - ✅ **Validar** mensagens antes de enviar ao AI Service
-- ✅ **Detectar e executar** comandos do e-commerce
+- ✅ **Detectar e executar** comandos do homebroker
 
 ---
 

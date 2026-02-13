@@ -8,6 +8,8 @@ import structlog
 from services.cache_service import cache_service
 from services.context_service import context_service
 from services.ai_integration import ai_integration
+from auth.dependencies import require_colaborador_role
+from fastapi import Depends
 
 logger = structlog.get_logger(__name__)
 
@@ -15,7 +17,10 @@ router = APIRouter(prefix="/chatbot", tags=["analytics"])
 
 
 @router.get("/analytics/{user_id}")
-async def get_user_analytics(user_id: str):
+async def get_user_analytics(
+    user_id: str,
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Busca analytics do usuário"""
     try:
         # Busca contexto do usuário
@@ -63,7 +68,10 @@ async def get_user_analytics(user_id: str):
 
 
 @router.get("/cost-tracking/{user_id}")
-async def get_cost_tracking(user_id: str):
+async def get_cost_tracking(
+    user_id: str,
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Busca informações de custos do usuário"""
     try:
         # Busca métricas de uso do AI Service
@@ -108,7 +116,9 @@ async def get_cost_tracking(user_id: str):
 
 
 @router.get("/cache-stats")
-async def get_cache_stats():
+async def get_cache_stats(
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Busca estatísticas do cache"""
     try:
         stats = cache_service.get_cache_stats()
@@ -124,7 +134,9 @@ async def get_cache_stats():
 
 
 @router.post("/clear-cache")
-async def clear_cache():
+async def clear_cache(
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Limpa todo o cache"""
     try:
         success = await cache_service.clear_cache()
@@ -140,7 +152,10 @@ async def clear_cache():
 
 
 @router.post("/invalidate-user-cache/{user_id}")
-async def invalidate_user_cache(user_id: str):
+async def invalidate_user_cache(
+    user_id: str,
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Invalida cache de um usuário específico"""
     try:
         success = await cache_service.invalidate_user_cache(user_id)
@@ -156,7 +171,9 @@ async def invalidate_user_cache(user_id: str):
 
 
 @router.get("/system-health")
-async def get_system_health():
+async def get_system_health(
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Verifica saúde geral do sistema"""
     try:
         # Verifica conexão com AI Service
@@ -198,7 +215,9 @@ async def get_system_health():
 
 
 @router.get("/performance-metrics")
-async def get_performance_metrics():
+async def get_performance_metrics(
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Busca métricas de performance do sistema"""
     try:
         # Estatísticas do cache

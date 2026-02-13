@@ -16,7 +16,7 @@ def test_health_check():
     data = response.json()
     assert data["status"] == "healthy"
     assert data["service"] == "chatbot_service"
-    assert data["port"] == 8002
+    assert data["port"] == 8011
 
 
 def test_root_endpoint():
@@ -24,7 +24,7 @@ def test_root_endpoint():
     response = client.get("/")
     assert response.status_code == 200
     data = response.json()
-    assert "E-commerce Chatbot Service" in data["message"]
+    assert "B3-Trader Chatbot Service" in data["message"]
     assert data["version"] == "1.0.0"
 
 

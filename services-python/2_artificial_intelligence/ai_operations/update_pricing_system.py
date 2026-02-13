@@ -6,7 +6,7 @@ from psycopg2 import sql
 def update_pricing_system():
     try:
         # Conectar ao banco
-        conn = psycopg2.connect('postgresql://postgres:123456@localhost:5434/sitio_multitrem')
+        conn = psycopg2.connect('postgresql://postgres:123456@localhost:5434/b3_trader')
         cur = conn.cursor()
         
         print("🔄 Atualizando sistema de preços para 2 tipos de venda...")

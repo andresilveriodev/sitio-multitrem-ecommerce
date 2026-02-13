@@ -1,4 +1,4 @@
-# 🤖 E-commerce Chatbot Service
+# 🤖 B3-Trader Chatbot Service
 
 ```powershell
 # Ativar virtual env
@@ -12,7 +12,7 @@ O **Chatbot Service** é um middleware inteligente que atua como o cérebro cent
 ## **🏗️ Arquitetura**
 
 ```
-Frontend → Chatbot Service (Porta 8002) → AI Service (Porta 8003) → Providers de IA
+Frontend → Chatbot Service (Porta 8008) → AI Service (Porta 8012) → Providers de IA
 ```
 
 ### **Responsabilidades do Chatbot Service:**
@@ -96,7 +96,7 @@ O Chatbot Service implementa um **gateway de segurança robusto** que valida tod
 
 - Python 3.11+
 - Redis
-- AI Service rodando na porta 8003
+- AI Service rodando na porta 8012
 
 ### **Instalação:**
 
@@ -119,11 +119,11 @@ cp .env.example .env
 # Configurações básicas
 DEBUG=false
 HOST=0.0.0.0
-PORT=8002
+PORT=8008
 LOG_LEVEL=INFO
 
 # AI Service
-AI_SERVICE_URL=http://localhost:8003
+AI_SERVICE_URL=http://localhost:8012
 AI_SERVICE_TIMEOUT=30
 
 # Redis
@@ -137,7 +137,7 @@ ALLOWED_ORIGINS=["http://localhost:3000", "http://localhost:8080"]
 
 ```bash
 # Desenvolvimento
-python -m uvicorn main:app --reload --host 0.0.0.0 --port 8002
+python -m uvicorn main:app --reload --host 0.0.0.0 --port 8008
 
 # Produção
 python main.py
@@ -324,7 +324,7 @@ O serviço responde automaticamente a perguntas frequentes:
 ### **Exemplo 1: Pergunta Simples (Resposta Automática)**
 
 ```bash
-curl -X POST "http://localhost:8002/chatbot/process-message" \
+curl -X POST "http://localhost:8008/chatbot/process-message" \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "123",
@@ -359,7 +359,7 @@ curl -X POST "http://localhost:8002/chatbot/process-message" \
 ### **Exemplo 2: Pergunta Complexa (Requer IA)**
 
 ```bash
-curl -X POST "http://localhost:8002/chatbot/process-message" \
+curl -X POST "http://localhost:8008/chatbot/process-message" \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "123",
@@ -396,7 +396,7 @@ curl -X POST "http://localhost:8002/chatbot/process-message" \
 ### **Exemplo 3: Validação de Segurança**
 
 ```bash
-curl -X POST "http://localhost:8002/chatbot/validate-input" \
+curl -X POST "http://localhost:8008/chatbot/validate-input" \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "123",
@@ -503,9 +503,9 @@ docker build -t chatbot-service .
 ### **Execução com Docker:**
 
 ```bash
-docker run -p 8002:8002 \
+docker run -p 8008:8008 \
   -e REDIS_URL=redis://redis:6379/9 \
-  -e AI_SERVICE_URL=http://ai-service:8003 \
+  -e AI_SERVICE_URL=http://ai-service:8012 \
   chatbot-service
 ```
 
@@ -517,10 +517,10 @@ services:
   chatbot-service:
     build: .
     ports:
-      - "8002:8002"
+      - "8008:8008"
     environment:
       - REDIS_URL=redis://redis:6379/9
-      - AI_SERVICE_URL=http://ai-service:8003
+      - AI_SERVICE_URL=http://ai-service:8012
     depends_on:
       - redis
       - ai-service
@@ -533,7 +533,7 @@ services:
   ai-service:
     image: ai-service:latest
     ports:
-      - "8003:8003"
+      - "8012:8012"
 ```
 
 ## **🔒 Segurança**
@@ -594,7 +594,7 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 Para suporte e dúvidas:
 
-- **Email**: suporte@ecommerce.com
+- **Email**: suporte@b3trader.com
 - **Documentação**: `/docs` (quando DEBUG=true)
 - **Issues**: GitHub Issues
 

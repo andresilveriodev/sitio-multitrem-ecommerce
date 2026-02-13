@@ -3,7 +3,6 @@ Filtros de mensagens para otimização de custos
 """
 
 import re
-import random
 from typing import Dict, Optional, Tuple
 from datetime import datetime
 import structlog
@@ -17,43 +16,29 @@ class MessageFilters:
     def __init__(self):
         # Respostas automáticas para perguntas frequentes
         self.auto_responses = {
-            # Saudações - mais amigáveis
-            r"^\s*(oi|olá|ola|hey|hi|hello)\s*$": {
-                "response": "Olá! 😊 Como posso ajudá-lo hoje com nossos produtos e pedidos?",
-                "confidence": 0.95,
-                "category": "greeting"
-            },
-            
-            # Saudações com contexto
-            r"\b(oi|olá|ola|hey|hi|hello)\b.*": {
+            # Saudações
+            r"\b(oi|olá|ola|hey|hi|hello)\b": {
                 "response": "Olá! Como posso ajudá-lo hoje?",
-                "confidence": 0.90,
+                "confidence": 0.95,
                 "category": "greeting"
             },
             
             # Saudações alternativas
             r"\b(tudo bem|tudo bom|td bem|td bom|tudo certo)\b\??": {
-                "response": "Tudo bem, sim! 😊 Como posso ajudá-lo hoje com o e-commerce?",
+                "response": "Tudo bem, sim! Como posso ajudá-lo hoje?",
                 "confidence": 0.95,
                 "category": "greeting"
             },
             
-            # Bom dia/tarde/noite
-            r"\b(bom dia|boa tarde|boa noite)\b": {
-                "response": "Bom dia! 😊 Como posso ajudá-lo hoje com nossos produtos?",
-                "confidence": 0.95,
-                "category": "greeting"
-            },
-            
-            # Perguntas sobre o sistema (amigáveis)
+            # Perguntas sobre o sistema
             r"\b(como você está|como vc está|como vai)\b": {
-                "response": "Estou muito bem, obrigado! 😊 Pronto para ajudá-lo com suas compras no nosso e-commerce.",
+                "response": "Estou funcionando perfeitamente! Pronto para ajudá-lo com suas dúvidas sobre investimentos e trading.",
                 "confidence": 0.90,
                 "category": "system_status"
             },
             
             r"\b(qual é o seu nome|como você se chama|quem é você)\b": {
-                "response": "Olá! Sou o assistente do e-commerce, especializado em ajudar com produtos, pedidos e compras. Como posso ajudá-lo hoje?",
+                "response": "Sou o assistente de IA do B3-Trader, especializado em ajudar com investimentos, análise de ações e estratégias de trading.",
                 "confidence": 0.95,
                 "category": "identity"
             },
@@ -66,103 +51,38 @@ class MessageFilters:
             },
             
             r"\b(obrigado|obrigada|valeu|thanks|thank you)\b": {
-                "response": "Por nada! 😊 Estou aqui para ajudar. Se precisar de mais alguma coisa sobre nossos produtos, é só perguntar!",
+                "response": "Por nada! Estou aqui para ajudar. Se precisar de mais alguma coisa, é só perguntar!",
                 "confidence": 0.95,
                 "category": "gratitude"
             },
             
-            r"\b(tchau|adeus|até logo|até mais|bye|goodbye)\b": {
-                "response": "Até logo! 😊 Volte sempre para conferir nossos produtos!",
+            r"\b(tchau|adeus|até logo|bye|goodbye)\b": {
+                "response": "Até logo! Tenha um ótimo dia de trading!",
                 "confidence": 0.95,
                 "category": "farewell"
             },
             
             r"\b(você pode me ajudar|pode me ajudar|ajuda)\b": {
-                "response": "Claro! Posso ajudá-lo com produtos, pedidos, compras, entregas e dúvidas sobre nosso e-commerce. O que você gostaria de saber?",
+                "response": "Claro! Posso ajudá-lo com análise de ações, estratégias de trading, informações sobre empresas, indicadores técnicos e muito mais. O que você gostaria de saber?",
                 "confidence": 0.90,
                 "category": "help_request"
             },
             
             # Perguntas sobre o sistema
             r"\b(como funciona|como usar|funcionalidades)\b": {
-                "response": "Posso ajudá-lo com produtos, pedidos, compras, carrinho, entregas e dúvidas sobre nosso e-commerce. Basta me fazer perguntas sobre produtos ou pedidos!",
+                "response": "Posso ajudá-lo com análise de ações, informações sobre empresas, estratégias de trading, indicadores técnicos e fundamentais. Basta me fazer perguntas específicas sobre o que você quer saber!",
                 "confidence": 0.85,
                 "category": "system_info"
             }
         }
         
-        # Palavras-chave relacionadas ao E-COMMERCE (contexto válido)
-        self.ecommerce_keywords = [
-            # Produtos e compras
-            "produto", "produtos", "comprar", "compra", "carrinho", "cesta",
-            "pedido", "pedidos", "encomenda", "entrega", "frete", "envio",
-            "preço", "preços", "valor", "desconto", "promoção", "oferta",
-            "categoria", "categorias", "buscar", "busca", "pesquisar", "procurar",
-            "estoque", "disponível", "disponibilidade", "adicionar", "remover",
-            "quantidade", "unidade", "parcelamento", "pagamento", "cartão",
-            "boleto", "pix", "cupom", "código", "desconto",
-            
-            # Pedidos e histórico
-            "meu pedido", "meus pedidos", "rastrear", "rastreamento", "status",
-            "cancelar", "cancelamento", "troca", "devolução", "reembolso",
-            "nota fiscal", "nf", "fatura", "recibo",
-            
-            # Conta e perfil
-            "minha conta", "perfil", "endereço", "endereços", "telefone",
-            "email", "senha", "cadastro", "dados pessoais",
-            
-            # Suporte e dúvidas sobre produtos
-            "dúvida", "dúvidas", "ajuda", "informação", "especificação",
-            "tamanho", "cor", "modelo", "marca", "garantia", "manual",
-            "instrução", "como usar", "funciona"
-        ]
-        
-        # Palavras-chave que indicam necessidade de IA (apenas para contexto de e-commerce)
-        self.ai_keywords = self.ecommerce_keywords.copy()
-        
-        # Assuntos FORA DO CONTEXTO do e-commerce (devem receber escape)
-        self.off_topic_keywords = [
-            # Clima e tempo
-            "clima", "tempo", "chuva", "sol", "temperatura", "previsão do tempo",
-            "meteorologia", "frio", "calor", "vento", "umidade",
-            
-            # Notícias gerais
-            "notícia", "notícias", "jornal", "jornalismo", "política", "eleição",
-            "presidente", "governo", "congresso", "senado",
-            
-            # Entretenimento
-            "filme", "filmes", "cinema", "série", "netflix", "streaming",
-            "música", "músicas", "artista", "cantor", "banda", "show",
-            "futebol", "time", "jogo", "jogos", "esporte", "esportes",
-            
-            # Educação e conhecimento geral
-            "história", "geografia", "matemática", "física", "química",
-            "biologia", "literatura", "livro", "livros", "estudar",
-            
-            # Saúde e medicina
-            "medicina", "médico", "doutor", "doença", "sintoma", "tratamento",
-            "remédio", "medicamento", "hospital", "clínica",
-            
-            # Tecnologia geral (não relacionada a produtos)
-            "programação", "código", "python", "javascript", "desenvolvimento",
-            "aplicativo", "app", "software", "hardware", "computador",
-            
-            # Conversas casuais
-            "como você está", "o que você faz", "onde você mora", "qual sua idade",
-            "você tem sentimentos", "você é humano", "você gosta",
-            
-            # Assuntos pessoais
-            "família", "amigos", "relacionamento", "namoro", "casamento",
-            "filhos", "filho", "filha", "pais", "mãe", "pai"
-        ]
-        
-        # Respostas simpáticas de escape para assuntos fora do contexto
-        self.off_topic_responses = [
-            "Olá! Sou especializado em ajudar com produtos, pedidos e dúvidas sobre compras no nosso e-commerce. Como posso ajudá-lo com isso hoje?",
-            "Oi! Estou aqui para ajudar você com produtos, compras e pedidos. Tem alguma dúvida sobre nossos produtos ou serviços?",
-            "Olá! Fico feliz em ajudar, mas meu foco é em produtos, pedidos e compras. Como posso ajudá-lo com isso?",
-            "Oi! Sou o assistente do e-commerce e posso ajudar com produtos, pedidos e compras. O que você gostaria de saber sobre nossos produtos?",
-            "Olá! Estou aqui para ajudar com questões relacionadas ao e-commerce - produtos, pedidos, entregas e compras. Como posso ajudar?"
+        # Palavras-chave que indicam necessidade de IA
+        self.ai_keywords = [
+            "análise", "ação", "ações", "bolsa", "investir", "compra", "venda",
+            "preço", "indicador", "gráfico", "tendência", "suporte", "resistência",
+            "empresa", "lucro", "receita", "dividendo", "balanço", "relatório",
+            "estratégia", "portfolio", "risco", "retorno", "mercado", "cotações",
+            "ibovespa", "petrobras", "vale", "itub", "bbas3", "petr4", "vale3"
         ]
         
         # Padrões de spam
@@ -197,62 +117,18 @@ class MessageFilters:
         
         return False
     
-    def is_off_topic(self, message: str) -> Tuple[bool, Optional[str]]:
-        """
-        Verifica se a mensagem está fora do contexto do e-commerce
-        
-        Returns:
-            Tuple[bool, Optional[str]]: (é off-topic, resposta de escape)
-        """
-        message_lower = message.lower()
-        
-        # Verifica se tem palavras-chave de e-commerce primeiro
-        has_ecommerce_keyword = any(keyword in message_lower for keyword in self.ecommerce_keywords)
-        
-        # Se tem palavra-chave de e-commerce, não é off-topic
-        if has_ecommerce_keyword:
-            return False, None
-        
-        # Verifica se tem palavras-chave de assuntos fora do contexto
-        for keyword in self.off_topic_keywords:
-            if keyword in message_lower:
-                # Retorna resposta de escape aleatória
-                escape_response = random.choice(self.off_topic_responses)
-                logger.info(f"Mensagem detectada como fora do contexto: {keyword}")
-                return True, escape_response
-        
-        # Se é uma pergunta complexa sem contexto de e-commerce, pode ser off-topic
-        if self._is_complex_question(message) and not has_ecommerce_keyword:
-            # Verifica se parece ser sobre e-commerce mesmo sem palavras-chave explícitas
-            # Perguntas sobre "isso", "aquilo", "produto" podem ser sobre e-commerce
-            if any(word in message_lower for word in ["isso", "aquilo", "produto", "item", "coisa"]):
-                return False, None
-            
-            # Se não tem contexto claro, é off-topic
-            escape_response = random.choice(self.off_topic_responses)
-            return True, escape_response
-        
-        return False, None
-    
     def requires_ai(self, message: str) -> bool:
-        """Verifica se a mensagem requer IA (apenas para contexto de e-commerce)"""
+        """Verifica se a mensagem requer IA"""
         message_lower = message.lower()
         
-        # Primeiro verifica se é off-topic - se for, NÃO precisa de IA
-        is_off, _ = self.is_off_topic(message)
-        if is_off:
-            return False
-        
-        # Se tem palavras-chave de e-commerce, provavelmente precisa de IA
+        # Se tem palavras-chave de IA, provavelmente precisa de IA
         for keyword in self.ai_keywords:
             if keyword in message_lower:
                 return True
         
-        # Se é uma pergunta complexa sobre e-commerce
+        # Se é uma pergunta complexa
         if self._is_complex_question(message):
-            # Verifica se tem algum contexto de e-commerce
-            if any(word in message_lower for word in ["produto", "pedido", "compra", "carrinho", "entrega"]):
-                return True
+            return True
         
         return False
     
@@ -308,8 +184,7 @@ class MessageFilters:
                 "valid": False,
                 "reason": "Mensagem vazia",
                 "requires_ai": False,
-                "urgency": "low",
-                "is_off_topic": False
+                "urgency": "low"
             }
         
         if len(message) > 1000:
@@ -317,8 +192,7 @@ class MessageFilters:
                 "valid": False,
                 "reason": "Mensagem muito longa",
                 "requires_ai": False,
-                "urgency": "low",
-                "is_off_topic": False
+                "urgency": "low"
             }
         
         if self.is_spam(message):
@@ -326,34 +200,13 @@ class MessageFilters:
                 "valid": False,
                 "reason": "Mensagem detectada como spam",
                 "requires_ai": False,
-                "urgency": "low",
-                "is_off_topic": False
-            }
-        
-        # Verifica se é off-topic ANTES de outras validações
-        is_off_topic, escape_response = self.is_off_topic(message)
-        if is_off_topic:
-            return {
-                "valid": True,
-                "is_off_topic": True,
-                "escape_response": escape_response,
-                "auto_respond": True,
-                "auto_response": {
-                    "response": escape_response,
-                    "confidence": 0.90,
-                    "category": "off_topic_escape"
-                },
-                "requires_ai": False,  # NÃO chama IA para assuntos off-topic
-                "urgency": "low",
-                "keywords": [],
-                "length": len(message)
+                "urgency": "low"
             }
         
         auto_respond, auto_response = self.should_auto_respond(message)
         
         return {
             "valid": True,
-            "is_off_topic": False,
             "auto_respond": auto_respond,
             "auto_response": auto_response,
             "requires_ai": self.requires_ai(message),

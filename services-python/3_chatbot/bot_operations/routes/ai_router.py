@@ -7,6 +7,8 @@ from pydantic import BaseModel
 import structlog
 
 from services.ai_integration import ai_integration
+from auth.dependencies import require_colaborador_role
+from fastapi import Depends
 
 logger = structlog.get_logger(__name__)
 
@@ -25,7 +27,10 @@ class ChatResponse(BaseModel):
 
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+async def chat(
+    request: ChatRequest,
+    current_user: dict = Depends(require_colaborador_role)
+):
     """
     Endpoint simplificado para chat com IA.
     Aceita apenas a mensagem e retorna a resposta.
@@ -57,7 +62,9 @@ async def chat(request: ChatRequest):
 
 
 @router.get("/providers")
-async def get_providers():
+async def get_providers(
+    current_user: dict = Depends(require_colaborador_role)
+):
     """Lista provedores disponíveis"""
     try:
         providers_data = await ai_integration.get_providers()

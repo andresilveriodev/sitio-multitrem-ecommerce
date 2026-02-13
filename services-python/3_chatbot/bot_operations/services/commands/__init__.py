@@ -15,6 +15,7 @@ from .types import (
 from .definitions import (
     VIEW_COMMANDS,
     CREATE_COMMANDS,
+    TRADE_COMMANDS,
     ALL_COMMANDS
 )
 from .validator import CommandValidator
@@ -32,6 +33,7 @@ __all__ = [
     "CommandConfirmation",
     "VIEW_COMMANDS",
     "CREATE_COMMANDS", 
+    "TRADE_COMMANDS",
     "ALL_COMMANDS",
     "CommandValidator",
     "CommandExecutor",

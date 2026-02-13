@@ -5,7 +5,7 @@ from psycopg2 import sql
 def check_table_structure():
     try:
         # Conectar ao banco
-        conn = psycopg2.connect('postgresql://postgres:123456@localhost:5434/sitio_multitrem')
+        conn = psycopg2.connect('postgresql://postgres:123456@localhost:5434/b3_trader')
         cur = conn.cursor()
         
         print("🔍 Verificando estrutura da tabela 'conversations'...")

@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 import os
 
 # Agora lendo de variável de ambiente, mas mantendo compatível
-DATABASE_URI = os.getenv("DATABASE_URI", 'postgresql://postgres:123456@localhost:5434/sitio_multitrem')
+DATABASE_URI = os.getenv("DATABASE_URI", 'postgresql://postgres:123456@localhost:5434/b3_trader')
 
 # Engine configurada
 engine = create_engine(DATABASE_URI, echo=False)
@@ -12,16 +12,15 @@ engine = create_engine(DATABASE_URI, echo=False)
 # Session original mantida
 Session = scoped_session(sessionmaker(bind=engine))
 
-# Base para os modelos com schema ai_management
+# Base para os modelos com schema chatbot
 Base = declarative_base()
-Base.metadata.schema = 'ai_management'
+Base.metadata.schema = 'chatbot'
 
 # Função para criar schema se não existir
 def create_schema_if_not_exists():
-    """Cria os schemas chatbot e ai_management se não existirem"""
+    """Cria o schema chatbot se não existir"""
     with engine.connect() as conn:
         conn.execute(text("CREATE SCHEMA IF NOT EXISTS chatbot"))
-        conn.execute(text("CREATE SCHEMA IF NOT EXISTS ai_management"))
         conn.commit()
 
 # Função para inicializar o banco

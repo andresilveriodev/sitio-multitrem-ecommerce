@@ -9,9 +9,9 @@ Este documento descreve a estrutura completa da base de dados criada para armaze
 - **SGBD:** PostgreSQL 11.7
 - **Host:** localhost
 - **Porta:** 5434
-- **Database:** `sitio_multitrem`
+- **Database:** `b3_trader`
 - **Schema:** `chatbot`
-- **URI:** `postgresql://postgres:123456@localhost:5434/sitio_multitrem`
+- **URI:** `postgresql://postgres:123456@localhost:5434/b3_trader`
 
 ### Ambiente
 - **Servidor API:** http://localhost:8012
@@ -159,7 +159,7 @@ response = requests.post(
 ```python
 from sqlalchemy import create_engine, text
 
-engine = create_engine("postgresql://postgres:123456@localhost:5434/sitio_multitrem")
+engine = create_engine("postgresql://postgres:123456@localhost:5434/b3_trader")
 
 with engine.connect() as conn:
     conn.execute(text("""

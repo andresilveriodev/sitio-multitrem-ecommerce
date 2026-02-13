@@ -318,19 +318,6 @@ class CommandExecutor:
                 symbol = parameters.get("symbol", "")
                 return f"Criar aba de análise para {symbol}?"
             
-            elif command.id == "create_order":
-                items_count = len(parameters.get("items", []))
-                return f"Criar pedido com {items_count} item(ns)?"
-            
-            elif command.id == "cancel_order":
-                order_id = parameters.get("order_id", "")
-                return f"Cancelar pedido {order_id}? Esta ação não pode ser desfeita."
-            
-            elif command.id == "update_order_stage":
-                order_id = parameters.get("order_id", "")
-                stage = parameters.get("stage", "")
-                return f"Avançar pedido {order_id} para etapa '{stage}'?"
-            
             # Caso padrão
             return base_message
             

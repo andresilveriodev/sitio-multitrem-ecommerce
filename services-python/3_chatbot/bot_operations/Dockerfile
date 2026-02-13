@@ -28,7 +28,7 @@ RUN adduser --disabled-password --gecos '' appuser && chown -R appuser:appuser /
 USER appuser
 
 # Expõe a porta
-EXPOSE 8008
+EXPOSE 8011
 
 # Comando para executar o serviço
 CMD ["python", "main.py"]

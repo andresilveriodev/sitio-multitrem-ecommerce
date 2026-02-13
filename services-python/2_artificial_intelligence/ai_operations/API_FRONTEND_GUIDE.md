@@ -264,6 +264,50 @@ curl -X POST "http://localhost:8012/ai/generate" \
 
 ---
 
+## 🚀 Casos de Uso para Homebroker
+
+### 1. Análise de Ações
+```json
+{
+  "message": "Analise a ação PETR4 considerando o cenário atual do mercado",
+  "provider": "openai",
+  "model": "gpt-5-mini",
+  "max_tokens": 200
+}
+```
+
+### 2. Configuração de Stop Loss
+```json
+{
+  "message": "Configure stop loss para VALE3: preço atual R$ 68,20, stop em R$ 65,00",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "max_tokens": 150
+}
+```
+
+### 3. Análise de Carteira
+```json
+{
+  "message": "Analise esta carteira: 40% PETR4, 30% VALE3, 20% ITUB4, 10% BBAS3",
+  "provider": "openai",
+  "model": "gpt-5-mini",
+  "max_tokens": 300
+}
+```
+
+### 4. Recomendações de Timing
+```json
+{
+  "message": "É 15:30 de uma sexta-feira. Devo comprar MGLU3 agora ou aguardar?",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "max_tokens": 200
+}
+```
+
+---
+
 ## ⚡ Dicas de Performance
 
 1. **Use gpt-5-nano** para respostas rápidas e baratas

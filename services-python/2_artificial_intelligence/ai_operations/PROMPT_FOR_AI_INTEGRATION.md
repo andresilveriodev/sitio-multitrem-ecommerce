@@ -11,7 +11,7 @@ Salvar TODAS as suas interações e comunicações na base de dados PostgreSQL p
 
 ## 🔗 **CONEXÃO COM A BASE DE DADOS**
 - **URL do Sistema:** http://localhost:8012
-- **Base de Dados:** PostgreSQL (sitio_multitrem/chatbot schema)
+- **Base de Dados:** PostgreSQL (b3_trader/chatbot schema)
 - **Status:** ✅ OPERACIONAL e testado
 
 ## 📊 **DADOS QUE VOCÊ DEVE SALVAR**
@@ -61,7 +61,7 @@ def salvar_interacao(dados):
 ```python
 from sqlalchemy import create_engine, text
 
-engine = create_engine("postgresql://postgres:123456@localhost:5434/sitio_multitrem")
+engine = create_engine("postgresql://postgres:123456@localhost:5434/b3_trader")
 
 def salvar_no_banco(dados):
     try:

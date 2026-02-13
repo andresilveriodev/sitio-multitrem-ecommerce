@@ -17,7 +17,7 @@ def test_psycopg2_connection():
         conn = psycopg2.connect(
             host="localhost",
             port="5434",
-            database="sitio_multitrem",
+            database="b3_trader",
             user="postgres",
             password="123456"
         )
@@ -48,7 +48,7 @@ def test_sqlalchemy_connection():
     
     try:
         # URI do banco baseada na configuração
-        database_uri = "postgresql://postgres:123456@localhost:5434/sitio_multitrem"
+        database_uri = "postgresql://postgres:123456@localhost:5434/b3_trader"
         engine = create_engine(database_uri)
         
         with engine.connect() as connection:

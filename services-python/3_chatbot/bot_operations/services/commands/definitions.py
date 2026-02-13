@@ -9,15 +9,6 @@ from .types import (
     ParameterDefinition,
     CommandResult
 )
-from .order_commands import (
-    create_order_action,
-    view_order_action,
-    list_orders_action,
-    track_order_action,
-    update_order_stage_action,
-    cancel_order_action,
-    process_order_with_ai_action
-)
 import structlog
 
 logger = structlog.get_logger(__name__)
@@ -188,6 +179,90 @@ async def create_analysis_tab_action(params: Dict[str, Any]) -> CommandResult:
         )
 
 
+async def prepare_buy_order_action(params: Dict[str, Any]) -> CommandResult:
+    """Ação para preparar ordem de compra (NÃO executa)"""
+    try:
+        symbol = params.get('symbol', '').upper()
+        quantity = params.get('quantity')
+        price = params.get('price')
+        
+        if not symbol:
+            return CommandResult(
+                success=False,
+                message="Símbolo do ativo é obrigatório",
+                error="symbol_required"
+            )
+        
+        if not quantity:
+            return CommandResult(
+                success=False,
+                message="Quantidade é obrigatória",
+                error="quantity_required"
+            )
+        
+        return CommandResult(
+            success=True,
+            message=f"Ordem de compra para {symbol} preparada com sucesso",
+            data={
+                "symbol": symbol,
+                "quantity": quantity,
+                "price": price,
+                "action": "prepare_buy_order",
+                "target": "frontend",
+                "note": "Ordem preparada - aguardando confirmação do usuário"
+            }
+        )
+    except Exception as e:
+        logger.error("Erro ao executar prepare_buy_order", error=str(e))
+        return CommandResult(
+            success=False,
+            message="Erro ao preparar ordem de compra",
+            error=str(e)
+        )
+
+
+async def prepare_sell_order_action(params: Dict[str, Any]) -> CommandResult:
+    """Ação para preparar ordem de venda (NÃO executa)"""
+    try:
+        symbol = params.get('symbol', '').upper()
+        quantity = params.get('quantity')
+        price = params.get('price')
+        
+        if not symbol:
+            return CommandResult(
+                success=False,
+                message="Símbolo do ativo é obrigatório",
+                error="symbol_required"
+            )
+        
+        if not quantity:
+            return CommandResult(
+                success=False,
+                message="Quantidade é obrigatória",
+                error="quantity_required"
+            )
+        
+        return CommandResult(
+            success=True,
+            message=f"Ordem de venda para {symbol} preparada com sucesso",
+            data={
+                "symbol": symbol,
+                "quantity": quantity,
+                "price": price,
+                "action": "prepare_sell_order",
+                "target": "frontend",
+                "note": "Ordem preparada - aguardando confirmação do usuário"
+            }
+        )
+    except Exception as e:
+        logger.error("Erro ao executar prepare_sell_order", error=str(e))
+        return CommandResult(
+            success=False,
+            message="Erro ao preparar ordem de venda",
+            error=str(e)
+        )
+
+
 # ============================================================================
 # DEFINIÇÕES DOS COMANDOS
 # ============================================================================
@@ -337,218 +412,77 @@ CREATE_COMMANDS: Dict[str, CommandDefinition] = {
     )
 }
 
-# Comandos de Pedidos e Entregas
-ORDER_COMMANDS: Dict[str, CommandDefinition] = {
-    "create_order": CommandDefinition(
-        id="create_order",
-        name="Criar Pedido",
-        description="Cria um novo pedido com itens e endereço de entrega",
+# Comandos de Trading (Sempre Confirmação)
+TRADE_COMMANDS: Dict[str, CommandDefinition] = {
+    "prepare_buy_order": CommandDefinition(
+        id="prepare_buy_order",
+        name="Preparar Ordem de Compra",
+        description="Prepara uma ordem de compra (NÃO executa)",
         requires_confirmation=True,
-        category=CommandCategory.CREATE,
-        permissions=["create_order"],
+        category=CommandCategory.TRADE,
+        permissions=["prepare_orders"],
         parameters=[
             ParameterDefinition(
-                name="items",
-                type="list",
+                name="symbol",
+                type="string",
                 required=True,
-                description="Lista de itens do pedido"
+                description="Símbolo do ativo"
             ),
             ParameterDefinition(
-                name="delivery_address",
-                type="dict",
-                required=False,
-                description="Endereço de entrega"
+                name="quantity",
+                type="integer",
+                required=True,
+                description="Quantidade de ações"
             ),
             ParameterDefinition(
-                name="payment_method",
-                type="string",
+                name="price",
+                type="float",
                 required=False,
-                description="Método de pagamento"
+                description="Preço limite (opcional - mercado se não informado)"
             )
         ],
-        action=create_order_action,
-        aliases=["pedido", "fazer pedido", "novo pedido", "criar pedido"],
+        action=prepare_buy_order_action,
+        aliases=["comprar", "buy", "compra"],
         examples=[
-            "Quero fazer um pedido",
-            "Criar pedido com 2kg de tomate",
-            "Fazer pedido"
+            "Prepare uma ordem de compra de 100 PETR4",
+            "Comprar 100 PETR4 a 38.50",
+            "prepare buy order PETR4 100 38.50"
         ]
     ),
     
-    "view_order": CommandDefinition(
-        id="view_order",
-        name="Ver Pedido",
-        description="Visualiza detalhes de um pedido",
-        requires_confirmation=False,
-        category=CommandCategory.VIEW,
-        permissions=["view_orders"],
-        parameters=[
-            ParameterDefinition(
-                name="order_id",
-                type="string",
-                required=False,
-                description="ID do pedido"
-            ),
-            ParameterDefinition(
-                name="order_number",
-                type="string",
-                required=False,
-                description="Número do pedido"
-            )
-        ],
-        action=view_order_action,
-        aliases=["ver pedido", "pedido", "detalhes pedido"],
-        examples=[
-            "Ver pedido PED-2024-001",
-            "Mostrar pedido",
-            "Detalhes do meu pedido"
-        ]
-    ),
-    
-    "list_orders": CommandDefinition(
-        id="list_orders",
-        name="Listar Pedidos",
-        description="Lista pedidos do usuário",
-        requires_confirmation=False,
-        category=CommandCategory.VIEW,
-        permissions=["view_orders"],
-        parameters=[
-            ParameterDefinition(
-                name="status",
-                type="string",
-                required=False,
-                description="Filtrar por status"
-            ),
-            ParameterDefinition(
-                name="limit",
-                type="int",
-                required=False,
-                description="Número máximo de pedidos"
-            )
-        ],
-        action=list_orders_action,
-        aliases=["meus pedidos", "pedidos", "listar pedidos", "histórico pedidos"],
-        examples=[
-            "Meus pedidos",
-            "Listar pedidos",
-            "Histórico de pedidos"
-        ]
-    ),
-    
-    "track_order": CommandDefinition(
-        id="track_order",
-        name="Acompanhar Pedido",
-        description="Acompanha o status e etapas de um pedido",
-        requires_confirmation=False,
-        category=CommandCategory.VIEW,
-        permissions=["view_orders"],
-        parameters=[
-            ParameterDefinition(
-                name="order_id",
-                type="string",
-                required=False,
-                description="ID do pedido"
-            ),
-            ParameterDefinition(
-                name="order_number",
-                type="string",
-                required=False,
-                description="Número do pedido"
-            )
-        ],
-        action=track_order_action,
-        aliases=["rastrear", "acompanhar", "status pedido", "onde está meu pedido"],
-        examples=[
-            "Onde está meu pedido?",
-            "Acompanhar pedido PED-2024-001",
-            "Status do pedido"
-        ]
-    ),
-    
-    "update_order_stage": CommandDefinition(
-        id="update_order_stage",
-        name="Atualizar Etapa do Pedido",
-        description="Avança pedido para próxima etapa (colheita, separação, envio, etc.)",
+    "prepare_sell_order": CommandDefinition(
+        id="prepare_sell_order",
+        name="Preparar Ordem de Venda",
+        description="Prepara uma ordem de venda (NÃO executa)",
         requires_confirmation=True,
-        category=CommandCategory.MODIFY,
-        permissions=["modify_orders"],
+        category=CommandCategory.TRADE,
+        permissions=["prepare_orders"],
         parameters=[
             ParameterDefinition(
-                name="order_id",
+                name="symbol",
                 type="string",
                 required=True,
-                description="ID do pedido"
+                description="Símbolo do ativo"
             ),
             ParameterDefinition(
-                name="stage",
-                type="string",
+                name="quantity",
+                type="integer",
                 required=True,
-                description="Nome da etapa (colheita, separacao, envio, etc.)"
-            )
-        ],
-        action=update_order_stage_action,
-        aliases=["avançar etapa", "próxima etapa", "atualizar pedido"],
-        examples=[
-            "Avançar pedido para separação",
-            "Próxima etapa do pedido"
-        ]
-    ),
-    
-    "cancel_order": CommandDefinition(
-        id="cancel_order",
-        name="Cancelar Pedido",
-        description="Cancela um pedido",
-        requires_confirmation=True,
-        category=CommandCategory.DELETE,
-        permissions=["cancel_orders"],
-        parameters=[
-            ParameterDefinition(
-                name="order_id",
-                type="string",
-                required=True,
-                description="ID do pedido"
-            )
-        ],
-        action=cancel_order_action,
-        aliases=["cancelar pedido", "cancelar"],
-        examples=[
-            "Cancelar pedido",
-            "Quero cancelar meu pedido"
-        ]
-    ),
-    
-    "process_order_with_ai": CommandDefinition(
-        id="process_order_with_ai",
-        name="Processar Pedido com IA",
-        description="Processa pedido usando IA para entender intenções e atualizar status",
-        requires_confirmation=False,
-        category=CommandCategory.MODIFY,
-        permissions=["modify_orders"],
-        parameters=[
-            ParameterDefinition(
-                name="order_id",
-                type="string",
-                required=True,
-                description="ID do pedido"
+                description="Quantidade de ações"
             ),
             ParameterDefinition(
-                name="message",
-                type="string",
-                required=True,
-                description="Mensagem do usuário sobre o pedido"
-            ),
-            ParameterDefinition(
-                name="context",
-                type="dict",
+                name="price",
+                type="float",
                 required=False,
-                description="Contexto adicional"
+                description="Preço limite (opcional - mercado se não informado)"
             )
         ],
-        action=process_order_with_ai_action,
-        aliases=["processar pedido", "ia pedido"],
+        action=prepare_sell_order_action,
+        aliases=["vender", "sell", "venda"],
         examples=[
-            "Processar pedido com IA",
-            "IA, atualize meu pedido"
+            "Prepare uma ordem de venda de 100 PETR4",
+            "Vender 100 PETR4 a 38.50",
+            "prepare sell order PETR4 100 38.50"
         ]
     )
 }
@@ -557,7 +491,7 @@ ORDER_COMMANDS: Dict[str, CommandDefinition] = {
 ALL_COMMANDS: Dict[str, CommandDefinition] = {
     **VIEW_COMMANDS,
     **CREATE_COMMANDS,
-    **ORDER_COMMANDS
+    **TRADE_COMMANDS
 }
 
 # Comandos PROIBIDOS (para referência)

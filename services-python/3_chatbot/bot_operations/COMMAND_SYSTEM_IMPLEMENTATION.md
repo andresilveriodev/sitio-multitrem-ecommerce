@@ -2,7 +2,7 @@
 
 ## 📋 Visão Geral
 
-Este documento descreve a implementação completa do sistema de comandos seguros para o chatbot do e-commerce, seguindo as especificações de segurança definidas no documento original.
+Este documento descreve a implementação completa do sistema de comandos seguros para o chatbot do homebroker, seguindo as especificações de segurança definidas no documento original.
 
 ## 🏗️ Arquitetura Implementada
 

@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Server Configuration
-HTTP_PORT = int(os.getenv("AI_SERVICE_PORT", 8003))
+HTTP_PORT = int(os.getenv("AI_SERVICE_PORT", 8012))
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",")
 
 # Database Configuration

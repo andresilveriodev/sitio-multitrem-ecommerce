@@ -16,13 +16,9 @@ def create_ai_management_tables():
     engine = create_engine(DATABASE_URL)
     
     with engine.connect() as conn:
-        # Criar schema ai_management se não existir
-        conn.execute(text("CREATE SCHEMA IF NOT EXISTS ai_management"))
-        conn.commit()
-        
-        # 1. Tabela ai_models (com schema)
+        # 1. Tabela ai_models
         conn.execute(text("""
-            CREATE TABLE IF NOT EXISTS ai_management.ai_models (
+            CREATE TABLE IF NOT EXISTS ai_models (
                 id SERIAL PRIMARY KEY,
                 model_id VARCHAR(100) UNIQUE NOT NULL,
                 name VARCHAR(200) NOT NULL,
@@ -39,9 +35,9 @@ def create_ai_management_tables():
             );
         """))
         
-        # 2. Tabela ai_subscriptions (com schema)
+        # 2. Tabela ai_subscriptions
         conn.execute(text("""
-            CREATE TABLE IF NOT EXISTS ai_management.ai_subscriptions (
+            CREATE TABLE IF NOT EXISTS ai_subscriptions (
                 id SERIAL PRIMARY KEY,
                 plan_id VARCHAR(100) UNIQUE NOT NULL,
                 name VARCHAR(200) NOT NULL,
@@ -56,12 +52,12 @@ def create_ai_management_tables():
             );
         """))
         
-        # 3. Tabela user_subscriptions (com schema)
+        # 3. Tabela user_subscriptions
         conn.execute(text("""
-            CREATE TABLE IF NOT EXISTS ai_management.user_subscriptions (
+            CREATE TABLE IF NOT EXISTS user_subscriptions (
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL REFERENCES public.users(id),
-                subscription_id INTEGER NOT NULL REFERENCES ai_management.ai_subscriptions(id),
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                subscription_id INTEGER NOT NULL REFERENCES ai_subscriptions(id),
                 status VARCHAR(20) DEFAULT 'active',
                 current_period_start TIMESTAMP,
                 current_period_end TIMESTAMP,
@@ -73,11 +69,11 @@ def create_ai_management_tables():
             );
         """))
         
-        # 4. Tabela user_ai_settings (com schema)
+        # 4. Tabela user_ai_settings
         conn.execute(text("""
-            CREATE TABLE IF NOT EXISTS ai_management.user_ai_settings (
+            CREATE TABLE IF NOT EXISTS user_ai_settings (
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER UNIQUE NOT NULL REFERENCES public.users(id),
+                user_id INTEGER UNIQUE NOT NULL REFERENCES users(id),
                 default_model VARCHAR(100) NOT NULL DEFAULT 'ollama',
                 preferred_models JSONB,
                 auto_fallback BOOLEAN DEFAULT TRUE,
@@ -87,11 +83,11 @@ def create_ai_management_tables():
             );
         """))
         
-        # 5. Tabela ai_usage_alerts (com schema)
+        # 5. Tabela ai_usage_alerts
         conn.execute(text("""
-            CREATE TABLE IF NOT EXISTS ai_management.ai_usage_alerts (
+            CREATE TABLE IF NOT EXISTS ai_usage_alerts (
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL REFERENCES public.users(id),
+                user_id INTEGER NOT NULL REFERENCES users(id),
                 alert_type VARCHAR(20) NOT NULL,
                 threshold DECIMAL(10,2) NOT NULL,
                 current_value DECIMAL(10,2) NOT NULL,
@@ -103,19 +99,19 @@ def create_ai_management_tables():
             );
         """))
         
-        # Índices para performance (com schema)
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_ai_models_model_id ON ai_management.ai_models(model_id);"))
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_ai_models_provider ON ai_management.ai_models(provider);"))
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_ai_subscriptions_plan_id ON ai_management.ai_subscriptions(plan_id);"))
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_user_subscriptions_user_id ON ai_management.user_subscriptions(user_id);"))
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_user_subscriptions_status ON ai_management.user_subscriptions(status);"))
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_user_ai_settings_user_id ON ai_management.user_ai_settings(user_id);"))
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_ai_usage_alerts_user_id ON ai_management.ai_usage_alerts(user_id);"))
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_ai_usage_alerts_type ON ai_management.ai_usage_alerts(alert_type);"))
+        # Índices para performance
+        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_ai_models_model_id ON ai_models(model_id);"))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_ai_models_provider ON ai_models(provider);"))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_ai_subscriptions_plan_id ON ai_subscriptions(plan_id);"))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_user_subscriptions_user_id ON user_subscriptions(user_id);"))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_user_subscriptions_status ON user_subscriptions(status);"))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_user_ai_settings_user_id ON user_ai_settings(user_id);"))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_ai_usage_alerts_user_id ON ai_usage_alerts(user_id);"))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_ai_usage_alerts_type ON ai_usage_alerts(alert_type);"))
         
-        # Dados iniciais - Modelos de IA (com schema)
+        # Dados iniciais - Modelos de IA
         conn.execute(text("""
-            INSERT INTO ai_management.ai_models (model_id, name, provider, is_paid, cost_per_1k_tokens, max_tokens_per_request, description, features, rate_limits) 
+            INSERT INTO ai_models (model_id, name, provider, is_paid, cost_per_1k_tokens, max_tokens_per_request, description, features, rate_limits) 
             VALUES 
             ('ollama', 'Ollama Local', 'Ollama', false, 0, 8192, 'Modelo local gratuito', '["chat", "analysis"]', '{"requestsPerMinute": 60, "requestsPerHour": 1000}'),
             ('deepseek', 'DeepSeek', 'DeepSeek', true, 0.0001, 4096, 'Modelo econômico para análise', '["chat", "analysis", "coding"]', '{"requestsPerMinute": 30, "requestsPerHour": 500}'),
@@ -124,9 +120,9 @@ def create_ai_management_tables():
             ON CONFLICT (model_id) DO NOTHING;
         """))
         
-        # Dados iniciais - Planos de assinatura (com schema)
+        # Dados iniciais - Planos de assinatura
         conn.execute(text("""
-            INSERT INTO ai_management.ai_subscriptions (plan_id, name, price, features, limits) 
+            INSERT INTO ai_subscriptions (plan_id, name, price, features, limits) 
             VALUES 
             ('free', 'Plano Gratuito', 0, '["chat", "basic_analysis"]', '{"maxRequestsPerMonth": 100, "maxTokensPerMonth": 50000, "maxCostPerMonth": 0}'),
             ('basic', 'Plano Básico', 29.90, '["chat", "analysis", "coding"]', '{"maxRequestsPerMonth": 1000, "maxTokensPerMonth": 500000, "maxCostPerMonth": 50}'),

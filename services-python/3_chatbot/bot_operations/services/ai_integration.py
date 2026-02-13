@@ -28,13 +28,13 @@ class AIServiceIntegration:
             timeout=self.timeout,
             base_url=self.base_url
         )
-        logger.info(f"Cliente HTTP inicializado para AI Service: {self.base_url}")
+        logger.info(f"HTTP client initialized for AI Service: {self.base_url}")
     
     async def disconnect(self):
         """Fecha cliente HTTP"""
         if self.client:
             await self.client.aclose()
-            logger.info("Cliente HTTP fechado")
+            logger.info("HTTP client closed")
     
     async def get_user_settings(self, user_id: str) -> Optional[Dict]:
         """Busca configurações de IA do usuário"""
@@ -43,13 +43,13 @@ class AIServiceIntegration:
             if response.status_code == 200:
                 return response.json()
             elif response.status_code == 404:
-                logger.warning(f"Configurações não encontradas para usuário {user_id}")
+                logger.warning(f"Settings not found for user {user_id}")
                 return None
             else:
-                logger.error(f"Erro ao buscar configurações: {response.status_code}")
+                logger.error(f"Error fetching settings: {response.status_code}")
                 return None
         except Exception as e:
-            logger.error(f"Erro na comunicação com AI Service: {e}")
+            logger.error(f"Error communicating with AI Service: {e}")
             return None
     
     async def get_user_subscription(self, user_id: str) -> Optional[Dict]:
@@ -184,23 +184,35 @@ class AIServiceIntegration:
                               context_summary: str = "",
                               user_preferences: Dict = None,
                               provider: Optional[str] = None,
-                              model: Optional[str] = None) -> Optional[Dict]:
+                              model: Optional[str] = None,
+                              investment_context: Optional[Dict] = None) -> Optional[Dict]:
         """
         Gera resposta da IA com suporte a contexto completo.
+        
+        Se investment_context for fornecido, usa endpoint completo com contexto.
+        Caso contrário, usa método simplificado apenas com mensagem.
         """
         start_time = time.time()
         
         try:
-            # Usa método completo com contexto
-            return await self._generate_response_with_context(
-                user_id=user_id,
-                message=message,
-                conversation_id=conversation_id,
-                context_summary=context_summary,
-                user_preferences=user_preferences,
-                provider=provider,
-                model=model
-            )
+            # Se tem contexto de investimentos, usa método completo
+            if investment_context:
+                logger.info(
+                    "Gerando resposta da IA com contexto de investimentos",
+                    user_id=user_id,
+                    conversation_id=conversation_id,
+                    has_context=True
+                )
+                return await self._generate_response_with_context(
+                    user_id=user_id,
+                    message=message,
+                    conversation_id=conversation_id,
+                    context_summary=context_summary,
+                    user_preferences=user_preferences,
+                    provider=provider,
+                    model=model,
+                    investment_context=investment_context
+                )
             
             # Método simplificado (sem contexto)
             logger.info(
@@ -262,7 +274,8 @@ class AIServiceIntegration:
         context_summary: str = "",
         user_preferences: Dict = None,
         provider: Optional[str] = None,
-        model: Optional[str] = None
+        model: Optional[str] = None,
+        investment_context: Optional[Dict] = None
     ) -> Optional[Dict]:
         """Gera resposta da IA enviando contexto completo para /ai/chat ou /ai/generate"""
         start_time = time.time()
@@ -273,6 +286,10 @@ class AIServiceIntegration:
                 "user_id": user_id,
                 "message": message
             }
+            
+            # Adiciona contexto de investimentos se disponível
+            if investment_context:
+                request_data["context"] = investment_context
             
             # Adiciona conversation_id se disponível
             if conversation_id:
@@ -726,13 +743,13 @@ class AIServiceIntegration:
         try:
             response = await self.client.get("/health")
             if response.status_code == 200:
-                logger.info("Conexão com AI Service validada")
+                logger.info("AI Service connection validated")
                 return True
             else:
-                logger.error(f"AI Service não está saudável: {response.status_code}")
+                logger.error(f"AI Service is not healthy: {response.status_code}")
                 return False
         except Exception as e:
-            logger.error(f"Erro ao validar conexão com AI Service: {e}")
+            logger.error(f"Error validating AI Service connection: {e}")
             return False
     
     async def check_user_limits(self, user_id: str) -> Dict[str, Any]:

@@ -429,25 +429,36 @@ class TelegramService:
                     "name": userinfo.get("name")
                 })
             
-            # Preparar credenciais para o chatbot client
-            credentials = None
-            if is_authenticated:
-                credentials = {
-                    "is_authenticated": True,
-                    "token": access_token,
-                    "keycloak_user_id": userinfo.get("sub"),
-                    "preferred_username": userinfo.get("preferred_username"),
-                    "email": userinfo.get("email")
-                }
-            
             # Chamar chatbot service
-            response = await self.chatbot_client.process_message(
-                user_id=telegram_user_id,
-                message=message,
-                session_id=f"telegram_{chat_id}",
-                metadata=metadata,
-                credentials=credentials
-            )
+            # Se usuário estiver autenticado, usar endpoint autenticado
+            if is_authenticated and access_token:
+                # Usar endpoint autenticado que valida perfil "colaborador"
+                response = await self.chatbot_client.process_message_authenticated(
+                    user_id=telegram_user_id,
+                    message=message,
+                    token=access_token,
+                    session_id=f"telegram_{chat_id}",
+                    conversation_id=None  # Opcional: buscar conversation_id se houver
+                )
+            else:
+                # Usar endpoint não autenticado (legado)
+                credentials = None
+                if is_authenticated:
+                    credentials = {
+                        "is_authenticated": True,
+                        "token": access_token,
+                        "keycloak_user_id": userinfo.get("sub"),
+                        "preferred_username": userinfo.get("preferred_username"),
+                        "email": userinfo.get("email")
+                    }
+                
+                response = await self.chatbot_client.process_message(
+                    user_id=telegram_user_id,
+                    message=message,
+                    session_id=f"telegram_{chat_id}",
+                    metadata=metadata,
+                    credentials=credentials
+                )
             
             if response and response.get("success"):
                 response_data = response.get("response", {})
@@ -461,7 +472,15 @@ class TelegramService:
                 return text if text else "Não consegui gerar uma resposta."
             else:
                 error = response.get("error", "Erro desconhecido") if response else "Erro ao processar mensagem"
-                logger.warning(f"Erro no chatbot: {error}")
+                status_code = response.get("status_code") if response else None
+                
+                logger.warning(f"Erro no chatbot: {error}", status_code=status_code, user_id=user_id)
+                
+                # Tratamento específico para erros de autenticação/autorização
+                if status_code == 401:
+                    return "🔐 Seu token de autenticação expirou. Por favor, faça login novamente."
+                elif status_code == 403:
+                    return "🔒 Acesso negado. Você precisa ter o perfil 'colaborador' para usar este recurso. Entre em contato com o administrador."
                 
                 # Mensagem de erro mais amigável para erros de conexão
                 if "connection" in str(error).lower() or "failed" in str(error).lower() or "unreachable" in str(error).lower():

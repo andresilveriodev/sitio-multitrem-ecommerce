@@ -33,9 +33,9 @@ class ContextService:
         try:
             self.redis = redis.from_url(settings.REDIS_URL)
             await self.redis.ping()
-            logger.info("ContextService conectado ao Redis")
+            logger.info("ContextService connected to Redis")
         except Exception as e:
-            logger.error(f"Erro ao conectar ContextService ao Redis: {e}")
+            logger.error(f"Error connecting ContextService to Redis: {e}")
             self.redis = None
     
     async def disconnect(self):

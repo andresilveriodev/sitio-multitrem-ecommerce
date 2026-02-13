@@ -29,9 +29,9 @@ class CacheService:
         try:
             self.redis = redis.from_url(settings.REDIS_URL)
             await self.redis.ping()
-            logger.info("Conectado ao Redis com sucesso")
+            logger.info("Connected to Redis successfully")
         except Exception as e:
-            logger.error(f"Erro ao conectar ao Redis: {e}")
+            logger.error(f"Error connecting to Redis: {e}")
             self.redis = None
     
     async def disconnect(self):
