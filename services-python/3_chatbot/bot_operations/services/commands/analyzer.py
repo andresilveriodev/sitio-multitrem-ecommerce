@@ -26,16 +26,24 @@ class CommandAnalyzer:
         for command_id, command in ALL_COMMANDS.items():
             command_patterns = []
             
-            # Padrão base do comando
+            # Padrão base do comando (com e sem "/")
             command_patterns.append(re.compile(
                 rf'\b{re.escape(command_id)}\b', 
                 re.IGNORECASE
             ))
+            command_patterns.append(re.compile(
+                rf'/{re.escape(command_id)}\b', 
+                re.IGNORECASE
+            ))
             
-            # Padrões dos aliases
+            # Padrões dos aliases (com e sem "/")
             for alias in command.aliases:
                 command_patterns.append(re.compile(
                     rf'\b{re.escape(alias)}\b', 
+                    re.IGNORECASE
+                ))
+                command_patterns.append(re.compile(
+                    rf'/{re.escape(alias)}\b', 
                     re.IGNORECASE
                 ))
             
@@ -68,11 +76,22 @@ class CommandAnalyzer:
             CommandAnalysis: Resultado da análise
         """
         try:
-            # Normalizar mensagem
-            processed_message = self._normalize_message(message)
-            
-            # Detectar comandos
-            detected_commands = await self._detect_commands(processed_message, user_permissions)
+            # Para comandos que começam com "/", usar mensagem original primeiro
+            # Isso garante que o "/" seja preservado para detecção
+            if message.strip().startswith('/'):
+                # Detectar comandos com mensagem original primeiro
+                detected_commands = await self._detect_commands(message, user_permissions)
+                # Se não encontrou, tentar com normalizada
+                if not detected_commands:
+                    processed_message = self._normalize_message(message)
+                    detected_commands = await self._detect_commands(processed_message, user_permissions)
+                else:
+                    processed_message = message
+            else:
+                # Normalizar mensagem
+                processed_message = self._normalize_message(message)
+                # Detectar comandos
+                detected_commands = await self._detect_commands(processed_message, user_permissions)
             
             if not detected_commands:
                 return CommandAnalysis(
@@ -116,11 +135,18 @@ class CommandAnalyzer:
     
     def _normalize_message(self, message: str) -> str:
         """Normaliza a mensagem para análise"""
-        # Converter para minúsculas
-        normalized = message.lower()
-        
-        # Remover caracteres especiais desnecessários
-        normalized = re.sub(r'[^\w\s\d\-\.]', ' ', normalized)
+        # Preservar comandos que começam com "/"
+        if message.strip().startswith('/'):
+            # Para comandos com "/", preservar o "/" e normalizar o resto
+            command_part = message.strip()
+            normalized = command_part.lower()
+            # Remover caracteres especiais exceto "/" e letras/números
+            normalized = re.sub(r'[^\w\s\d\-\./]', ' ', normalized)
+        else:
+            # Converter para minúsculas
+            normalized = message.lower()
+            # Remover caracteres especiais desnecessários
+            normalized = re.sub(r'[^\w\s\d\-\.]', ' ', normalized)
         
         # Normalizar espaços
         normalized = re.sub(r'\s+', ' ', normalized).strip()
@@ -148,16 +174,24 @@ class CommandAnalyzer:
                 matches = pattern.findall(message)
                 if matches:
                     # Calcular confiança baseada no tipo de match
-                    if pattern.pattern.lower() == command_id.lower():
-                        confidence = 0.9  # Match exato do ID
-                    elif any(alias.lower() in pattern.pattern.lower() for alias in command.aliases):
-                        confidence = 0.8  # Match de alias
+                    pattern_str = pattern.pattern.lower()
+                    
+                    # Se a mensagem começa com "/", dar mais confiança
+                    is_slash_command = message.strip().startswith('/')
+                    
+                    if pattern_str == command_id.lower() or f'/{command_id.lower()}' in pattern_str:
+                        confidence = 0.95 if is_slash_command else 0.9  # Match exato do ID
+                    elif any(f'/{alias.lower()}' in pattern_str or alias.lower() in pattern_str for alias in command.aliases):
+                        confidence = 0.9 if is_slash_command else 0.8  # Match de alias
                     else:
-                        confidence = 0.6  # Match parcial
+                        confidence = 0.7 if is_slash_command else 0.6  # Match parcial
                     
                     max_confidence = max(max_confidence, confidence)
             
-            if max_confidence > 0.5:  # Threshold mínimo
+            # Threshold mínimo: mais baixo para comandos com "/"
+            threshold = 0.3 if message.strip().startswith('/') else 0.5
+            
+            if max_confidence >= threshold:
                 detected.append({
                     "command": command,
                     "confidence": max_confidence
@@ -171,6 +205,11 @@ class CommandAnalyzer:
         user_permissions: List[str]
     ) -> bool:
         """Verifica se o usuário tem permissão para o comando"""
+        # Se o comando não requer permissões específicas, permite
+        if not command.permissions:
+            return True
+        
+        # Verifica se o usuário tem pelo menos uma das permissões necessárias
         for required_permission in command.permissions:
             if required_permission in user_permissions:
                 return True
@@ -218,6 +257,74 @@ class CommandAnalyzer:
                                 break
                         except (ValueError, TypeError):
                             continue
+            
+            elif param.name == "order_id":
+                # Extrair ID do pedido (número inteiro)
+                number_matches = self.number_pattern.findall(message)
+                if number_matches:
+                    for match in number_matches:
+                        try:
+                            order_id = int(float(match))
+                            if 1 <= order_id <= 999999:  # Range razoável
+                                parameters["order_id"] = order_id
+                                break
+                        except (ValueError, TypeError):
+                            continue
+            
+            elif param.name == "order_number":
+                # Extrair número do pedido (formato ORD-YYYYMMDD-XXXXX)
+                order_pattern = re.compile(r'\b(ORD-\d{8}-[A-Z0-9]{5})\b', re.IGNORECASE)
+                order_match = order_pattern.search(message.upper())
+                if order_match:
+                    parameters["order_number"] = order_match.group(1)
+            
+            elif param.name == "status":
+                # Extrair status (pending, confirmed, etc.)
+                status_pattern = re.compile(
+                    r'\b(pending|confirmed|processing|shipped|delivered|cancelled|rejected)\b',
+                    re.IGNORECASE
+                )
+                status_match = status_pattern.search(message)
+                if status_match:
+                    parameters["status"] = status_match.group(1).lower()
+            
+            elif param.name == "customer_id":
+                # Extrair ID do cliente (pode ser número ou string)
+                customer_pattern = re.compile(r'\bcustomer[_\s]?id[:\s]+(\w+)', re.IGNORECASE)
+                customer_match = customer_pattern.search(message)
+                if customer_match:
+                    parameters["customer_id"] = customer_match.group(1)
+                else:
+                    # Tentar extrair número que pode ser customer_id
+                    number_matches = self.number_pattern.findall(message)
+                    if number_matches and "customer" in message.lower():
+                        try:
+                            customer_id = int(float(number_matches[0]))
+                            parameters["customer_id"] = str(customer_id)
+                        except (ValueError, TypeError):
+                            pass
+            
+            elif param.name == "limit":
+                # Extrair limite (número)
+                limit_pattern = re.compile(r'\blimit[:\s]+(\d+)', re.IGNORECASE)
+                limit_match = limit_pattern.search(message)
+                if limit_match:
+                    try:
+                        parameters["limit"] = int(limit_match.group(1))
+                    except (ValueError, TypeError):
+                        pass
+            
+            elif param.name == "admin_notes":
+                # Extrair notas administrativas (texto após "notas:", "motivo:", etc.)
+                notes_patterns = [
+                    re.compile(r'\b(?:notas?|motivo|observações?)[:\s]+(.+?)(?:\n|$)', re.IGNORECASE),
+                    re.compile(r'["\'](.+?)["\']', re.IGNORECASE)
+                ]
+                for pattern in notes_patterns:
+                    notes_match = pattern.search(message)
+                    if notes_match:
+                        parameters["admin_notes"] = notes_match.group(1).strip()
+                        break
         
         return parameters
     

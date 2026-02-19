@@ -31,52 +31,76 @@ class PollingService:
         
         logger.info("Iniciando serviço de polling do Telegram...")
         
-        # Remover webhook ANTES de marcar como running (polling e webhook não podem coexistir)
-        # Tentar múltiplas vezes para garantir remoção com delays maiores
-        max_attempts = 5
-        webhook_removed = False
-        for attempt in range(max_attempts):
-            try:
-                await self._remove_webhook_if_exists()
-                # Aguardar para propagação do Telegram
-                await asyncio.sleep(2)
-                # Verificar se foi removido
-                webhook_info = await self.telegram_service.get_webhook_info()
-                webhook_url = webhook_info.get("result", {}).get("url") if webhook_info and webhook_info.get("result") else None
-                if webhook_url:
-                    logger.warning(f"Webhook ainda configurado após tentativa {attempt + 1}/{max_attempts} (URL: {webhook_url}). Tentando novamente...")
-                    await asyncio.sleep(2)  # Aguardar mais 2 segundos antes de tentar novamente
-                else:
-                    logger.info(f"Webhook confirmado como removido na tentativa {attempt + 1}")
-                    # Aguardar mais 3 segundos para garantir propagação completa
-                    logger.info("Aguardando 3 segundos para propagação completa da remoção do webhook...")
-                    await asyncio.sleep(3)
-                    webhook_removed = True
-                    break
-            except Exception as e:
-                logger.error(f"Erro ao remover webhook (tentativa {attempt + 1}/{max_attempts}): {e}")
-                if attempt < max_attempts - 1:
-                    await asyncio.sleep(2)
-        
-        # Verificar uma última vez antes de iniciar
-        if not webhook_removed:
-            try:
-                webhook_info = await self.telegram_service.get_webhook_info()
-                webhook_url = webhook_info.get("result", {}).get("url") if webhook_info and webhook_info.get("result") else None
-                if webhook_url:
-                    logger.error(f"Webhook ainda está configurado após todas as tentativas! URL: {webhook_url}")
-                    logger.error("Polling pode não funcionar corretamente. Tentando iniciar mesmo assim...")
-                else:
-                    logger.info("Webhook confirmado como removido na verificação final")
-                    webhook_removed = True
-            except Exception as e:
-                logger.error(f"Erro ao verificar webhook final: {e}")
+        # Remover webhook se existir (polling e webhook não podem coexistir)
+        await self._ensure_webhook_removed()
         
         self.running = True
         
         # Iniciar task de polling
         self.polling_task = asyncio.create_task(self._polling_loop())
         logger.info("Serviço de polling iniciado com sucesso")
+    
+    async def _ensure_webhook_removed(self):
+        """Garante que o webhook foi removido antes de iniciar polling"""
+        logger.info("Verificando e removendo webhook (se existir)...")
+        max_attempts = 3
+        
+        for attempt in range(max_attempts):
+            try:
+                # Verificar se há webhook configurado
+                logger.debug(f"Verificando webhook (tentativa {attempt + 1}/{max_attempts})...")
+                webhook_info = await self.telegram_service.get_webhook_info()
+                
+                webhook_url = None
+                if webhook_info and webhook_info.get("ok") and webhook_info.get("result"):
+                    webhook_url = webhook_info.get("result", {}).get("url", "")
+                    if webhook_url:
+                        webhook_url = webhook_url.strip()
+                
+                if webhook_url:
+                    logger.info(f"Webhook encontrado: {webhook_url} - Removendo... (tentativa {attempt + 1}/{max_attempts})")
+                    try:
+                        delete_result = await self.telegram_service.delete_webhook(drop_pending_updates=True)
+                        logger.info(f"Comando delete_webhook executado. Resultado: {delete_result}")
+                        await asyncio.sleep(3)  # Aguardar propagação (aumentado para 3 segundos)
+                        
+                        # Verificar se foi removido
+                        webhook_info_after = await self.telegram_service.get_webhook_info()
+                        webhook_url_after = None
+                        if webhook_info_after and webhook_info_after.get("ok") and webhook_info_after.get("result"):
+                            webhook_url_after = webhook_info_after.get("result", {}).get("url", "")
+                            if webhook_url_after:
+                                webhook_url_after = webhook_url_after.strip()
+                        
+                        if webhook_url_after:
+                            logger.warning(f"Webhook ainda configurado após remoção (URL: {webhook_url_after}). Tentando novamente...")
+                            if attempt < max_attempts - 1:
+                                await asyncio.sleep(3)
+                                continue
+                            else:
+                                logger.error(f"Webhook ainda configurado após {max_attempts} tentativas! URL: {webhook_url_after}")
+                                logger.error("Polling pode não funcionar corretamente enquanto o webhook estiver ativo.")
+                        else:
+                            logger.info("✅ Webhook removido com sucesso!")
+                            await asyncio.sleep(2)  # Aguardar propagação final
+                            return
+                    except Exception as delete_error:
+                        logger.error(f"Erro ao executar delete_webhook: {delete_error}", exc_info=True)
+                        if attempt < max_attempts - 1:
+                            await asyncio.sleep(2)
+                            continue
+                else:
+                    logger.info("✅ Nenhum webhook configurado - pronto para polling")
+                    return
+                    
+            except Exception as e:
+                logger.error(f"Erro ao verificar/remover webhook (tentativa {attempt + 1}): {e}", exc_info=True)
+                if attempt < max_attempts - 1:
+                    await asyncio.sleep(2)
+                else:
+                    logger.error("Não foi possível remover webhook após todas as tentativas. Polling pode não funcionar.")
+        
+        logger.warning("Finalizando verificação de webhook. Polling será iniciado mesmo se webhook ainda estiver ativo.")
     
     async def stop(self):
         """Para o serviço de polling"""
@@ -91,39 +115,6 @@ class PollingService:
                 pass
         
         logger.info("Serviço de polling parado")
-    
-    async def _remove_webhook_if_exists(self):
-        """Remove webhook se existir (polling e webhook não podem coexistir)"""
-        try:
-            logger.info("Verificando se há webhook configurado...")
-            webhook_info = await self.telegram_service.get_webhook_info()
-            
-            if webhook_info and webhook_info.get("result"):
-                webhook_url = webhook_info.get("result", {}).get("url")
-                if webhook_url:
-                    logger.warning(f"Webhook encontrado: {webhook_url} - Removendo...")
-                    await self.telegram_service.delete_webhook(drop_pending_updates=True)
-                    logger.info("Webhook removido com sucesso")
-                    
-                    # Verificar novamente para confirmar
-                    webhook_info_after = await self.telegram_service.get_webhook_info()
-                    if webhook_info_after and webhook_info_after.get("result", {}).get("url"):
-                        logger.error("Webhook ainda está configurado após tentativa de remoção!")
-                    else:
-                        logger.info("Webhook confirmado como removido")
-                else:
-                    logger.info("Nenhum webhook configurado")
-            else:
-                logger.info("Nenhum webhook configurado")
-        except Exception as e:
-            logger.error(f"Erro ao verificar/remover webhook: {e}", exc_info=True)
-            # Tentar remover mesmo assim
-            try:
-                logger.info("Tentando remover webhook forçadamente...")
-                await self.telegram_service.delete_webhook(drop_pending_updates=True)
-                logger.info("Webhook removido forçadamente")
-            except Exception as e2:
-                logger.error(f"Erro ao remover webhook forçadamente: {e2}")
     
     async def _polling_loop(self):
         """Loop principal de polling"""

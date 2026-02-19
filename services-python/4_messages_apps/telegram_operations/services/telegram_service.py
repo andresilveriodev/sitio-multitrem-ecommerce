@@ -133,42 +133,31 @@ class TelegramService:
                 # Retornar após processar logout (não continuar para chatbot)
                 return
             
-            # ========== VERIFICAÇÃO DE AUTENTICAÇÃO - DEVE SER A PRIMEIRA COISA APÓS EXTRAIR INFORMAÇÕES ==========
-            # NÃO PROCESSAR NADA ANTES DE VERIFICAR AUTENTICAÇÃO
-            print("=" * 80, file=sys.stderr)
-            print("INICIANDO VERIFICACAO DE AUTENTICACAO (ANTES DE QUALQUER PROCESSAMENTO)", file=sys.stderr)
-            print(f"user_id={user_id}, chat_id={chat_id}, text={text[:50]}", file=sys.stderr)
-            print("=" * 80, file=sys.stderr)
-            
-            logger.info("INICIANDO VERIFICACAO DE AUTENTICACAO", telegram_user_id=user_id, chat_id=chat_id)
-            
-            # FORÇAR VERIFICAÇÃO - SEMPRE VERIFICAR ANTES DE PROCESSAR
+            # ========== VERIFICAÇÃO DE AUTENTICAÇÃO ==========
+            # SEMPRE verificar autenticação e enviar link de login se não autenticado
+            # SEMPRE bloquear processamento com chatbot se não autenticado (não depende de REQUIRE_AUTH)
             auth_status = None
             is_authenticated = False
+            
             try:
-                print(f"Chamando get_user_auth_status para user_id={user_id}", file=sys.stderr)
                 auth_status = keycloak_auth_service.get_user_auth_status(user_id)
-                print(f"auth_status RAW: {auth_status}", file=sys.stderr)
                 is_authenticated = auth_status and auth_status.get("is_authenticated", False)
-                print(f"auth_status recebido: is_authenticated={is_authenticated}", file=sys.stderr)
-                print(f"auth_status type: {type(auth_status)}, keys: {auth_status.keys() if auth_status else 'None'}", file=sys.stderr)
                 
                 logger.info(
                     "Status de autenticação verificado",
                     telegram_user_id=user_id,
-                    is_authenticated=is_authenticated
+                    is_authenticated=is_authenticated,
+                    require_auth=settings.REQUIRE_AUTH
                 )
                 
-                # Se não autenticado, ENVIAR MENSAGEM DE AUTENTICAÇÃO E RETORNAR IMEDIATAMENTE (NÃO PROCESSAR)
-                # VERIFICAÇÃO RIGOROSA: Se auth_status é None, False, ou is_authenticated é False
+                # Se usuário não estiver autenticado, SEMPRE enviar link de login
                 if not auth_status or not is_authenticated or not auth_status.get("is_authenticated", False):
                     print("=" * 80, file=sys.stderr)
                     print(f"USUARIO NAO AUTENTICADO - user_id={user_id}", file=sys.stderr)
-                    print(f"auth_status={auth_status}, is_authenticated={is_authenticated}", file=sys.stderr)
-                    print("BLOQUEANDO PROCESSAMENTO - Enviando apenas mensagem de autenticacao", file=sys.stderr)
+                    print(f"REQUIRE_AUTH={settings.REQUIRE_AUTH}", file=sys.stderr)
                     print("=" * 80, file=sys.stderr)
                     
-                    logger.warning("USUARIO NAO AUTENTICADO - BLOQUEANDO PROCESSAMENTO", telegram_user_id=user_id, auth_status=auth_status)
+                    logger.warning("USUARIO NAO AUTENTICADO - Enviando link de login", telegram_user_id=user_id, auth_status=auth_status)
                     
                     auth_url, state = keycloak_auth_service.generate_authorization_url(
                         telegram_user_id=user_id,
@@ -177,37 +166,22 @@ class TelegramService:
                     
                     auth_message = (
                         "🔐 Você precisa estar autenticado para usar este bot.\n\n"
-                        "Por favor, clique no link abaixo para fazer login:\n"
-                        f"{auth_url}\n\n"
+                        "Por favor, <a href=\"{}\">clique aqui para fazer login</a>.\n\n"
                         "Após fazer login, você será redirecionado de volta para o Telegram."
-                    )
+                    ).format(auth_url)
                     
-                    print(f"Enviando APENAS mensagem de autenticacao para chat_id={chat_id}", file=sys.stderr)
-                    await self.send_message(chat_id=chat_id, text=auth_message)
-                    logger.info("Mensagem de autenticacao enviada - RETORNANDO SEM PROCESSAR", telegram_user_id=user_id)
-                    print("=" * 80, file=sys.stderr)
-                    print("RETORNANDO - NAO PROCESSAR COM CHATBOT - FIM DA FUNCAO", file=sys.stderr)
-                    print("=" * 80, file=sys.stderr)
-                    # CRÍTICO: Retornar aqui impede QUALQUER processamento com chatbot
-                    # NÃO CONTINUAR PARA O CHATBOT DE FORMA ALGUMA
-                    # NÃO CHAMAR _process_message_with_chatbot
-                    # NÃO ENVIAR NENHUMA OUTRA MENSAGEM
-                    # NÃO CONTINUAR O CÓDIGO ABAIXO
-                    return  # FIM DA FUNÇÃO - NÃO EXECUTAR MAIS NADA
+                    await self.send_message(chat_id=chat_id, text=auth_message, parse_mode="HTML")
+                    logger.info("Mensagem de autenticacao enviada - RETORNANDO SEM PROCESSAR COM CHATBOT", telegram_user_id=user_id)
+                    return  # SEMPRE bloquear processamento com chatbot se não autenticado
                     
             except Exception as e:
-                print("=" * 80, file=sys.stderr)
-                print(f"ERRO ao verificar autenticacao: {e}", file=sys.stderr)
-                print("Tentando enviar mensagem de autenticacao mesmo assim...", file=sys.stderr)
-                print("=" * 80, file=sys.stderr)
-                
                 logger.error(
                     "Erro ao verificar autenticação",
                     telegram_user_id=user_id,
                     error=str(e),
                     exc_info=True
                 )
-                # Em caso de erro, ainda assim pedir autenticação e RETORNAR
+                # Em caso de erro, tentar enviar link de login
                 try:
                     auth_url, state = keycloak_auth_service.generate_authorization_url(
                         telegram_user_id=user_id,
@@ -215,74 +189,113 @@ class TelegramService:
                     )
                     auth_message = (
                         "🔐 Você precisa estar autenticado para usar este bot.\n\n"
-                        "Por favor, clique no link abaixo para fazer login:\n"
-                        f"{auth_url}\n\n"
+                        "Por favor, <a href=\"{}\">clique aqui para fazer login</a>.\n\n"
                         "Após fazer login, você será redirecionado de volta para o Telegram."
-                    )
-                    await self.send_message(chat_id=chat_id, text=auth_message)
-                    print("Mensagem de autenticacao enviada apos erro - RETORNANDO", file=sys.stderr)
+                    ).format(auth_url)
+                    await self.send_message(chat_id=chat_id, text=auth_message, parse_mode="HTML")
+                    logger.info("Mensagem de autenticacao enviada apos erro na verificacao - RETORNANDO SEM PROCESSAR", telegram_user_id=user_id)
                 except Exception as e2:
                     logger.error("Erro ao enviar mensagem de autenticação", error=str(e2))
-                return  # IMPORTANTE: Retornar aqui também
+                
+                # SEMPRE bloquear processamento com chatbot se não autenticado
+                return
             
-            # ========== SÓ CHEGA AQUI SE O USUÁRIO ESTIVER AUTENTICADO ==========
-            # VERIFICAÇÃO ABSOLUTA - NUNCA PROCESSAR SEM AUTENTICAÇÃO
-            # Verificar TODAS as condições possíveis antes de processar
-            is_really_authenticated = (
-                auth_status is not None and
-                isinstance(auth_status, dict) and
-                auth_status.get("is_authenticated") is True and
-                is_authenticated is True
-            )
-            
-            if not is_really_authenticated:
-                print("=" * 80, file=sys.stderr)
-                print("ERRO CRÍTICO: Verificação final falhou! Retornando SEM PROCESSAR", file=sys.stderr)
-                print(f"is_really_authenticated={is_really_authenticated}", file=sys.stderr)
-                print(f"auth_status={auth_status}", file=sys.stderr)
-                print(f"is_authenticated={is_authenticated}", file=sys.stderr)
-                print("=" * 80, file=sys.stderr)
-                logger.error("ERRO CRÍTICO: Verificação final falhou - BLOQUEANDO PROCESSAMENTO", telegram_user_id=user_id)
-                # NÃO PROCESSAR - RETORNAR IMEDIATAMENTE
-                return  # FIM DA FUNÇÃO - NÃO EXECUTAR MAIS NADA
-            
+            # ========== PROCESSAR MENSAGEM COM CHATBOT ==========
+            # Só chega aqui se o usuário estiver autenticado
+            # Se autenticado, usar token para processar com chatbot
             print("=" * 80, file=sys.stderr)
-            print(f"USUARIO AUTENTICADO - Processando com chatbot - user_id={user_id}", file=sys.stderr)
+            if is_authenticated:
+                print(f"USUARIO AUTENTICADO - Processando com chatbot (com token) - user_id={user_id}", file=sys.stderr)
+                logger.info("USUARIO AUTENTICADO - Processando mensagem com chatbot", telegram_user_id=user_id)
+            else:
+                print(f"USUARIO NAO AUTENTICADO - Processando com chatbot (sem token) - user_id={user_id}", file=sys.stderr)
+                logger.info("USUARIO NAO AUTENTICADO - Processando mensagem sem autenticação", telegram_user_id=user_id)
             print("=" * 80, file=sys.stderr)
-            
-            # Usuário autenticado - continuar processamento
-            logger.info("USUARIO AUTENTICADO - Processando mensagem com chatbot", telegram_user_id=user_id)
-            userinfo = auth_status.get("userinfo", {})
-            logger.info(
-                "Informações do usuário autenticado",
-                telegram_user_id=user_id,
-                preferred_username=userinfo.get("preferred_username"),
-                keycloak_user_id=userinfo.get("sub")
-            )
             
             # Enviar indicador de digitação
             await self.send_chat_action(chat_id=chat_id, action="typing")
             
-            # Processar mensagem com o chatbot (com token de autenticação)
-            access_token = keycloak_auth_service.get_access_token(user_id)
-            logger.info("Enviando mensagem para chatbot com token de autenticação", telegram_user_id=user_id)
-            response_text = await self._process_message_with_chatbot(
+            # Obter token e userinfo se autenticado
+            access_token = None
+            userinfo = {}
+            if is_authenticated and auth_status:
+                access_token = keycloak_auth_service.get_access_token(user_id)
+                userinfo = auth_status.get("userinfo", {})
+                logger.info(
+                    "Informações do usuário autenticado",
+                    telegram_user_id=user_id,
+                    preferred_username=userinfo.get("preferred_username"),
+                    keycloak_user_id=userinfo.get("sub")
+                )
+            
+            # Processar mensagem com o chatbot
+            chatbot_response = await self._process_message_with_chatbot(
                 user_id=user_id,
                 username=username,
                 message=text,
                 chat_id=chat_id,
                 access_token=access_token,
-                userinfo=userinfo
+                userinfo=userinfo,
+                telegram_message=message,
+                update_id=update_id
             )
             
             # Enviar resposta para o Telegram
-            if response_text:
-                await self.send_message(chat_id=chat_id, text=response_text)
+            if chatbot_response and chatbot_response.get("text"):
+                text_response = chatbot_response.get("text")
+                reply_markup = chatbot_response.get("reply_markup")
+                parse_mode = chatbot_response.get("parse_mode")
+                edit_message = chatbot_response.get("edit_message", False)
+                message_id_to_edit = chatbot_response.get("message_id")
+                delete_user_message = chatbot_response.get("delete_user_message", False)
+                
+                # Verificar se deve editar mensagem existente (mantém chat limpo)
+                if edit_message and message_id_to_edit:
+                    # Editar mensagem existente
+                    await self.edit_message_text(
+                        chat_id=chat_id,
+                        message_id=message_id_to_edit,
+                        text=text_response,
+                        parse_mode=parse_mode,
+                        reply_markup=reply_markup
+                    )
+                else:
+                    # Enviar nova mensagem
+                    telegram_result = await self.send_message(
+                        chat_id=chat_id,
+                        text=text_response,
+                        parse_mode=parse_mode,
+                        reply_markup=reply_markup
+                    )
+                    
+                    # Capturar message_id da nova mensagem criada
+                    if telegram_result.get("ok") and telegram_result.get("result", {}).get("message_id"):
+                        new_message_id = telegram_result["result"]["message_id"]
+                        logger.info(
+                            "Nova mensagem criada",
+                            chat_id=chat_id,
+                            message_id=new_message_id
+                        )
+                
+                # Deletar mensagem do usuário se solicitado
+                if delete_user_message and message_id:
+                    try:
+                        await self.delete_message(chat_id=chat_id, message_id=message_id)
+                        logger.info(
+                            "Mensagem do usuário deletada",
+                            chat_id=chat_id,
+                            message_id=message_id
+                        )
+                    except Exception as e:
+                        logger.warning(
+                            "Erro ao deletar mensagem do usuário",
+                            chat_id=chat_id,
+                            message_id=message_id,
+                            error=str(e)
+                        )
             else:
-                # Se não houve resposta, verificar se foi erro de conexão
+                # Se não houve resposta, enviar mensagem de erro padrão
                 error_msg = "Desculpe, não consegui processar sua mensagem. Tente novamente."
-                if "connection" in str(response_text).lower() or "failed" in str(response_text).lower():
-                    error_msg = "Desculpe, o serviço de chatbot não está disponível no momento. Por favor, tente novamente em alguns instantes."
                 await self.send_message(
                     chat_id=chat_id,
                     text=error_msg
@@ -321,10 +334,16 @@ class TelegramService:
             data = callback_query.get("data")
             user_id = str(callback_query.get("from", {}).get("id", ""))
             
-            logger.info("Callback query recebido", query_id=query_id, data=data)
+            message_id = callback_query.get("message", {}).get("message_id")
+            username = callback_query.get("from", {}).get("username", "")
             
-            # Responder ao callback (obrigatório)
-            await self.answer_callback_query(query_id=query_id, text="Processando...")
+            logger.info(
+                "Callback query recebido",
+                query_id=query_id,
+                data=data,
+                chat_id=chat_id,
+                message_id=message_id
+            )
             
             # VERIFICAR AUTENTICAÇÃO ANTES DE PROCESSAR
             print("=" * 80, file=sys.stderr)
@@ -351,11 +370,10 @@ class TelegramService:
                     )
                     auth_message = (
                         "🔐 Você precisa estar autenticado para usar este bot.\n\n"
-                        "Por favor, clique no link abaixo para fazer login:\n"
-                        f"{auth_url}\n\n"
+                        "Por favor, <a href=\"{}\">clique aqui para fazer login</a>.\n\n"
                         "Após fazer login, você será redirecionado de volta para o Telegram."
-                    )
-                    await self.send_message(chat_id=chat_id, text=auth_message)
+                    ).format(auth_url)
+                    await self.send_message(chat_id=chat_id, text=auth_message, parse_mode="HTML")
                 except Exception as e2:
                     logger.error(f"Erro ao enviar mensagem de autenticação no callback: {e2}")
                 return  # NÃO PROCESSAR CALLBACK SEM AUTENTICAÇÃO
@@ -364,24 +382,224 @@ class TelegramService:
             access_token = keycloak_auth_service.get_access_token(user_id) if is_authenticated else None
             userinfo = auth_status.get("userinfo") if is_authenticated else None
             
-            # Processar com chatbot se houver dados
-            if data:
-                response_text = await self._process_message_with_chatbot(
-                    user_id=user_id,
-                    username=callback_query.get("from", {}).get("username", ""),
-                    message=data,
-                    chat_id=chat_id,
-                    access_token=access_token,
-                    userinfo=userinfo
-                )
+            # Processar com chatbot - enviar callback_query completo conforme especificação
+            chatbot_response = await self._process_callback_with_chatbot(
+                callback_query=callback_query,
+                user_id=user_id,
+                username=username,
+                chat_id=chat_id,
+                access_token=access_token,
+                userinfo=userinfo
+            )
+            
+            # Responder ao callback (obrigatório para remover loading)
+            # Texto vazio para não mostrar popup conforme especificação
+            await self.answer_callback_query(query_id=query_id, text="")
+            
+            if chatbot_response and chatbot_response.get("text"):
+                text_response = chatbot_response.get("text")
+                reply_markup = chatbot_response.get("reply_markup")
+                parse_mode = chatbot_response.get("parse_mode")
+                edit_message = chatbot_response.get("edit_message", False)
+                message_id_to_edit = chatbot_response.get("message_id") or message_id
+                delete_user_message = chatbot_response.get("delete_user_message", False)
+                user_message_id = chatbot_response.get("user_message_id")
                 
-                if response_text:
-                    await self.send_message(chat_id=chat_id, text=response_text)
+                # Verificar se deve editar mensagem existente (mantém chat limpo)
+                if edit_message and message_id_to_edit:
+                    # Editar mensagem existente (RECOMENDADO - mantém chat limpo)
+                    await self.edit_message_text(
+                        chat_id=chat_id,
+                        message_id=message_id_to_edit,
+                        text=text_response,
+                        parse_mode=parse_mode,
+                        reply_markup=reply_markup
+                    )
+                else:
+                    # Enviar nova mensagem (apenas se não tiver message_id)
+                    telegram_result = await self.send_message(
+                        chat_id=chat_id,
+                        text=text_response,
+                        parse_mode=parse_mode,
+                        reply_markup=reply_markup
+                    )
+                    
+                    # Capturar message_id da nova mensagem criada
+                    if telegram_result.get("ok") and telegram_result.get("result", {}).get("message_id"):
+                        new_message_id = telegram_result["result"]["message_id"]
+                        logger.info(
+                            "Nova mensagem criada (callback)",
+                            chat_id=chat_id,
+                            message_id=new_message_id
+                        )
+                
+                # Deletar mensagem do usuário se solicitado
+                # Usar user_message_id se fornecido, caso contrário usar message_id do callback
+                message_to_delete = user_message_id if user_message_id else None
+                if delete_user_message and message_to_delete:
+                    try:
+                        await self.delete_message(chat_id=chat_id, message_id=message_to_delete)
+                        logger.info(
+                            "Mensagem do usuário deletada (callback)",
+                            chat_id=chat_id,
+                            message_id=message_to_delete
+                        )
+                    except Exception as e:
+                        logger.warning(
+                            "Erro ao deletar mensagem do usuário (callback)",
+                            chat_id=chat_id,
+                            message_id=message_to_delete,
+                            error=str(e)
+                        )
                     
         except Exception as e:
             logger.error(f"Erro ao processar callback query: {e}", exc_info=True)
             # NÃO PROCESSAR EM CASO DE ERRO
             return
+    
+    async def _process_callback_with_chatbot(
+        self,
+        callback_query: Dict[str, Any],
+        user_id: str,
+        username: str,
+        chat_id: int,
+        access_token: Optional[str] = None,
+        userinfo: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Processa callback_query com o chatbot service
+        Envia callback_query completo conforme especificação
+        
+        Args:
+            callback_query: Objeto callback_query completo do Telegram
+            user_id: ID do usuário do Telegram
+            username: Nome de usuário do Telegram
+            chat_id: ID do chat do Telegram
+            access_token: Token de acesso do Keycloak (opcional)
+            userinfo: Informações do usuário do Keycloak (opcional)
+            
+        Returns:
+            Dicionário com 'text' (str) e opcionalmente 'reply_markup' (dict), 'edit_message' (bool) e 'message_id' (int)
+        """
+        try:
+            # Criar user_id único combinando telegram_id e chat_id
+            telegram_user_id = f"telegram_{user_id}_{chat_id}"
+            
+            # Preparar metadata com informações de autenticação
+            is_authenticated = access_token is not None and userinfo is not None
+            metadata = {
+                "telegram_user_id": user_id,
+                "telegram_username": username,
+                "telegram_chat_id": chat_id,
+                "platform": "telegram",
+                "is_authenticated": is_authenticated
+            }
+            
+            # Adicionar informações do usuário autenticado se disponível
+            if userinfo:
+                metadata.update({
+                    "keycloak_user_id": userinfo.get("sub"),
+                    "preferred_username": userinfo.get("preferred_username"),
+                    "email": userinfo.get("email"),
+                    "name": userinfo.get("name")
+                })
+            
+            # Chamar chatbot service com callback_query completo conforme especificação
+            if is_authenticated and access_token:
+                # Usar endpoint autenticado que valida perfil "colaborador"
+                response = await self.chatbot_client.process_message_authenticated(
+                    user_id=telegram_user_id,
+                    message="",  # Vazio pois vamos enviar callback_query
+                    token=access_token,
+                    session_id=f"telegram_{chat_id}",
+                    conversation_id=None,
+                    callback_query=callback_query  # Enviar callback_query completo
+                )
+            else:
+                # Fallback para endpoint não autenticado (não deveria acontecer se autenticação estiver correta)
+                logger.warning("Processando callback sem autenticação", user_id=user_id)
+                response = await self.chatbot_client.process_message(
+                    user_id=telegram_user_id,
+                    message="",
+                    session_id=f"telegram_{chat_id}",
+                    metadata=metadata,
+                    callback_query=callback_query
+                )
+            
+            if response and response.get("success"):
+                # Extrair texto da resposta
+                text = response.get("response", "")
+                if not text:
+                    text = "Não consegui gerar uma resposta."
+                
+                # Verificar se tem botões usando flag explícita
+                result = {"text": text}
+                
+                # Adicionar parse_mode se fornecido
+                if response.get("parse_mode"):
+                    result["parse_mode"] = response["parse_mode"]
+                
+                # Adicionar delete_user_message e user_message_id se fornecidos
+                if response.get("delete_user_message"):
+                    result["delete_user_message"] = response["delete_user_message"]
+                if response.get("user_message_id"):
+                    result["user_message_id"] = response["user_message_id"]
+                
+                if response.get("has_keyboard") and response.get("reply_markup"):
+                    result["reply_markup"] = response["reply_markup"]
+                    
+                    # Log para depuração
+                    keyboard_type = response.get("keyboard_type", "inline")
+                    buttons_count = len(response["reply_markup"].get("inline_keyboard", []))
+                    logger.info(
+                        "Adicionando teclado à resposta (callback)",
+                        chat_id=chat_id,
+                        keyboard_type=keyboard_type,
+                        buttons_count=buttons_count
+                    )
+                elif response.get("telegram_keyboard"):
+                    # Compatibilidade com alias telegram_keyboard
+                    result["reply_markup"] = response["telegram_keyboard"]
+                    logger.info("Adicionando teclado (via telegram_keyboard)", chat_id=chat_id)
+                
+                # Verificar se deve editar mensagem existente
+                edit_message = response.get("edit_message", False)
+                message_id_to_edit = response.get("message_id")
+                
+                if edit_message and message_id_to_edit:
+                    result["edit_message"] = True
+                    result["message_id"] = message_id_to_edit
+                    logger.info(
+                        "Resposta requer edição de mensagem (callback)",
+                        chat_id=chat_id,
+                        message_id=message_id_to_edit
+                    )
+                else:
+                    result["edit_message"] = False
+                
+                return result
+            else:
+                error = response.get("error", "Erro desconhecido") if response else "Erro ao processar callback"
+                status_code = response.get("status_code") if response else None
+                
+                logger.warning(f"Erro no chatbot (callback): {error}", status_code=status_code, user_id=user_id)
+                
+                # Tratamento específico para erros de autenticação/autorização
+                error_text = ""
+                if status_code == 401:
+                    error_text = "🔐 Seu token de autenticação expirou. Por favor, faça login novamente."
+                elif status_code == 403:
+                    error_text = "🔒 Acesso negado. Você precisa ter o perfil 'colaborador' para usar este recurso. Entre em contato com o administrador."
+                elif "connection" in str(error).lower() or "failed" in str(error).lower() or "unreachable" in str(error).lower():
+                    error_text = "Desculpe, o serviço de chatbot não está disponível no momento. Por favor, tente novamente em alguns instantes."
+                else:
+                    error_text = f"Desculpe, ocorreu um erro: {error}"
+                
+                return {"text": error_text, "edit_message": False}
+                
+        except Exception as e:
+            logger.error(f"Erro ao processar callback com chatbot: {e}", exc_info=True)
+            return {"text": "Desculpe, ocorreu um erro ao processar sua ação.", "edit_message": False}
     
     async def _process_message_with_chatbot(
         self,
@@ -390,8 +608,10 @@ class TelegramService:
         message: str,
         chat_id: int,
         access_token: Optional[str] = None,
-        userinfo: Optional[Dict[str, Any]] = None
-    ) -> Optional[str]:
+        userinfo: Optional[Dict[str, Any]] = None,
+        telegram_message: Optional[Dict[str, Any]] = None,
+        update_id: Optional[int] = None
+    ) -> Dict[str, Any]:
         """
         Processa mensagem com o chatbot service
         
@@ -402,9 +622,11 @@ class TelegramService:
             chat_id: ID do chat do Telegram
             access_token: Token de acesso do Keycloak (opcional)
             userinfo: Informações do usuário do Keycloak (opcional)
+            telegram_message: Objeto message completo do Telegram (opcional)
+            update_id: ID da atualização do Telegram (opcional)
             
         Returns:
-            Texto da resposta do chatbot
+            Dicionário com 'text' (str) e opcionalmente 'reply_markup' (dict)
         """
         try:
             # Criar user_id único combinando telegram_id e chat_id
@@ -433,12 +655,15 @@ class TelegramService:
             # Se usuário estiver autenticado, usar endpoint autenticado
             if is_authenticated and access_token:
                 # Usar endpoint autenticado que valida perfil "colaborador"
+                # Conforme especificação: passar objeto message completo e update_id
                 response = await self.chatbot_client.process_message_authenticated(
                     user_id=telegram_user_id,
                     message=message,
                     token=access_token,
                     session_id=f"telegram_{chat_id}",
-                    conversation_id=None  # Opcional: buscar conversation_id se houver
+                    conversation_id=None,  # Opcional: buscar conversation_id se houver
+                    telegram_message=telegram_message,
+                    update_id=update_id
                 )
             else:
                 # Usar endpoint não autenticado (legado)
@@ -461,15 +686,63 @@ class TelegramService:
                 )
             
             if response and response.get("success"):
-                response_data = response.get("response", {})
-                
                 # Extrair texto da resposta
-                if isinstance(response_data, dict):
-                    text = response_data.get("response", "")
-                else:
-                    text = str(response_data)
+                text = response.get("response", "")
+                if not text:
+                    # Tentar extrair de response_data se response for um dict aninhado
+                    response_data = response.get("response", {})
+                    if isinstance(response_data, dict):
+                        text = response_data.get("response", "")
+                    else:
+                        text = str(response_data) if response_data else ""
                 
-                return text if text else "Não consegui gerar uma resposta."
+                if not text:
+                    text = "Não consegui gerar uma resposta."
+                
+                # Verificar se tem botões usando flag explícita
+                result = {"text": text}
+                
+                # Adicionar parse_mode se fornecido
+                if response.get("parse_mode"):
+                    result["parse_mode"] = response["parse_mode"]
+                
+                # Adicionar delete_user_message se fornecido
+                if response.get("delete_user_message"):
+                    result["delete_user_message"] = response["delete_user_message"]
+                
+                if response.get("has_keyboard") and response.get("reply_markup"):
+                    result["reply_markup"] = response["reply_markup"]
+                    
+                    # Log para depuração
+                    keyboard_type = response.get("keyboard_type", "inline")
+                    buttons_count = len(response["reply_markup"].get("inline_keyboard", []))
+                    logger.info(
+                        "Adicionando teclado à resposta",
+                        chat_id=chat_id,
+                        keyboard_type=keyboard_type,
+                        buttons_count=buttons_count
+                    )
+                elif response.get("telegram_keyboard"):
+                    # Compatibilidade com alias telegram_keyboard
+                    result["reply_markup"] = response["telegram_keyboard"]
+                    logger.info("Adicionando teclado (via telegram_keyboard)", chat_id=chat_id)
+                
+                # Verificar se deve editar mensagem existente
+                edit_message = response.get("edit_message", False)
+                message_id_to_edit = response.get("message_id")
+                
+                if edit_message and message_id_to_edit:
+                    result["edit_message"] = True
+                    result["message_id"] = message_id_to_edit
+                    logger.info(
+                        "Resposta requer edição de mensagem",
+                        chat_id=chat_id,
+                        message_id=message_id_to_edit
+                    )
+                else:
+                    result["edit_message"] = False
+                
+                return result
             else:
                 error = response.get("error", "Erro desconhecido") if response else "Erro ao processar mensagem"
                 status_code = response.get("status_code") if response else None
@@ -477,27 +750,29 @@ class TelegramService:
                 logger.warning(f"Erro no chatbot: {error}", status_code=status_code, user_id=user_id)
                 
                 # Tratamento específico para erros de autenticação/autorização
+                error_text = ""
                 if status_code == 401:
-                    return "🔐 Seu token de autenticação expirou. Por favor, faça login novamente."
+                    error_text = "🔐 Seu token de autenticação expirou. Por favor, faça login novamente."
                 elif status_code == 403:
-                    return "🔒 Acesso negado. Você precisa ter o perfil 'colaborador' para usar este recurso. Entre em contato com o administrador."
-                
-                # Mensagem de erro mais amigável para erros de conexão
-                if "connection" in str(error).lower() or "failed" in str(error).lower() or "unreachable" in str(error).lower():
-                    return "Desculpe, o serviço de chatbot não está disponível no momento. Por favor, tente novamente em alguns instantes."
+                    error_text = "🔒 Acesso negado. Você precisa ter o perfil 'colaborador' para usar este recurso. Entre em contato com o administrador."
+                elif "connection" in str(error).lower() or "failed" in str(error).lower() or "unreachable" in str(error).lower():
+                    error_text = "Desculpe, o serviço de chatbot não está disponível no momento. Por favor, tente novamente em alguns instantes."
                 else:
-                    return f"Desculpe, ocorreu um erro: {error}"
+                    error_text = f"Desculpe, ocorreu um erro: {error}"
+                
+                return {"text": error_text}
                 
         except Exception as e:
             logger.error(f"Erro ao processar mensagem com chatbot: {e}", exc_info=True)
-            return None
+            return {"text": "Desculpe, ocorreu um erro ao processar sua mensagem."}
     
     async def send_message(
         self,
         chat_id: int,
         text: str,
         parse_mode: Optional[str] = None,
-        reply_to_message_id: Optional[int] = None
+        reply_to_message_id: Optional[int] = None,
+        reply_markup: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Envia mensagem para o Telegram
@@ -507,6 +782,7 @@ class TelegramService:
             text: Texto da mensagem
             parse_mode: Modo de parsing (HTML, Markdown, etc.)
             reply_to_message_id: ID da mensagem para responder
+            reply_markup: Teclado inline ou de resposta (opcional)
             
         Returns:
             Resposta da API do Telegram
@@ -526,6 +802,9 @@ class TelegramService:
             if reply_to_message_id:
                 payload["reply_to_message_id"] = reply_to_message_id
             
+            if reply_markup:
+                payload["reply_markup"] = reply_markup
+            
             response = await client.post(url, json=payload)
             response.raise_for_status()
             
@@ -536,6 +815,61 @@ class TelegramService:
             raise
         except Exception as e:
             logger.error(f"Erro ao enviar mensagem: {e}", exc_info=True)
+            raise
+    
+    async def edit_message_text(
+        self,
+        chat_id: int,
+        message_id: int,
+        text: str,
+        parse_mode: Optional[str] = None,
+        reply_markup: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Edita texto de uma mensagem existente no Telegram
+        
+        Args:
+            chat_id: ID do chat
+            message_id: ID da mensagem a ser editada
+            text: Novo texto da mensagem
+            parse_mode: Modo de parsing (HTML, Markdown, etc.)
+            reply_markup: Teclado inline ou de resposta (opcional)
+            
+        Returns:
+            Resposta da API do Telegram
+        """
+        try:
+            client = await self._get_client()
+            url = f"{self.base_url}/editMessageText"
+            
+            payload = {
+                "chat_id": chat_id,
+                "message_id": message_id,
+                "text": text
+            }
+            
+            if parse_mode:
+                payload["parse_mode"] = parse_mode
+            
+            if reply_markup:
+                payload["reply_markup"] = reply_markup
+            
+            response = await client.post(url, json=payload)
+            response.raise_for_status()
+            
+            logger.info(
+                "Mensagem editada com sucesso",
+                chat_id=chat_id,
+                message_id=message_id
+            )
+            
+            return response.json()
+            
+        except httpx.HTTPError as e:
+            logger.error(f"Erro HTTP ao editar mensagem: {e}")
+            raise
+        except Exception as e:
+            logger.error(f"Erro ao editar mensagem: {e}", exc_info=True)
             raise
     
     async def send_chat_action(self, chat_id: int, action: str = "typing"):
@@ -593,40 +927,46 @@ class TelegramService:
         except Exception as e:
             logger.debug(f"Erro ao responder callback query (não crítico): {e}")
     
-    async def set_webhook(
+    async def delete_message(
         self,
-        url: str,
-        secret_token: Optional[str] = None
+        chat_id: int,
+        message_id: int
     ) -> Dict[str, Any]:
         """
-        Configura webhook do Telegram
+        Deleta uma mensagem do Telegram
         
         Args:
-            url: URL do webhook
-            secret_token: Token secreto (opcional)
+            chat_id: ID do chat
+            message_id: ID da mensagem a ser deletada
             
         Returns:
             Resposta da API do Telegram
         """
         try:
             client = await self._get_client()
-            api_url = f"{self.base_url}/setWebhook"
+            url = f"{self.base_url}/deleteMessage"
             
-            payload = {"url": url}
+            payload = {
+                "chat_id": chat_id,
+                "message_id": message_id
+            }
             
-            if secret_token:
-                payload["secret_token"] = secret_token
-            
-            response = await client.post(api_url, json=payload)
+            response = await client.post(url, json=payload)
             response.raise_for_status()
+            
+            logger.info(
+                "Mensagem deletada com sucesso",
+                chat_id=chat_id,
+                message_id=message_id
+            )
             
             return response.json()
             
         except httpx.HTTPError as e:
-            logger.error(f"Erro HTTP ao configurar webhook: {e}")
+            logger.warning(f"Erro HTTP ao deletar mensagem: {e}")
             raise
         except Exception as e:
-            logger.error(f"Erro ao configurar webhook: {e}", exc_info=True)
+            logger.warning(f"Erro ao deletar mensagem: {e}", exc_info=True)
             raise
     
     async def get_webhook_info(self) -> Dict[str, Any]:
@@ -701,27 +1041,9 @@ class TelegramService:
             # Timeout é esperado em long polling quando não há atualizações
             return []
         except httpx.HTTPError as e:
-            # Erro 409 Conflict geralmente significa que há webhook configurado
+            # Erro 409 Conflict significa que há webhook configurado
             if hasattr(e, 'response') and e.response and e.response.status_code == 409:
-                logger.error("Erro 409 Conflict: Webhook ainda está configurado! Tentando remover...")
-                try:
-                    # Tentar remover webhook múltiplas vezes com delay maior
-                    for i in range(5):
-                        await self.delete_webhook(drop_pending_updates=True)
-                        await asyncio.sleep(2)  # Aguardar 2 segundos para propagação
-                        # Verificar se foi removido
-                        webhook_info = await self.get_webhook_info()
-                        webhook_url = webhook_info.get("result", {}).get("url") if webhook_info else None
-                        if not webhook_url:
-                            logger.info(f"Webhook removido após erro 409 (tentativa {i+1}). Aguardando mais 3 segundos para propagação...")
-                            await asyncio.sleep(3)  # Aguardar mais 3 segundos para garantir propagação
-                            break
-                        else:
-                            logger.warning(f"Webhook ainda configurado após tentativa {i+1} (URL: {webhook_url}), tentando novamente...")
-                    else:
-                        logger.error("Não foi possível remover webhook após 5 tentativas! Polling pode não funcionar.")
-                except Exception as e2:
-                    logger.error(f"Erro ao remover webhook após 409: {e2}")
+                logger.warning("Erro 409: Webhook ainda configurado. O serviço deve removê-lo ao iniciar.")
             else:
                 logger.error(f"Erro HTTP ao buscar atualizações: {e}")
             return []

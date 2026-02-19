@@ -8,12 +8,13 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 |-------|---------|--------|
 | 8000 | Gateway Service | ✅ |
 | 8001 | User Service | ✅ |
+| 8002 | Commerce Service | ✅ |
 | 8005 | AI Service Operations | ✅ |
 | 8006 | AI Service Users | ✅ |
 | 8010 | Chatbot Users Service | ✅ |
 | 8011 | Chatbot Operations Service | ✅ |
 | 8020 | WhatsApp Service | 🔜 |
-| 8021 | Telegram Service | ✅ |
+| 8021 | Telegram Service Operations (Colaboradores) | ✅ |
 
 ---
 
@@ -23,7 +24,8 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 |-------|---------|-----------|--------|-----------|
 | **8000** | Gateway Service | `0_gateway/` | ✅ Implementado | Gateway principal que roteia requisições para outros serviços |
 | **8001** | User Service | `1_users/` | ✅ Implementado | Serviço de autenticação e gerenciamento de usuários |
-| **8002-8004** | Reservado | - | 🔜 Reservado | Portas reservadas para serviços futuros |
+| **8002** | Commerce Service | `5_commerce/` | ✅ Implementado | Serviço de processamento de pedidos do e-commerce |
+| **8003-8004** | Reservado | - | 🔜 Reservado | Portas reservadas para serviços futuros |
 | **8005** | AI Service | `2_artificial_intelligence/ai_operations/` | ✅ Implementado | Serviço de inteligência artificial |
 | **8006-8009** | Reservado | - | 🔜 Reservado | Portas reservadas para serviços futuros |
 | **8010** | Chatbot Users Service | `3_chatbot/bot_users/` | ✅ Implementado | Serviço de chatbot para usuários - middleware entre frontend e AI Service |
@@ -40,6 +42,7 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 ### Serviços Core (8000-8019)
 - **8000**: Gateway Service
 - **8001**: User Service
+- **8002**: Commerce Service
 - **8005**: Ai Service
 - **8010**: Chatbot Users Service
 - **8011**: Chatbot Operations Service
@@ -90,12 +93,12 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 - **Variável de Ambiente:** `AI_SERVICE_PORT` (padrão: `8005`)
 - **Descrição:** Serviço de inteligência artificial que integra com múltiplos provedores (OpenAI, DeepSeek, Ollama). Gerencia analytics, transações, modelos e planos de pricing.
 
-#### 4. Portas Reservadas (8006-8009)
+#### 5. Portas Reservadas (8006-8009)
 - **Portas:** `8006-8009`
 - **Status:** 🔜 Reservado para futuros serviços
 - **Descrição:** Portas reservadas para expansão de serviços core do sistema.
 
-#### 5. Chatbot Users Service (Porta 8010)
+#### 6. Chatbot Users Service (Porta 8010)
 - **Porta:** `8010`
 - **Diretório:** `3_chatbot/bot_users/`
 - **Arquivo Principal:** `3_chatbot/bot_users/main.py`
@@ -108,7 +111,7 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 - **Dependências:**
   - AI Service (porta 8005)
 
-#### 6. Chatbot Operations Service (Porta 8011)
+#### 7. Chatbot Operations Service (Porta 8011)
 - **Porta:** `8011`
 - **Diretório:** `3_chatbot/bot_operations/`
 - **Arquivo Principal:** `3_chatbot/bot_operations/main.py`
@@ -122,14 +125,14 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
   - AI Service (porta 8005)
   - Market Data Service (configurado na porta 8000, pode estar no Gateway)
 
-#### 7. Portas Reservadas (8012-8019)
+#### 8. Portas Reservadas (8012-8019)
 - **Portas:** `8012-8019`
 - **Status:** 🔜 Reservado para futuros serviços
 - **Descrição:** Portas reservadas para expansão de serviços core do sistema.
 
 ### Serviços de Mensagens
 
-#### 8. WhatsApp Service (Porta 8020)
+#### 9. WhatsApp Service (Porta 8020)
 - **Porta:** `8020`
 - **Diretório:** `4_messages_apps/whatsapp/`
 - **Status:** 🔜 Planejado
@@ -138,7 +141,7 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 - **Dependências:**
   - Chatbot Users Service (porta 8010)
 
-#### 9. Telegram Service (Porta 8021)
+#### 10. Telegram Service (Porta 8021)
 - **Porta:** `8021`
 - **Diretório:** `4_messages_apps/telegram_operations/`
 - **Arquivo Principal:** `4_messages_apps/telegram_operations/main.py`
@@ -150,7 +153,7 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 - **Dependências:**
   - Chatbot Users Service (porta 8010)
 
-#### 10. Outros Message Apps (Portas 8022-8029)
+#### 11. Outros Message Apps (Portas 8022-8029)
 - **Portas:** `8022-8029`
 - **Diretório:** `4_messages_apps/`
 - **Status:** 🔜 Reservado para futuros serviços
@@ -160,6 +163,18 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
   - Discord
   - Slack
   - Outros serviços de mensageria
+
+#### 3. Commerce Service (Porta 8002)
+- **Porta:** `8002`
+- **Diretório:** `5_commerce/`
+- **Arquivo Principal:** `5_commerce/main.py`
+- **Arquivo de Configuração:** `5_commerce/config.py`
+- **URL Padrão:** `http://localhost:8002`
+- **Base Path:** `/api/v1`
+- **Documentação:** `http://localhost:8002/docs`
+- **Health Check:** `http://localhost:8002/health`
+- **Variável de Ambiente:** `PORT` (padrão: `8002`)
+- **Descrição:** Serviço de processamento de pedidos do e-commerce Sítio Multitrem. Gerencia produtos, clientes, pedidos, pagamentos e entregas.
 
 ---
 
@@ -188,16 +203,19 @@ Gateway Service (8000)
 1. **Frontend → Gateway (8000) → User Service (8001)**
    - Autenticação e gerenciamento de usuários
 
-2. **Frontend → Gateway (8000) → Chatbot Users Service (8010) → AI Service (8005)**
+2. **Frontend → Gateway (8000) → Commerce Service (8002)**
+   - Gerenciamento de produtos, pedidos, pagamentos e entregas
+
+3. **Frontend → Gateway (8000) → Chatbot Users Service (8010) → AI Service (8005)**
    - Conversas com chatbot (usuários)
 
-3. **Frontend → Gateway (8000) → Chatbot Operations Service (8011) → AI Service (8005)**
+4. **Frontend → Gateway (8000) → Chatbot Operations Service (8011) → AI Service (8005)**
    - Conversas com chatbot (operações)
 
-4. **WhatsApp → WhatsApp Service (8020) → Chatbot Users Service (8010) → AI Service (8005)**
+5. **WhatsApp → WhatsApp Service (8020) → Chatbot Users Service (8010) → AI Service (8005)**
    - Mensagens do WhatsApp processadas pelo chatbot
 
-5. **Telegram → Telegram Service (8021) → Chatbot Users Service (8010) → AI Service (8005)**
+6. **Telegram → Telegram Service (8021) → Chatbot Users Service (8010) → AI Service (8005)**
    - Mensagens do Telegram processadas pelo chatbot
 
 ---
@@ -207,6 +225,7 @@ Gateway Service (8000)
 ### Serviços Implementados
 - ✅ Gateway Service (8000)
 - ✅ User Service (8001)
+- ✅ Commerce Service (8002)
 - ✅ AI Service (8005)
 - ✅ Chatbot Users Service (8010)
 - ✅ Chatbot Operations Service (8011)
@@ -287,6 +306,9 @@ PORT=8000
 # User Service (1_users/.env)
 PORT=8001
 
+# Commerce Service (5_commerce/.env)
+PORT=8002
+
 # AI Service (2_artificial_intelligence/ai_operations/.env)
 AI_SERVICE_PORT=8005
 
@@ -304,6 +326,9 @@ PORT=8020
 
 # Telegram Service (4_messages_apps/telegram_operations/.env)
 PORT=8021
+
+# Commerce Service (5_commerce/.env)
+PORT=8002
 ```
 
 ---

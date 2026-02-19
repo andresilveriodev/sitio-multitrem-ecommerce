@@ -72,7 +72,9 @@ class CommandExecutor:
                 return True, "Comando aguardando confirmação", None, confirmation
             
             # 4. Executar diretamente
-            result = await self._execute_command_action(command, request.parameters)
+            # Adicionar user_id aos parâmetros para comandos que precisam
+            params_with_user = {**request.parameters, "user_id": request.user_id}
+            result = await self._execute_command_action(command, params_with_user)
             
             # 5. Atualizar status
             execution.status = CommandStatus.SUCCESS if result.success else CommandStatus.FAILED
@@ -177,8 +179,9 @@ class CommandExecutor:
             execution.status = CommandStatus.CONFIRMED
             execution.confirmed_at = datetime.now()
             
-            # Executar ação
-            result = await self._execute_command_action(command, execution.parameters)
+            # Executar ação - adicionar user_id aos parâmetros
+            params_with_user = {**execution.parameters, "user_id": execution.user_id}
+            result = await self._execute_command_action(command, params_with_user)
             
             # Atualizar status final
             execution.status = CommandStatus.SUCCESS if result.success else CommandStatus.FAILED

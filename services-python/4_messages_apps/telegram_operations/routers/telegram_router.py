@@ -146,9 +146,8 @@ async def auth_callback(
                 logger.error(f"Erro ao enviar mensagem de confirmação no Telegram: {e}", exc_info=True)
                 # Continuar mesmo se falhar o envio da mensagem
         
-        # Redirecionar para o bot do Telegram (similar ao Java: tg://resolve?domain=bot_username)
-        # Por enquanto, retornamos uma página de sucesso com link para o bot
-        bot_username = settings.TELEGRAM_BOT_TOKEN.split(":")[0] if settings.TELEGRAM_BOT_TOKEN else "seu_bot"
+        # Redirecionar para o bot do Telegram Web
+        telegram_redirect_url = "https://web.telegram.org/k/#@BaculejoBot"
         
         return HTMLResponse(
             content=f"""
@@ -156,14 +155,14 @@ async def auth_callback(
                 <head>
                     <meta charset="UTF-8">
                     <title>Autenticação Concluída</title>
-                    <meta http-equiv="refresh" content="3;url=https://t.me/{bot_username}">
+                    <meta http-equiv="refresh" content="3;url={telegram_redirect_url}">
                 </head>
                 <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
                     <h1 style="color: #0088cc;">✅ Autenticação Concluída!</h1>
                     <p>Olá, <strong>{userinfo.get('preferred_username', 'Usuário')}</strong>!</p>
                     <p>Sua autenticação foi realizada com sucesso.</p>
                     <p>Você será redirecionado para o Telegram em alguns segundos...</p>
-                    <p><a href="https://t.me/{bot_username}" style="color: #0088cc;">Clique aqui se não for redirecionado</a></p>
+                    <p><a href="{telegram_redirect_url}" style="color: #0088cc;">Clique aqui se não for redirecionado</a></p>
                 </body>
             </html>
             """

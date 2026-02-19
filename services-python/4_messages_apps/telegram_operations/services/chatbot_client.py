@@ -43,7 +43,8 @@ class ChatbotClient:
         message: str,
         session_id: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
-        credentials: Optional[Dict[str, Any]] = None
+        credentials: Optional[Dict[str, Any]] = None,
+        callback_query: Optional[Dict[str, Any]] = None
     ) -> Optional[Dict[str, Any]]:
         """
         Processa mensagem através do Chatbot Service
@@ -62,18 +63,24 @@ class ChatbotClient:
             client = await self._get_client()
             url = f"{self.base_url}/chatbot/process-message"
             
-            payload = {
-                "user_id": user_id,
-                "message": message,
-                "content_type": "text/plain"
-            }
-            
-            if session_id:
-                payload["session_id"] = session_id
-            
-            if metadata:
-                # Adicionar metadata ao contexto se necessário
-                payload["context"] = metadata
+            # Se callback_query estiver disponível, enviar callback_query completo
+            if callback_query:
+                payload = {
+                    "callback_query": callback_query
+                }
+            else:
+                payload = {
+                    "user_id": user_id,
+                    "message": message,
+                    "content_type": "text/plain"
+                }
+                
+                if session_id:
+                    payload["session_id"] = session_id
+                
+                if metadata:
+                    # Adicionar metadata ao contexto se necessário
+                    payload["context"] = metadata
             
             # Preparar headers com token JWT se disponível
             headers = {}
@@ -94,8 +101,9 @@ class ChatbotClient:
             logger.info(
                 "Enviando mensagem para chatbot",
                 user_id=user_id,
-                message_preview=message[:50],
-                is_authenticated=credentials is not None and credentials.get("is_authenticated", False) if credentials else False
+                message_preview=message[:50] if isinstance(message, str) else "objeto message",
+                is_authenticated=credentials is not None and credentials.get("is_authenticated", False) if credentials else False,
+                has_callback_query=callback_query is not None
             )
             
             response = await client.post(url, json=payload, headers=headers)
@@ -132,51 +140,73 @@ class ChatbotClient:
         session_id: Optional[str] = None,
         conversation_id: Optional[int] = None,
         provider: Optional[str] = None,
-        model: Optional[str] = None
+        model: Optional[str] = None,
+        telegram_message: Optional[Dict[str, Any]] = None,
+        update_id: Optional[int] = None,
+        callback_query: Optional[Dict[str, Any]] = None
     ) -> Optional[Dict[str, Any]]:
         """
         Processa mensagem através do endpoint autenticado do Chatbot Service
         Requer token JWT válido e perfil "colaborador"
         
-        CORRIGIDO: Usa o endpoint /chatbot/process-message que já requer autenticação JWT
+        Conforme especificação: Usa o endpoint /chatbot/process-message-authenticated
+        com headers X-Telegram-Bot-Token e Authorization
         
         Args:
             user_id: ID do usuário
-            message: Texto da mensagem
+            message: Texto da mensagem ou objeto message completo do Telegram
             token: Token JWT do Keycloak (obrigatório)
             session_id: ID da sessão (opcional)
             conversation_id: ID da conversa (opcional)
             provider: Provedor de IA (opcional)
             model: Modelo de IA (opcional)
+            telegram_message: Objeto message completo do Telegram (opcional)
+            update_id: ID da atualização do Telegram (opcional)
             
         Returns:
             Resposta do chatbot service
         """
         try:
             client = await self._get_client()
-            # CORRIGIDO: Usar endpoint /chatbot/process-message que já requer autenticação
-            url = f"{self.base_url}/chatbot/process-message"
+            # Conforme especificação: usar endpoint /chatbot/process-message-authenticated
+            url = f"{self.base_url}/chatbot/process-message-authenticated"
             
-            payload = {
-                "user_id": user_id,
-                "message": message,
-                "content_type": "text/plain"
-            }
+            # Preparar payload conforme especificação
+            # Se callback_query estiver disponível, enviar callback_query completo
+            if callback_query:
+                payload = {
+                    "callback_query": callback_query
+                }
+            # Se telegram_message estiver disponível, usar formato da especificação
+            elif telegram_message:
+                payload = {
+                    "message": telegram_message,
+                    "update_id": update_id
+                }
+            else:
+                # Fallback para formato legado
+                payload = {
+                    "user_id": user_id,
+                    "message": message,
+                    "content_type": "text/plain"
+                }
+                
+                if session_id:
+                    payload["session_id"] = session_id
+                
+                if conversation_id:
+                    payload["conversation_id"] = conversation_id
+                
+                if provider:
+                    payload["provider"] = provider
+                
+                if model:
+                    payload["model"] = model
             
-            if session_id:
-                payload["session_id"] = session_id
-            
-            if conversation_id:
-                payload["conversation_id"] = conversation_id
-            
-            if provider:
-                payload["provider"] = provider
-            
-            if model:
-                payload["model"] = model
-            
-            # IMPORTANTE: Token JWT no header Authorization
+            # IMPORTANTE: Headers conforme especificação
+            # X-Telegram-Bot-Token e Authorization: Bearer {token}
             headers = {
+                "X-Telegram-Bot-Token": settings.TELEGRAM_BOT_TOKEN,
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json"
             }
@@ -184,9 +214,11 @@ class ChatbotClient:
             logger.info(
                 "Enviando mensagem para chatbot (autenticado)",
                 user_id=user_id,
-                message_preview=message[:50],
+                message_preview=message[:50] if isinstance(message, str) else "objeto message",
                 has_token=bool(token),
-                endpoint="process-message"
+                endpoint="process-message-authenticated",
+                has_telegram_message=telegram_message is not None,
+                has_callback_query=callback_query is not None
             )
             
             response = await client.post(url, json=payload, headers=headers)
@@ -197,7 +229,8 @@ class ChatbotClient:
             logger.info(
                 "Resposta recebida do chatbot (autenticado)",
                 user_id=user_id,
-                success=result.get("success")
+                success=result.get("success"),
+                has_keyboard=result.get("has_keyboard", False)
             )
             
             return result

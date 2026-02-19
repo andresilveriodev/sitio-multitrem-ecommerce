@@ -14,13 +14,11 @@ class Settings(BaseSettings):
     # Configurações básicas
     DEBUG: bool = os.getenv("DEBUG", "false").lower() == "true"
     HOST: str = os.getenv("HOST", "127.0.0.1")  # Usando 127.0.0.1 para evitar problemas de permissão no Windows
-    PORT: int = int(os.getenv("PORT", "8022"))  # Alterado para 8022 devido a bloqueio da 8021 no Windows
+    PORT: int = int(os.getenv("PORT", "8021"))
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
     
     # Telegram Bot Configuration
     TELEGRAM_BOT_TOKEN: str = ""
-    TELEGRAM_WEBHOOK_URL: str = ""
-    TELEGRAM_WEBHOOK_SECRET: str = ""
     
     # Chatbot Service
     CHATBOT_SERVICE_URL: str = os.getenv("CHATBOT_SERVICE_URL", "http://localhost:8002")
@@ -35,11 +33,11 @@ class Settings(BaseSettings):
     KEYCLOAK_REALM: str = os.getenv("KEYCLOAK_REALM", "auth_sso")
     KEYCLOAK_CLIENT_ID: str = os.getenv("KEYCLOAK_CLIENT_ID", "auth_client")
     KEYCLOAK_CLIENT_SECRET: str = os.getenv("KEYCLOAK_CLIENT_SECRET", "e56cf527-d5d9-4b52-bd9f-1e87c8f288de")
-    KEYCLOAK_REDIRECT_URI: str = os.getenv("KEYCLOAK_REDIRECT_URI", "http://localhost:8022/telegram/auth/callback")
+    KEYCLOAK_REDIRECT_URI: str = os.getenv("KEYCLOAK_REDIRECT_URI", "http://localhost:8021/telegram/auth/callback")
     KEYCLOAK_SCOPE: str = os.getenv("KEYCLOAK_SCOPE", "openid profile email offline_access")
     
     # URL base do serviço (para callbacks)
-    SERVICE_BASE_URL: str = os.getenv("SERVICE_BASE_URL", "http://localhost:8022")
+    SERVICE_BASE_URL: str = os.getenv("SERVICE_BASE_URL", "http://localhost:8021")
     
     # CORS - será processado manualmente
     _allowed_origins_str: str = ""
@@ -48,6 +46,9 @@ class Settings(BaseSettings):
     
     # Redis (opcional, para cache)
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/10")
+    
+    # Autenticação obrigatória (padrão: False - permite mensagens sem autenticação)
+    REQUIRE_AUTH: bool = os.getenv("REQUIRE_AUTH", "false").lower() == "true"
     
     @property
     def ALLOWED_ORIGINS(self) -> List[str]:

@@ -100,6 +100,22 @@ class PermissionManager:
                 "risk": "crítico"
             },
             
+            # Permissões de pedidos (e-commerce)
+            "view_orders": {
+                "name": "Visualizar Pedidos",
+                "description": "Permite visualizar pedidos de clientes",
+                "category": PermissionCategory.VIEW,
+                "level": PermissionLevel.BASIC,
+                "risk": "baixo"
+            },
+            "process_orders": {
+                "name": "Processar Pedidos",
+                "description": "Permite aprovar, rejeitar e atualizar status de pedidos",
+                "category": PermissionCategory.MODIFY,
+                "level": PermissionLevel.PREMIUM,
+                "risk": "médio"
+            },
+            
             # Permissões administrativas
             "admin_users": {
                 "name": "Administrar Usuários",
@@ -125,7 +141,8 @@ class PermissionManager:
                 "view_book", 
                 "view_watchlist",
                 "create_multibox",
-                "modify_watchlist"
+                "modify_watchlist",
+                "view_orders"
             },
             PermissionLevel.PREMIUM: {
                 "view_positions",
@@ -133,7 +150,9 @@ class PermissionManager:
                 "view_watchlist", 
                 "create_multibox",
                 "modify_watchlist",
-                "create_analysis"
+                "create_analysis",
+                "view_orders",
+                "process_orders"
             },
             PermissionLevel.TRADER: {
                 "view_positions",
@@ -142,7 +161,9 @@ class PermissionManager:
                 "create_multibox", 
                 "modify_watchlist",
                 "create_analysis",
-                "prepare_orders"
+                "prepare_orders",
+                "view_orders",
+                "process_orders"
             },
             PermissionLevel.PROFESSIONAL: {
                 "view_positions",
@@ -152,7 +173,9 @@ class PermissionManager:
                 "modify_watchlist", 
                 "create_analysis",
                 "prepare_orders",
-                "execute_orders"
+                "execute_orders",
+                "view_orders",
+                "process_orders"
             },
             PermissionLevel.ADMIN: {
                 "view_positions",
@@ -163,6 +186,8 @@ class PermissionManager:
                 "create_analysis", 
                 "prepare_orders",
                 "execute_orders",
+                "view_orders",
+                "process_orders",
                 "admin_users",
                 "admin_system"
             }
@@ -340,7 +365,12 @@ class PermissionManager:
                 "add_watchlist": ["modify_watchlist"],
                 "create_analysis_tab": ["create_analysis"],
                 "prepare_buy_order": ["prepare_orders"],
-                "prepare_sell_order": ["prepare_orders"]
+                "prepare_sell_order": ["prepare_orders"],
+                "list_orders": ["view_orders"],
+                "show_order": ["view_orders"],
+                "approve_order": ["process_orders"],
+                "reject_order": ["process_orders"],
+                "update_order_status": ["process_orders"]
             }
             
             required_permissions = command_permissions.get(target_command, [])

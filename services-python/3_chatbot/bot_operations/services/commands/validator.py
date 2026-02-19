@@ -80,6 +80,10 @@ class CommandValidator:
     ) -> bool:
         """Valida se o usuário tem as permissões necessárias"""
         try:
+            # Se o comando não requer permissões específicas (lista vazia), permite
+            if not command.permissions or len(command.permissions) == 0:
+                return True
+            
             # Verificar se o usuário tem pelo menos uma das permissões necessárias
             for required_permission in command.permissions:
                 if required_permission in user_permissions:

@@ -70,3 +70,25 @@ def require_colaborador_role(
     )
     
     return current_user
+
+
+def check_colaborador_role(current_user: Dict[str, Any]) -> bool:
+    """
+    Verifica se o usuário tem role 'colaborador' sem levantar exceção.
+    Útil para verificações condicionais.
+    
+    Args:
+        current_user: Claims do token JWT
+        
+    Returns:
+        bool: True se tem role 'colaborador', False caso contrário
+    """
+    realm_roles = current_user.get('realm_access', {}).get('roles', [])
+    resource_access = current_user.get('resource_access', {})
+    client_roles = []
+    for resource, access in resource_access.items():
+        if isinstance(access, dict) and 'roles' in access:
+            client_roles.extend(access.get('roles', []))
+    
+    all_roles = realm_roles + client_roles
+    return 'colaborador' in all_roles

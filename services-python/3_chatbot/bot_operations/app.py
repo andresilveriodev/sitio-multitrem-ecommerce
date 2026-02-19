@@ -7,11 +7,12 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 import structlog
 
 from config import settings
-from routes import chat_router, analytics_router, ai_router
+from routes import chat_router, analytics_router, ai_router, telegram_router
 from services.cache_service import cache_service
 from services.context_service import context_service
 from services.ai_integration import ai_integration
 from services.market_service import market_service
+from services.database_service import database_service
 
 logger = structlog.get_logger(__name__)
 
@@ -44,6 +45,12 @@ def create_app() -> FastAPI:
             await context_service.connect()
             await ai_integration.connect()
             
+            # Database Service - necessário para CRUD de produtos
+            try:
+                await database_service.connect()
+            except Exception as e:
+                logger.warning(f"Database Service not available (non-critical): {e}")
+            
             # Market Service é opcional - não falha se não estiver disponível
             try:
                 await market_service.connect()
@@ -63,6 +70,7 @@ def create_app() -> FastAPI:
             await cache_service.disconnect()
             await context_service.disconnect()
             await ai_integration.disconnect()
+            await database_service.disconnect()
             await market_service.disconnect()
             
             logger.info("Chatbot Operations Service shut down successfully")
@@ -73,6 +81,7 @@ def create_app() -> FastAPI:
     app.include_router(chat_router)
     app.include_router(analytics_router)
     app.include_router(ai_router)
+    app.include_router(telegram_router)
     
     @app.get("/health")
     async def health_check():
