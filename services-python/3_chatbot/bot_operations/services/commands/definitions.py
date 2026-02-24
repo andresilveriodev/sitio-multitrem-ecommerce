@@ -114,6 +114,9 @@ async def show_menu_action(params: Dict[str, Any]) -> CommandResult:
             [
                 {"text": "👤 Clientes", "callback_data": "menu_clientes"},
                 {"text": "⚙️ Admin", "callback_data": "menu_admin"}
+            ],
+            [
+                {"text": "❌ Sair", "callback_data": "menu_sair"}
             ]
         ]
         
@@ -161,7 +164,8 @@ async def show_pedidos_menu_action(params: Dict[str, Any]) -> CommandResult:
                 {"text": "📊 Resumo por Data", "callback_data": "pedido_resumo"}
             ],
             [
-                {"text": "🔙 Voltar", "callback_data": "menu_voltar"}
+                {"text": "🔙 Voltar", "callback_data": "menu_voltar"},
+                {"text": "❌ Sair", "callback_data": "menu_sair"}
             ]
         ]
         

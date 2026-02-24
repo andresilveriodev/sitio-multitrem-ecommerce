@@ -250,6 +250,12 @@ async def send_or_edit_telegram_message(processed: dict):
   - Presente quando `edit_message: true`
   - Obrigatório para `editMessageText`
 
+- **`delete_message`** (boolean): Indica se deve excluir a mensagem
+  - `true`: Usar `deleteMessage` para excluir a mensagem do chat
+  - `false` ou ausente: Não excluir mensagem
+  - **IMPORTANTE**: Quando `true`, NÃO editar ou enviar nova mensagem, apenas excluir
+  - **CRÍTICO**: Verificar esta flag ANTES de processar `edit_message` ou `sendMessage`
+
 ### Campos de Botões
 
 - **`reply_markup`** (object): Formato direto para Telegram Bot API
@@ -393,6 +399,28 @@ async def handle_callback_query(callback_query: dict, keycloak_token: str):
         if chatbot_data.get("has_keyboard") and chatbot_data.get("reply_markup"):
             telegram_payload["reply_markup"] = chatbot_data["reply_markup"]
         
+        # Verificar se deve EXCLUIR mensagem (verificar ANTES de editar/enviar)
+        delete_message = chatbot_data.get("delete_message", False)
+        message_id_to_delete = chatbot_data.get("message_id") or message_id
+        
+        if delete_message and message_id_to_delete:
+            # Excluir mensagem (NÃO editar ou enviar nova)
+            async with httpx.AsyncClient() as client:
+                telegram_response = await client.post(
+                    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/deleteMessage",
+                    json={
+                        "chat_id": chat_id,
+                        "message_id": message_id_to_delete
+                    }
+                )
+                telegram_response.raise_for_status()
+                logger.info(
+                    "Mensagem excluída com sucesso",
+                    message_id=message_id_to_delete,
+                    chat_id=chat_id
+                )
+                return telegram_response.json()
+        
         # Verificar se deve editar mensagem existente (mantém chat limpo)
         edit_message = chatbot_data.get("edit_message", False)
         message_id_to_edit = chatbot_data.get("message_id") or message_id
@@ -505,30 +533,52 @@ async def handle_callback_query(callback_query: dict, keycloak_token: str):
         "text": chatbot_data.get("response", "")
     }
     
-    # 4. Adicionar botões se existirem
+    # 4. Verificar se deve EXCLUIR mensagem (verificar ANTES de editar/enviar)
+    delete_message = chatbot_data.get("delete_message", False)
+    message_id_to_delete = chatbot_data.get("message_id") or message_id
+    
+    if delete_message and message_id_to_delete:
+        # Excluir mensagem (NÃO editar ou enviar nova)
+        async with httpx.AsyncClient() as client:
+            telegram_response = await client.post(
+                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/deleteMessage",
+                json={
+                    "chat_id": chat_id,
+                    "message_id": message_id_to_delete
+                }
+            )
+            telegram_response.raise_for_status()
+            logger.info(
+                "Mensagem excluída com sucesso",
+                message_id=message_id_to_delete,
+                chat_id=chat_id
+            )
+            return telegram_response.json()
+    
+    # 5. Adicionar botões se existirem
     if chatbot_data.get("has_keyboard") and chatbot_data.get("reply_markup"):
         telegram_payload["reply_markup"] = chatbot_data["reply_markup"]
     
-        # 5. Verificar se deve editar mensagem existente
-        if chatbot_data.get("edit_message") and chatbot_data.get("message_id"):
-            # Editar mensagem existente (recomendado - mantém chat limpo)
-            telegram_payload["message_id"] = chatbot_data["message_id"]
-            async with httpx.AsyncClient() as client:
-                telegram_response = await client.post(
-                    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/editMessageText",
-                    json=telegram_payload
-                )
-                telegram_response.raise_for_status()
-                return telegram_response.json()
-        else:
-            # Enviar nova mensagem (apenas se não tiver message_id)
-            async with httpx.AsyncClient() as client:
-                telegram_response = await client.post(
-                    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-                    json=telegram_payload
-                )
-                telegram_response.raise_for_status()
-                return telegram_response.json()
+    # 6. Verificar se deve editar mensagem existente
+    if chatbot_data.get("edit_message") and chatbot_data.get("message_id"):
+        # Editar mensagem existente (recomendado - mantém chat limpo)
+        telegram_payload["message_id"] = chatbot_data["message_id"]
+        async with httpx.AsyncClient() as client:
+            telegram_response = await client.post(
+                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/editMessageText",
+                json=telegram_payload
+            )
+            telegram_response.raise_for_status()
+            return telegram_response.json()
+    else:
+        # Enviar nova mensagem (apenas se não tiver message_id)
+        async with httpx.AsyncClient() as client:
+            telegram_response = await client.post(
+                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                json=telegram_payload
+            )
+            telegram_response.raise_for_status()
+            return telegram_response.json()
 ```
 
 ### Callbacks Disponíveis

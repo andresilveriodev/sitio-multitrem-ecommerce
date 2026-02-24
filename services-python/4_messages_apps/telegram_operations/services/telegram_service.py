@@ -241,6 +241,43 @@ class TelegramService:
             )
             
             # Enviar resposta para o Telegram
+            # IMPORTANTE: Verificar delete_message ANTES de qualquer outra ação
+            delete_message = chatbot_response.get("delete_message", False) if chatbot_response else False
+            message_id_to_delete = chatbot_response.get("message_id") if chatbot_response else None
+            chat_id_to_delete = chatbot_response.get("chat_id") if chatbot_response else None
+            
+            # Usar chat_id do chatbot_response se disponível, caso contrário usar do message
+            chat_id_to_delete = chat_id_to_delete or chat_id
+            
+            logger.info(
+                "Verificando delete_message (mensagem)",
+                delete_message=delete_message,
+                message_id_to_delete=message_id_to_delete,
+                chat_id_to_delete=chat_id_to_delete,
+                has_text=bool(chatbot_response.get("text") if chatbot_response else False),
+                text_preview=chatbot_response.get("text", "")[:50] if chatbot_response and chatbot_response.get("text") else "",
+                edit_message=chatbot_response.get("edit_message", False) if chatbot_response else False
+            )
+            
+            if delete_message and message_id_to_delete and chat_id_to_delete:
+                # Deletar mensagem do bot (NÃO editar nem enviar nova)
+                try:
+                    await self.delete_message(chat_id=chat_id_to_delete, message_id=message_id_to_delete)
+                    logger.info(
+                        "Mensagem do bot deletada",
+                        chat_id=chat_id_to_delete,
+                        message_id=message_id_to_delete
+                    )
+                except Exception as e:
+                    logger.warning(
+                        "Erro ao deletar mensagem do bot",
+                        chat_id=chat_id_to_delete,
+                        message_id=message_id_to_delete,
+                        error=str(e)
+                    )
+                # Retornar após deletar (não processar mais nada)
+                return
+            
             if chatbot_response and chatbot_response.get("text"):
                 text_response = chatbot_response.get("text")
                 reply_markup = chatbot_response.get("reply_markup")
@@ -382,6 +419,69 @@ class TelegramService:
             access_token = keycloak_auth_service.get_access_token(user_id) if is_authenticated else None
             userinfo = auth_status.get("userinfo") if is_authenticated else None
             
+            # ✅ INTERCEPTAR AÇÃO "SAIR" ANTES DO LOOKUP DE MENUS
+            # "sair" não é menu, é ação - tratar aqui para evitar erro "Menu 'sair' não encontrado"
+            callback_data_lower = (data or "").strip().lower()
+            is_exit_action = callback_data_lower in (
+                "sair", 
+                "action:sair", 
+                "exit", 
+                "menu_sair",
+                "action:exit",
+                "close",
+                "action:close"
+            )
+            
+            if is_exit_action:
+                logger.info(
+                    "Ação 'sair' detectada - fechando menu",
+                    callback_data=data,
+                    chat_id=chat_id,
+                    message_id=message_id
+                )
+                
+                # Responder ao callback (obrigatório para remover loading)
+                await self.answer_callback_query(query_id=query_id, text="")
+                
+                # Tentar deletar a mensagem do menu (melhor opção - não polui o chat)
+                try:
+                    await self.delete_message(chat_id=chat_id, message_id=message_id)
+                    logger.info(
+                        "Menu fechado - mensagem deletada",
+                        chat_id=chat_id,
+                        message_id=message_id
+                    )
+                except Exception as e:
+                    # Se não conseguir deletar (ex: mensagem muito antiga), editar removendo botões
+                    logger.warning(
+                        "Não foi possível deletar mensagem, editando para remover botões",
+                        chat_id=chat_id,
+                        message_id=message_id,
+                        error=str(e)
+                    )
+                    try:
+                        await self.edit_message_text(
+                            chat_id=chat_id,
+                            message_id=message_id,
+                            text="✅ Menu fechado.",
+                            reply_markup=None
+                        )
+                        logger.info(
+                            "Menu fechado - botões removidos",
+                            chat_id=chat_id,
+                            message_id=message_id
+                        )
+                    except Exception as e2:
+                        logger.warning(
+                            "Não foi possível editar mensagem para fechar menu",
+                            chat_id=chat_id,
+                            message_id=message_id,
+                            error=str(e2)
+                        )
+                
+                # Retornar imediatamente - não processar com chatbot
+                return
+            
             # Processar com chatbot - enviar callback_query completo conforme especificação
             chatbot_response = await self._process_callback_with_chatbot(
                 callback_query=callback_query,
@@ -395,6 +495,43 @@ class TelegramService:
             # Responder ao callback (obrigatório para remover loading)
             # Texto vazio para não mostrar popup conforme especificação
             await self.answer_callback_query(query_id=query_id, text="")
+            
+            # IMPORTANTE: Verificar delete_message ANTES de qualquer outra ação
+            delete_message = chatbot_response.get("delete_message", False) if chatbot_response else False
+            message_id_to_delete = chatbot_response.get("message_id") if chatbot_response else None
+            chat_id_to_delete = chatbot_response.get("chat_id") if chatbot_response else None
+            
+            # Usar chat_id do chatbot_response se disponível, caso contrário usar do callback
+            chat_id_to_delete = chat_id_to_delete or chat_id
+            
+            logger.info(
+                "Verificando delete_message (callback)",
+                delete_message=delete_message,
+                message_id_to_delete=message_id_to_delete,
+                chat_id_to_delete=chat_id_to_delete,
+                has_text=bool(chatbot_response.get("text") if chatbot_response else False),
+                text_preview=chatbot_response.get("text", "")[:50] if chatbot_response and chatbot_response.get("text") else "",
+                edit_message=chatbot_response.get("edit_message", False) if chatbot_response else False
+            )
+            
+            if delete_message and message_id_to_delete and chat_id_to_delete:
+                # Deletar mensagem do bot (NÃO editar nem enviar nova)
+                try:
+                    await self.delete_message(chat_id=chat_id_to_delete, message_id=message_id_to_delete)
+                    logger.info(
+                        "Mensagem do bot deletada (callback)",
+                        chat_id=chat_id_to_delete,
+                        message_id=message_id_to_delete
+                    )
+                except Exception as e:
+                    logger.warning(
+                        "Erro ao deletar mensagem do bot (callback)",
+                        chat_id=chat_id_to_delete,
+                        message_id=message_id_to_delete,
+                        error=str(e)
+                    )
+                # Retornar após deletar (não processar mais nada)
+                return
             
             if chatbot_response and chatbot_response.get("text"):
                 text_response = chatbot_response.get("text")
@@ -539,6 +676,12 @@ class TelegramService:
                 if response.get("parse_mode"):
                     result["parse_mode"] = response["parse_mode"]
                 
+                # Adicionar delete_message e message_id se fornecidos (para deletar mensagem do bot)
+                if response.get("delete_message"):
+                    result["delete_message"] = response["delete_message"]
+                if response.get("message_id"):
+                    result["message_id"] = response["message_id"]
+                
                 # Adicionar delete_user_message e user_message_id se fornecidos
                 if response.get("delete_user_message"):
                     result["delete_user_message"] = response["delete_user_message"]
@@ -583,6 +726,20 @@ class TelegramService:
                 status_code = response.get("status_code") if response else None
                 
                 logger.warning(f"Erro no chatbot (callback): {error}", status_code=status_code, user_id=user_id)
+                
+                # IMPORTANTE: Verificar se o chatbot retornou delete_message mesmo com erro
+                # Se sim, retornar delete_message para que a mensagem seja deletada
+                delete_message = response.get("delete_message", False) if response else False
+                message_id_to_delete = response.get("message_id") if response else None
+                
+                if delete_message and message_id_to_delete:
+                    # Retornar delete_message mesmo em caso de erro
+                    return {
+                        "delete_message": True,
+                        "message_id": message_id_to_delete,
+                        "text": "",  # Texto vazio pois vamos deletar
+                        "edit_message": False
+                    }
                 
                 # Tratamento específico para erros de autenticação/autorização
                 error_text = ""
@@ -706,6 +863,12 @@ class TelegramService:
                 if response.get("parse_mode"):
                     result["parse_mode"] = response["parse_mode"]
                 
+                # Adicionar delete_message e message_id se fornecidos (para deletar mensagem do bot)
+                if response.get("delete_message"):
+                    result["delete_message"] = response["delete_message"]
+                if response.get("message_id"):
+                    result["message_id"] = response["message_id"]
+                
                 # Adicionar delete_user_message se fornecido
                 if response.get("delete_user_message"):
                     result["delete_user_message"] = response["delete_user_message"]
@@ -748,6 +911,20 @@ class TelegramService:
                 status_code = response.get("status_code") if response else None
                 
                 logger.warning(f"Erro no chatbot: {error}", status_code=status_code, user_id=user_id)
+                
+                # IMPORTANTE: Verificar se o chatbot retornou delete_message mesmo com erro
+                # Se sim, retornar delete_message para que a mensagem seja deletada
+                delete_message = response.get("delete_message", False) if response else False
+                message_id_to_delete = response.get("message_id") if response else None
+                
+                if delete_message and message_id_to_delete:
+                    # Retornar delete_message mesmo em caso de erro
+                    return {
+                        "delete_message": True,
+                        "message_id": message_id_to_delete,
+                        "text": "",  # Texto vazio pois vamos deletar
+                        "edit_message": False
+                    }
                 
                 # Tratamento específico para erros de autenticação/autorização
                 error_text = ""
