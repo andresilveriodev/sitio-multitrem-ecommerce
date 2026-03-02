@@ -160,6 +160,7 @@ class Customer(Base):
     addresses = relationship("CustomerAddress", back_populates="customer", cascade="all, delete-orphan")
     orders = relationship("Order", back_populates="customer")
     customer_product_prices = relationship("CustomerProductPrice", back_populates="customer", cascade="all, delete-orphan")
+    contacts = relationship("CustomerContact", back_populates="customer", cascade="all, delete-orphan")
 
 
 class DeliveryZone(Base):
@@ -193,6 +194,7 @@ class CustomerAddress(Base):
     state = Column(String(2), nullable=False)
     zip = Column(String(10), nullable=False)
     reference = Column(Text, nullable=True)
+    location_url = Column(String(500), nullable=True)  # URL do Google Maps ou similar
     lat = Column(Numeric(10, 8), nullable=True)
     lng = Column(Numeric(11, 8), nullable=True)
     is_default = Column(Boolean, default=False, nullable=False)
@@ -221,6 +223,26 @@ class CustomerProductPrice(Base):
     # Relacionamentos
     customer = relationship("Customer", back_populates="customer_product_prices")
     product = relationship("Product", back_populates="customer_product_prices")
+
+
+class CustomerContact(Base):
+    """Contato/Usuário vinculado a um cliente comercial"""
+    __tablename__ = "customer_contact"
+    __table_args__ = {'schema': 'commerce'}
+    
+    id = Column(Integer, primary_key=True, index=True)
+    customer_id = Column(Integer, ForeignKey('commerce.customer.id'), nullable=False, index=True)
+    name = Column(String(200), nullable=False)  # Nome do contato (ex: "João Batista", "Dona Dilma")
+    phone_e164 = Column(String(20), nullable=True, index=True)  # Telefone do contato (opcional)
+    email = Column(String(200), nullable=True, index=True)  # Email para login (opcional)
+    role = Column(String(100), nullable=True)  # Função: "proprietario", "cozinheira", "gerente", etc.
+    keycloak_user_id = Column(String(200), nullable=True, index=True)  # ID do usuário no Keycloak (opcional)
+    active = Column(Boolean, default=True, nullable=False)
+    notes = Column(Text, nullable=True)  # Observações sobre o contato
+    created_at = Column(DateTime, default=func.now(), nullable=False)
+    
+    # Relacionamentos
+    customer = relationship("Customer", back_populates="contacts")
 
 
 class Order(Base):

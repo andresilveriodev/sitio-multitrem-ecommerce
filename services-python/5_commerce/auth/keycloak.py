@@ -7,12 +7,24 @@ from fastapi import HTTPException, Depends, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional, Dict, Any
 import structlog
+import logging
+import sys
 # Validação via introspection endpoint do Keycloak
 # Não precisa importar jwt diretamente pois usamos introspection
 
 from config import settings
 
 logger = structlog.get_logger()
+# Logger padrão do Python para garantir que apareça no console do uvicorn
+std_logger = logging.getLogger(__name__)
+# Configurar nível de log para garantir que apareça
+std_logger.setLevel(logging.INFO)
+if not std_logger.handlers:
+    handler = logging.StreamHandler(sys.stderr)
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
+    handler.setFormatter(formatter)
+    std_logger.addHandler(handler)
 security = HTTPBearer()
 
 
@@ -50,10 +62,23 @@ class KeycloakTokenValidator:
     
     async def introspect_token(self, token: str) -> Dict[str, Any]:
         """Valida token via introspection endpoint do Keycloak"""
+        # Variáveis para logging (definidas no início para uso em exceções)
+        introspection_url = (
+            f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}"
+            f"/protocol/openid-connect/token/introspect"
+        )
+        token_preview = f"{token[:10]}...{token[-10:]}" if len(token) > 20 else "***"
+        has_client_secret = bool(settings.KEYCLOAK_CLIENT_SECRET)
+        
         try:
-            introspection_url = (
-                f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}"
-                f"/protocol/openid-connect/token/introspect"
+            
+            logger.info(
+                "Iniciando validação de token",
+                keycloak_url=settings.KEYCLOAK_SERVER_URL,
+                realm=settings.KEYCLOAK_REALM,
+                client_id=settings.KEYCLOAK_CLIENT_ID,
+                has_client_secret=has_client_secret,
+                token_preview=token_preview
             )
             
             data = {
@@ -69,31 +94,121 @@ class KeycloakTokenValidator:
                     headers={"Content-Type": "application/x-www-form-urlencoded"},
                     timeout=5.0
                 )
-                response.raise_for_status()
-                result = response.json()
                 
+                # Log detalhado antes de verificar status
+                try:
+                    result = response.json()
+                except Exception:
+                    result = {"raw_response": response.text[:500]}
+                
+                # Verificar status HTTP antes de verificar active
+                if response.status_code != 200:
+                    error_msg = (
+                        f"[AUTH ERROR] Keycloak retornou HTTP {response.status_code} na introspection. "
+                        f"URL: {introspection_url}, Client ID: {settings.KEYCLOAK_CLIENT_ID}, "
+                        f"Has Secret: {has_client_secret}, Response: {result}"
+                    )
+                    print(error_msg, file=sys.stderr, flush=True)
+                    std_logger.error(error_msg)
+                    logger.error(
+                        "Keycloak retornou erro HTTP na introspection",
+                        status_code=response.status_code,
+                        response_body=result,
+                        introspection_url=introspection_url,
+                        client_id=settings.KEYCLOAK_CLIENT_ID,
+                        has_client_secret=has_client_secret
+                    )
+                    response.raise_for_status()
+                
+                # Verificar se token está ativo
                 if not result.get("active"):
+                    error_msg = (
+                        f"[AUTH ERROR] Token marcado como INATIVO pelo Keycloak. "
+                        f"Token preview: {token_preview}, Response: {result}, "
+                        f"Client ID: {result.get('client_id')}, Username: {result.get('username')}"
+                    )
+                    print(error_msg, file=sys.stderr, flush=True)
+                    std_logger.error(error_msg)
+                    logger.warning(
+                        "Token marcado como inativo pelo Keycloak",
+                        active=result.get("active"),
+                        token_preview=token_preview,
+                        keycloak_response=result,
+                        client_id=result.get("client_id"),
+                        username=result.get("username")
+                    )
                     raise HTTPException(
                         status_code=401,
-                        detail="Token inválido ou expirado"
+                        detail=f"Token inválido ou expirado. Keycloak response: {result}"
                     )
                 
                 logger.info("Token validado via introspection", 
                            username=result.get("username"),
-                           client_id=result.get("client_id"))
+                           client_id=result.get("client_id"),
+                           exp=result.get("exp"),
+                           token_preview=token_preview)
                 return result
                 
         except httpx.HTTPStatusError as e:
-            logger.error("Erro na validação do token", status_code=e.response.status_code)
-            raise HTTPException(
-                status_code=401,
-                detail="Falha na validação do token"
+            # Capturar resposta de erro do Keycloak
+            error_body = {}
+            try:
+                error_body = e.response.json()
+            except Exception:
+                error_body = {"raw_response": e.response.text[:500]}
+            
+            error_msg = (
+                f"[AUTH ERROR] Erro HTTP {e.response.status_code} na validação do token com Keycloak. "
+                f"URL: {introspection_url}, Client ID: {settings.KEYCLOAK_CLIENT_ID}, "
+                f"Has Secret: {has_client_secret}, Token preview: {token_preview}, "
+                f"Keycloak error: {error_body}"
             )
-        except Exception as e:
-            logger.error("Erro ao validar token", error=str(e))
+            print(error_msg, file=sys.stderr, flush=True)
+            std_logger.error(error_msg)
+            logger.error(
+                "Erro HTTP na validação do token com Keycloak",
+                status_code=e.response.status_code,
+                keycloak_error=error_body,
+                introspection_url=introspection_url,
+                client_id=settings.KEYCLOAK_CLIENT_ID,
+                has_client_secret=has_client_secret,
+                token_preview=token_preview
+            )
             raise HTTPException(
                 status_code=401,
-                detail="Erro na autenticação"
+                detail=f"Falha na validação do token. Keycloak retornou {e.response.status_code}: {error_body}"
+            )
+        except httpx.RequestError as e:
+            error_msg = (
+                f"[AUTH ERROR] Erro de conexão com Keycloak. "
+                f"URL: {settings.KEYCLOAK_SERVER_URL}, Realm: {settings.KEYCLOAK_REALM}, "
+                f"Error: {str(e)}, Type: {type(e).__name__}"
+            )
+            std_logger.error(error_msg)
+            logger.error(
+                "Erro de conexão com Keycloak",
+                error=str(e),
+                error_type=type(e).__name__,
+                keycloak_url=settings.KEYCLOAK_SERVER_URL,
+                realm=settings.KEYCLOAK_REALM
+            )
+            raise HTTPException(
+                status_code=503,
+                detail=f"Serviço de autenticação indisponível: {str(e)}"
+            )
+        except HTTPException:
+            # Re-raise HTTPExceptions (já logadas acima)
+            raise
+        except Exception as e:
+            logger.error(
+                "Erro inesperado ao validar token",
+                error=str(e),
+                error_type=type(e).__name__,
+                token_preview=token_preview
+            )
+            raise HTTPException(
+                status_code=401,
+                detail=f"Erro na autenticação: {str(e)}"
             )
     
     async def validate_token(self, token: str) -> Dict[str, Any]:
@@ -116,7 +231,24 @@ async def verify_keycloak_token(
     """
     token = credentials.credentials
     
+    # Log inicial para rastreamento - usando print() para garantir que apareça
+    if token:
+        token_preview = f"{token[:10]}...{token[-10:]}" if len(token) > 20 else "***"
+        msg = f"[AUTH] Recebida requisição com token. Preview: {token_preview}"
+        print(msg, file=sys.stderr, flush=True)
+        std_logger.info(msg)
+        logger.info("Recebida requisição com token", token_preview=token_preview)
+    else:
+        msg = "[AUTH] Recebida requisição sem token"
+        print(msg, file=sys.stderr, flush=True)
+        std_logger.warning(msg)
+        logger.warning("Recebida requisição sem token")
+    
     if not token:
+        msg = "[AUTH ERROR] Tentativa de acesso sem token de autenticação"
+        print(msg, file=sys.stderr, flush=True)
+        std_logger.warning(msg)
+        logger.warning("Tentativa de acesso sem token de autenticação")
         raise HTTPException(
             status_code=401,
             detail="Token não fornecido",
@@ -126,13 +258,30 @@ async def verify_keycloak_token(
     try:
         token_data = await token_validator.validate_token(token)
         return token_data
-    except HTTPException:
+    except HTTPException as e:
+        # Log adicional para HTTPExceptions - usando print() para garantir
+        error_msg = (
+            f"[AUTH ERROR] Falha na autenticação. "
+            f"Status: {e.status_code}, Detail: {e.detail}"
+        )
+        print(error_msg, file=sys.stderr, flush=True)
+        std_logger.error(error_msg)
+        logger.warning(
+            "Falha na autenticação",
+            status_code=e.status_code,
+            detail=e.detail,
+            headers=e.headers if hasattr(e, 'headers') else None
+        )
         raise
     except Exception as e:
-        logger.error("Erro inesperado na validação", error=str(e))
+        logger.error(
+            "Erro inesperado na validação do token",
+            error=str(e),
+            error_type=type(e).__name__
+        )
         raise HTTPException(
             status_code=401,
-            detail="Erro na autenticação"
+            detail=f"Erro na autenticação: {str(e)}"
         )
 
 

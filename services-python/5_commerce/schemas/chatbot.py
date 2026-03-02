@@ -95,3 +95,25 @@ class ChatbotOrderCreate(BaseModel):
     items: List[ChatbotOrderItem] = Field(..., min_items=1)
     delivery_address_id: Optional[int] = None
     notes: Optional[str] = None
+
+
+class TelegramNormalizedOrderItem(BaseModel):
+    """Item de pedido já normalizado pelo chatbot"""
+    product_id: Optional[int] = None  # Se None, produto não identificado
+    product_name: str  # Nome do produto original
+    qty: float
+
+
+class TelegramNormalizedOrder(BaseModel):
+    """Pedido normalizado pelo chatbot"""
+    contact_name: Optional[str] = None  # Nome do contato (ex: "Dilma", sem "Dona")
+    establishment_name: Optional[str] = None  # Nome do estabelecimento (ex: "Recanto Verde")
+    contact_phone: Optional[str] = None  # Telefone do contato (se disponível)
+    items: List[TelegramNormalizedOrderItem] = Field(..., min_items=1)
+    price_profile_hint: Optional[str] = None  # Dica do chatbot sobre perfil (R$ 2,50 = RESTAURANTE_LOW)
+
+
+class TelegramBulkOrdersCreate(BaseModel):
+    """Múltiplos pedidos normalizados do Telegram"""
+    conversation_id: Optional[UUID] = None
+    orders: List[TelegramNormalizedOrder] = Field(..., min_items=1)

@@ -62,10 +62,11 @@ def list_products(
     limit: int = Query(100, ge=1, le=100),
     category_id: Optional[int] = Query(None),
     active_only: bool = Query(True),
+    search: Optional[str] = Query(None, description="Busca produtos por nome ou SKU"),
     db: Session = Depends(get_db_session)
 ):
-    """Lista produtos"""
-    return ProductService.get_products(db, skip=skip, limit=limit, category_id=category_id, active_only=active_only)
+    """Lista produtos com busca opcional"""
+    return ProductService.get_products(db, skip=skip, limit=limit, category_id=category_id, active_only=active_only, search=search)
 
 
 @router.get("/{product_id}", response_model=ProductResponse)

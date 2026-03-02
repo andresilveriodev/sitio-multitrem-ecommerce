@@ -4,7 +4,7 @@ Serviço de produtos
 
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
+from sqlalchemy import and_, or_, func
 from decimal import Decimal
 import structlog
 
@@ -59,8 +59,8 @@ class ProductService:
         return db_category
     
     @staticmethod
-    def get_products(db: Session, skip: int = 0, limit: int = 100, category_id: Optional[int] = None, active_only: bool = True) -> List[Product]:
-        """Lista produtos"""
+    def get_products(db: Session, skip: int = 0, limit: int = 100, category_id: Optional[int] = None, active_only: bool = True, search: Optional[str] = None) -> List[Product]:
+        """Lista produtos com busca opcional por nome"""
         query = db.query(Product)
         
         if category_id:
@@ -68,6 +68,16 @@ class ProductService:
         
         if active_only:
             query = query.filter(Product.active == True)
+        
+        if search:
+            search_term = search.lower()
+            # Busca por nome ou SKU (se SKU não for None)
+            query = query.filter(
+                or_(
+                    func.lower(Product.name).contains(search_term),
+                    and_(Product.sku.isnot(None), func.lower(Product.sku).contains(search_term))
+                )
+            )
         
         return query.offset(skip).limit(limit).all()
     

@@ -10,7 +10,8 @@ from db_session import get_db_session
 from services.customer_service import CustomerService
 from schemas.customer import (
     CustomerCreate, CustomerUpdate, CustomerResponse,
-    CustomerAddressCreate, CustomerAddressUpdate, CustomerAddressResponse
+    CustomerAddressCreate, CustomerAddressUpdate, CustomerAddressResponse,
+    CustomerContactCreate, CustomerContactUpdate, CustomerContactResponse
 )
 
 router = APIRouter(prefix="/customers", tags=["customers"])
@@ -96,3 +97,55 @@ def update_customer_address(
     if not updated:
         raise HTTPException(status_code=404, detail="Endereço não encontrado")
     return updated
+
+
+@router.get("/{customer_id}/contacts", response_model=List[CustomerContactResponse])
+def list_customer_contacts(customer_id: int, db: Session = Depends(get_db_session)):
+    """Lista contatos de um cliente"""
+    return CustomerService.get_customer_contacts(db, customer_id)
+
+
+@router.get("/contacts/{contact_id}", response_model=CustomerContactResponse)
+def get_customer_contact(contact_id: int, db: Session = Depends(get_db_session)):
+    """Busca um contato por ID"""
+    contact = CustomerService.get_customer_contact(db, contact_id)
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contato não encontrado")
+    return contact
+
+
+@router.get("/contacts/phone/{phone_e164}", response_model=CustomerContactResponse)
+def get_customer_contact_by_phone(phone_e164: str, db: Session = Depends(get_db_session)):
+    """Busca um contato por telefone"""
+    contact = CustomerService.get_customer_contact_by_phone(db, phone_e164)
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contato não encontrado")
+    return contact
+
+
+@router.post("/contacts", response_model=CustomerContactResponse, status_code=201)
+def create_customer_contact(contact: CustomerContactCreate, db: Session = Depends(get_db_session)):
+    """Cria um novo contato"""
+    return CustomerService.create_customer_contact(db, contact)
+
+
+@router.put("/contacts/{contact_id}", response_model=CustomerContactResponse)
+def update_customer_contact(
+    contact_id: int,
+    contact: CustomerContactUpdate,
+    db: Session = Depends(get_db_session)
+):
+    """Atualiza um contato"""
+    updated = CustomerService.update_customer_contact(db, contact_id, contact)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Contato não encontrado")
+    return updated
+
+
+@router.delete("/contacts/{contact_id}", status_code=204)
+def delete_customer_contact(contact_id: int, db: Session = Depends(get_db_session)):
+    """Remove um contato"""
+    deleted = CustomerService.delete_customer_contact(db, contact_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Contato não encontrado")
+    return None

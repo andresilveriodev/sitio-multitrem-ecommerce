@@ -83,6 +83,70 @@ class PedidoInlineService:
             return instrucao
         return "Novo Pedido - Cadastre os itens abaixo:"
     
+    def render_saved_order(self, pedido: Dict[str, Any], order_id: str = None) -> str:
+        """
+        Renderiza pedido salvo em formato de texto simples (apenas itens salvos)
+        
+        Args:
+            pedido: Dados do pedido
+            order_id: ID do pedido no e-commerce (opcional)
+            
+        Returns:
+            Texto formatado com apenas os itens salvos
+        """
+        lines = []
+        
+        # Cabeçalho
+        if order_id:
+            lines.append(f"✅ Pedido salvo com sucesso! ID: {order_id}\n")
+        else:
+            lines.append("✅ Pedido salvo com sucesso!\n")
+        
+        # Informações do pedido (se houver)
+        if pedido.get("nome"):
+            lines.append(f"👤 Nome: {pedido.get('nome')}")
+        if pedido.get("data"):
+            lines.append(f"📅 Data: {pedido.get('data')}")
+        if pedido.get("endereco"):
+            lines.append(f"📍 Endereço: {pedido.get('endereco')}")
+        
+        # Lista de itens salvos (apenas os que têm quantidade > 0)
+        items_saved = []
+        for key, quantidade in pedido.get("produtos", {}).items():
+            if quantidade > 0 and key in PRODUTOS:
+                produto_info = PRODUTOS[key]
+                items_saved.append(f"{produto_info['emoji']} {produto_info['nome']}: {quantidade:02d}")
+        
+        if items_saved:
+            lines.append("\n📦 Itens salvos:")
+            for item in items_saved:
+                lines.append(f"  • {item}")
+        else:
+            lines.append("\n⚠️ Nenhum item foi salvo")
+        
+        return "\n".join(lines)
+    
+    def build_saved_order_keyboard(self, order_id: str = None) -> Dict[str, Any]:
+        """
+        Constrói teclado para pedido salvo (Editar, Deletar, Sair)
+        
+        Args:
+            order_id: ID do pedido no e-commerce (opcional)
+            
+        Returns:
+            Teclado inline com botões de ação
+        """
+        keyboard = []
+        
+        # Botões de ação
+        keyboard.append([
+            {"text": "✏️ Editar", "callback_data": f"order:edit:{order_id}" if order_id else "order:edit"},
+            {"text": "🗑️ Deletar", "callback_data": f"order:delete:{order_id}" if order_id else "order:delete"},
+            {"text": "❌ Sair", "callback_data": "order:saved:sair"}
+        ])
+        
+        return {"inline_keyboard": keyboard}
+    
     def build_keyboard(self, pedido: Dict[str, Any], panel_state: Dict[str, Any]) -> Dict[str, Any]:
         """Constrói teclado inline"""
         keyboard = []
@@ -162,6 +226,10 @@ class PedidoInlineService:
             {"text": "🔄 Zerar", "callback_data": "action:zero"},
             {"text": "❌ Cancelar", "callback_data": "action:cancel"},
             {"text": "🔙 Voltar", "callback_data": "action:back"}
+        ])
+        # 5. Botão Sair para excluir mensagem
+        keyboard.append([
+            {"text": "❌ Sair", "callback_data": "action:close"}
         ])
         
         return {"inline_keyboard": keyboard}

@@ -84,11 +84,18 @@ class KeycloakAuthService:
         }
         
         # Parâmetros para a URL de autorização (scope inclui offline_access para refresh token)
+        # Verificar se offline_access já está no scope para evitar duplicação
+        scope_parts = self.scope.split()
+        if "offline_access" not in scope_parts:
+            final_scope = f"{self.scope} offline_access"
+        else:
+            final_scope = self.scope
+        
         params = {
             "client_id": self.client_id,
             "redirect_uri": self.redirect_uri,
             "response_type": "code",
-            "scope": f"{self.scope} offline_access",  # offline_access para refresh token
+            "scope": final_scope,
             "state": state
         }
         
@@ -114,27 +121,56 @@ class KeycloakAuthService:
             Dict com UserInfo ou None se falhar
         """
         try:
+            logger.info(
+                "Iniciando exchange_code_for_tokens",
+                has_code=bool(code),
+                has_state=bool(state),
+                state_preview=state[:10] + "..." if state else "None",
+                trackers_count=len(self._user_trackers)
+            )
+            
             # UserTrackerStorage: buscar telegram_user_id pelo state (e remover após uso)
             tracker_data = self._user_trackers.pop(state, None)
             
             if not tracker_data:
-                logger.warning("State inválido ou expirado", state=state[:8] + "...")
+                logger.warning(
+                    "State inválido ou expirado",
+                    state=state[:8] + "..." if state else "None",
+                    available_states=list(self._user_trackers.keys())[:3] if self._user_trackers else []
+                )
                 return None
             
             # Verificar se state não expirou
             if datetime.utcnow() > tracker_data["expires_at"]:
-                logger.warning("State expirado", state=state[:8] + "...")
+                logger.warning(
+                    "State expirado",
+                    state=state[:8] + "...",
+                    expires_at=tracker_data["expires_at"],
+                    now=datetime.utcnow()
+                )
                 return None
             
             telegram_user_id = tracker_data["telegram_user_id"]
             telegram_chat_id = tracker_data.get("telegram_chat_id")
             
+            logger.info(
+                "State válido, obtendo tokens do Keycloak",
+                telegram_user_id=telegram_user_id,
+                telegram_chat_id=telegram_chat_id
+            )
+            
             # Obter tokens do Keycloak
             tokens = await self._request_token(code)
             
             if not tokens:
-                logger.error("Erro ao obter tokens do Keycloak")
+                logger.error(
+                    "Erro ao obter tokens do Keycloak",
+                    telegram_user_id=telegram_user_id,
+                    code_preview=code[:10] + "..." if code else "None"
+                )
                 return None
+            
+            logger.info("Tokens obtidos com sucesso do Keycloak", telegram_user_id=telegram_user_id)
             
             # Extrair UserInfo do id_token (JWT) - similar a UserInfo.of()
             userinfo = self._extract_userinfo_from_id_token(tokens.get("id_token"))
@@ -200,15 +236,37 @@ class KeycloakAuthService:
             )
             
             if response.status_code != 200:
+                error_detail = response.text[:200] if response.text else "Sem detalhes"
                 logger.error(
                     "Erro ao obter tokens do Keycloak",
                     status_code=response.status_code,
-                    response=response.text
+                    response=error_detail,
+                    token_url=self.token_url
                 )
                 return None
             
             return response.json()
             
+        except httpx.HTTPStatusError as e:
+            # Erro HTTP específico (502, 503, etc.)
+            error_detail = e.response.text[:200] if e.response.text else "Sem detalhes"
+            logger.error(
+                "Erro HTTP ao solicitar token do Keycloak",
+                status_code=e.response.status_code,
+                error=error_detail,
+                token_url=self.token_url,
+                exc_info=True
+            )
+            return None
+        except httpx.RequestError as e:
+            # Erro de conexão/rede
+            logger.error(
+                "Erro de conexão ao solicitar token do Keycloak",
+                error=str(e),
+                token_url=self.token_url,
+                exc_info=True
+            )
+            return None
         except Exception as e:
             logger.error("Erro ao solicitar token", error=str(e), exc_info=True)
             return None

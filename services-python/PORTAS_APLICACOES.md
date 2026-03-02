@@ -183,6 +183,7 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 ```
 Gateway Service (8000)
   ├── User Service (8001)
+  ├── E-Commerce (8002)
   ├── AI Service (8005)
   ├── Chatbot Users Service (8010)
   │   └── AI Service (8005)

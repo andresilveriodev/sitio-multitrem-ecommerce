@@ -50,6 +50,7 @@ class CustomerAddressBase(BaseModel):
     state: str = Field(..., max_length=2)
     zip: str = Field(..., max_length=10)
     reference: Optional[str] = None
+    location_url: Optional[str] = Field(None, max_length=500)  # URL do Google Maps
     lat: Optional[Decimal] = None
     lng: Optional[Decimal] = None
     is_default: bool = False
@@ -69,12 +70,46 @@ class CustomerAddressUpdate(BaseModel):
     state: Optional[str] = Field(None, max_length=2)
     zip: Optional[str] = Field(None, max_length=10)
     reference: Optional[str] = None
+    location_url: Optional[str] = Field(None, max_length=500)
     lat: Optional[Decimal] = None
     lng: Optional[Decimal] = None
     is_default: Optional[bool] = None
 
 
 class CustomerAddressResponse(CustomerAddressBase):
+    id: int
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+class CustomerContactBase(BaseModel):
+    customer_id: int
+    name: str = Field(..., max_length=200)
+    phone_e164: Optional[str] = Field(None, max_length=20)
+    email: Optional[str] = Field(None, max_length=200)
+    role: Optional[str] = Field(None, max_length=100)  # "proprietario", "cozinheira", "gerente", etc.
+    keycloak_user_id: Optional[str] = Field(None, max_length=200)
+    active: bool = True
+    notes: Optional[str] = None
+
+
+class CustomerContactCreate(CustomerContactBase):
+    pass
+
+
+class CustomerContactUpdate(BaseModel):
+    name: Optional[str] = Field(None, max_length=200)
+    phone_e164: Optional[str] = Field(None, max_length=20)
+    email: Optional[str] = Field(None, max_length=200)
+    role: Optional[str] = Field(None, max_length=100)
+    keycloak_user_id: Optional[str] = Field(None, max_length=200)
+    active: Optional[bool] = None
+    notes: Optional[str] = None
+
+
+class CustomerContactResponse(CustomerContactBase):
     id: int
     created_at: datetime
     

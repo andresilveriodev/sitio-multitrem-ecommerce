@@ -43,7 +43,7 @@ class PollingService:
     async def _ensure_webhook_removed(self):
         """Garante que o webhook foi removido antes de iniciar polling"""
         logger.info("Verificando e removendo webhook (se existir)...")
-        max_attempts = 3
+        max_attempts = 5  # Aumentado para 5 tentativas
         
         for attempt in range(max_attempts):
             try:
@@ -60,9 +60,12 @@ class PollingService:
                 if webhook_url:
                     logger.info(f"Webhook encontrado: {webhook_url} - Removendo... (tentativa {attempt + 1}/{max_attempts})")
                     try:
+                        # Tentar remover webhook
                         delete_result = await self.telegram_service.delete_webhook(drop_pending_updates=True)
                         logger.info(f"Comando delete_webhook executado. Resultado: {delete_result}")
-                        await asyncio.sleep(3)  # Aguardar propagação (aumentado para 3 segundos)
+                        
+                        # Aguardar propagação (aumentado para 5 segundos)
+                        await asyncio.sleep(5)
                         
                         # Verificar se foi removido
                         webhook_info_after = await self.telegram_service.get_webhook_info()
@@ -75,19 +78,20 @@ class PollingService:
                         if webhook_url_after:
                             logger.warning(f"Webhook ainda configurado após remoção (URL: {webhook_url_after}). Tentando novamente...")
                             if attempt < max_attempts - 1:
-                                await asyncio.sleep(3)
+                                await asyncio.sleep(5)  # Aguardar mais tempo antes de tentar novamente
                                 continue
                             else:
-                                logger.error(f"Webhook ainda configurado após {max_attempts} tentativas! URL: {webhook_url_after}")
+                                logger.error(f"⚠️ Webhook ainda configurado após {max_attempts} tentativas! URL: {webhook_url_after}")
                                 logger.error("Polling pode não funcionar corretamente enquanto o webhook estiver ativo.")
+                                logger.error("Tente remover o webhook manualmente ou aguarde alguns minutos.")
                         else:
                             logger.info("✅ Webhook removido com sucesso!")
-                            await asyncio.sleep(2)  # Aguardar propagação final
+                            await asyncio.sleep(3)  # Aguardar propagação final
                             return
                     except Exception as delete_error:
                         logger.error(f"Erro ao executar delete_webhook: {delete_error}", exc_info=True)
                         if attempt < max_attempts - 1:
-                            await asyncio.sleep(2)
+                            await asyncio.sleep(3)
                             continue
                 else:
                     logger.info("✅ Nenhum webhook configurado - pronto para polling")
@@ -96,7 +100,7 @@ class PollingService:
             except Exception as e:
                 logger.error(f"Erro ao verificar/remover webhook (tentativa {attempt + 1}): {e}", exc_info=True)
                 if attempt < max_attempts - 1:
-                    await asyncio.sleep(2)
+                    await asyncio.sleep(3)
                 else:
                     logger.error("Não foi possível remover webhook após todas as tentativas. Polling pode não funcionar.")
         

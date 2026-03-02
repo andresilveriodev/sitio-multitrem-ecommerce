@@ -6,7 +6,8 @@ import uuid
 import time
 from datetime import datetime
 from typing import Dict, Optional
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, Header
+from typing import Optional
 from fastapi.responses import StreamingResponse
 import structlog
 
@@ -99,17 +100,69 @@ async def get_chat_request_with_context(request: Request) -> tuple:
     return chat_request, context
 
 
-@router.post("/process-message")
+@router.post("/process")
 async def process_message(
     request: Request,
+    x_telegram_bot_token: Optional[str] = Header(None, alias="X-Telegram-Bot-Token"),
     current_user: dict = Depends(require_colaborador_role)
 ):
-    """Processa mensagem do usuário com validação de segurança e contexto opcional do frontend"""
+    """
+    Endpoint unificado para processar mensagens
+    Detecta automaticamente se é formato Telegram ou formato chat padrão
+    
+    Formato Telegram: {message: {...}, callback_query: {...}}
+    Formato Chat: {user_id, message, session_id, content_type}
+    
+    URL: POST /chatbot/process
+    """
+    # LOG: Entrada no endpoint
+    logger.info(
+        "🚀 ENTRADA NO ENDPOINT /chatbot/process",
+        method=request.method,
+        url=str(request.url),
+        path=request.url.path,
+        has_telegram_token=bool(x_telegram_bot_token),
+        username=current_user.get('preferred_username'),
+        user_id=current_user.get('sub'),
+        client_host=request.client.host if request.client else None
+    )
+    
     start_time = time.time()
     
     try:
-        # Extrai dados da requisição (incluindo contexto opcional do frontend)
+        # Extrai dados da requisição
         body = await request.json()
+        
+        logger.info(
+            "📥 Body recebido",
+            body_keys=list(body.keys()) if body else None,
+            has_message="message" in body if body else False,
+            has_callback_query="callback_query" in body if body else False,
+            has_user_id="user_id" in body if body else False
+        )
+        
+        # Detectar se é formato Telegram (tem "message" ou "callback_query" no nível raiz)
+        is_telegram_format = (
+            "message" in body or 
+            "callback_query" in body or
+            x_telegram_bot_token is not None
+        )
+        
+        logger.info(
+            "🔍 Formato detectado",
+            is_telegram_format=is_telegram_format,
+            has_telegram_token=bool(x_telegram_bot_token),
+            body_has_message="message" in body if body else False,
+            body_has_callback_query="callback_query" in body if body else False
+        )
+        
+        # Se for formato Telegram, redirecionar para processamento do Telegram
+        if is_telegram_format:
+            logger.info("📱 Redirecionando para processamento Telegram")
+            from routes.telegram_router import process_telegram_message
+            return await process_telegram_message(request, x_telegram_bot_token, current_user)
+        
+        # Formato chat padrão (frontend)
         chat_request = ChatRequest(
             user_id=body.get("user_id"),
             message=body.get("message"),

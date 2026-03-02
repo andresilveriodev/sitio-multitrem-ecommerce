@@ -7,8 +7,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_
 import structlog
 
-from models.commerce import Customer, CustomerAddress
-from schemas.customer import CustomerCreate, CustomerUpdate, CustomerAddressCreate, CustomerAddressUpdate
+from models.commerce import Customer, CustomerAddress, CustomerContact
+from schemas.customer import (
+    CustomerCreate, CustomerUpdate, CustomerAddressCreate, CustomerAddressUpdate,
+    CustomerContactCreate, CustomerContactUpdate
+)
 
 logger = structlog.get_logger()
 
@@ -18,17 +21,24 @@ class CustomerService:
     
     @staticmethod
     def get_customers(db: Session, skip: int = 0, limit: int = 100, search: Optional[str] = None) -> List[Customer]:
-        """Lista clientes"""
+        """
+        Lista clientes com busca opcional
+        Busca por: nome do cliente (establishment), telefone, documento OU nome de contato
+        """
         query = db.query(Customer)
         
         if search:
-            query = query.filter(
+            search_term = f"%{search}%"
+            # Busca no cliente (nome do estabelecimento, telefone, documento)
+            # E também em contatos vinculados (nome do contato)
+            query = query.outerjoin(CustomerContact).filter(
                 or_(
-                    Customer.name.ilike(f"%{search}%"),
-                    Customer.phone_e164.ilike(f"%{search}%"),
-                    Customer.document.ilike(f"%{search}%")
+                    Customer.name.ilike(search_term),
+                    Customer.phone_e164.ilike(search_term),
+                    Customer.document.ilike(search_term),
+                    CustomerContact.name.ilike(search_term)
                 )
-            )
+            ).distinct()  # Evita duplicatas quando há múltiplos contatos
         
         return query.offset(skip).limit(limit).all()
     
@@ -119,3 +129,61 @@ class CustomerService:
         db.refresh(db_address)
         logger.info("Endereço atualizado", address_id=address_id)
         return db_address
+    
+    @staticmethod
+    def get_customer_contacts(db: Session, customer_id: int) -> List[CustomerContact]:
+        """Lista contatos de um cliente"""
+        return db.query(CustomerContact).filter(CustomerContact.customer_id == customer_id).all()
+    
+    @staticmethod
+    def get_customer_contact(db: Session, contact_id: int) -> Optional[CustomerContact]:
+        """Busca um contato por ID"""
+        return db.query(CustomerContact).filter(CustomerContact.id == contact_id).first()
+    
+    @staticmethod
+    def get_customer_contact_by_phone(db: Session, phone_e164: str) -> Optional[CustomerContact]:
+        """Busca um contato por telefone"""
+        return db.query(CustomerContact).filter(CustomerContact.phone_e164 == phone_e164).first()
+    
+    @staticmethod
+    def get_customer_contact_by_email(db: Session, email: str) -> Optional[CustomerContact]:
+        """Busca um contato por email"""
+        return db.query(CustomerContact).filter(CustomerContact.email == email).first()
+    
+    @staticmethod
+    def create_customer_contact(db: Session, contact: CustomerContactCreate) -> CustomerContact:
+        """Cria um novo contato"""
+        db_contact = CustomerContact(**contact.model_dump())
+        db.add(db_contact)
+        db.commit()
+        db.refresh(db_contact)
+        logger.info("Contato criado", contact_id=db_contact.id, customer_id=contact.customer_id)
+        return db_contact
+    
+    @staticmethod
+    def update_customer_contact(db: Session, contact_id: int, contact: CustomerContactUpdate) -> Optional[CustomerContact]:
+        """Atualiza um contato"""
+        db_contact = db.query(CustomerContact).filter(CustomerContact.id == contact_id).first()
+        if not db_contact:
+            return None
+        
+        update_data = contact.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(db_contact, field, value)
+        
+        db.commit()
+        db.refresh(db_contact)
+        logger.info("Contato atualizado", contact_id=contact_id)
+        return db_contact
+    
+    @staticmethod
+    def delete_customer_contact(db: Session, contact_id: int) -> bool:
+        """Remove um contato"""
+        db_contact = db.query(CustomerContact).filter(CustomerContact.id == contact_id).first()
+        if not db_contact:
+            return False
+        
+        db.delete(db_contact)
+        db.commit()
+        logger.info("Contato removido", contact_id=contact_id)
+        return True

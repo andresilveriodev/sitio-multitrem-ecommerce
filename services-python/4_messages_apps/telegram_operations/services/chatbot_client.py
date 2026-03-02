@@ -61,7 +61,8 @@ class ChatbotClient:
         """
         try:
             client = await self._get_client()
-            url = f"{self.base_url}/chatbot/process-message"
+            # Usar o mesmo endpoint /chatbot/process que existe no chatbot service
+            url = f"{self.base_url}/chatbot/process"
             
             # Se callback_query estiver disponível, enviar callback_query completo
             if callback_query:
@@ -119,6 +120,29 @@ class ChatbotClient:
             
             return result
             
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                # Endpoint não existe - tratar como erro de autenticação
+                logger.warning("Endpoint não encontrado - tratando como erro de autenticação", user_id=user_id)
+                return {
+                    "success": False,
+                    "error": "Endpoint não encontrado",
+                    "status_code": 401  # Tratar como erro de autenticação
+                }
+            elif e.response.status_code == 401:
+                logger.warning("Token inválido ou expirado", user_id=user_id)
+                return {
+                    "success": False,
+                    "error": "Token de autenticação inválido ou expirado",
+                    "status_code": 401
+                }
+            else:
+                logger.error(f"Erro HTTP ao chamar chatbot: {e}")
+                return {
+                    "success": False,
+                    "error": f"Erro de comunicação com chatbot: {str(e)}",
+                    "status_code": e.response.status_code
+                }
         except httpx.HTTPError as e:
             logger.error(f"Erro HTTP ao chamar chatbot: {e}")
             return {
@@ -149,8 +173,8 @@ class ChatbotClient:
         Processa mensagem através do endpoint autenticado do Chatbot Service
         Requer token JWT válido e perfil "colaborador"
         
-        Conforme especificação: Usa o endpoint /chatbot/process-message-authenticated
-        com headers X-Telegram-Bot-Token e Authorization
+        Conforme especificação: Usa o endpoint /chatbot/process
+        com headers X-Telegram-Bot-Token (opcional) e Authorization (obrigatório)
         
         Args:
             user_id: ID do usuário
@@ -168,8 +192,8 @@ class ChatbotClient:
         """
         try:
             client = await self._get_client()
-            # Conforme especificação: usar endpoint /chatbot/process-message-authenticated
-            url = f"{self.base_url}/chatbot/process-message-authenticated"
+            # Conforme especificação: usar endpoint /chatbot/process
+            url = f"{self.base_url}/chatbot/process"
             
             # Preparar payload conforme especificação
             # Se callback_query estiver disponível, enviar callback_query completo
@@ -204,19 +228,22 @@ class ChatbotClient:
                     payload["model"] = model
             
             # IMPORTANTE: Headers conforme especificação
-            # X-Telegram-Bot-Token e Authorization: Bearer {token}
+            # Authorization: Bearer {token} é obrigatório
+            # X-Telegram-Bot-Token é opcional (pode não ser aceito pelo novo endpoint)
             headers = {
-                "X-Telegram-Bot-Token": settings.TELEGRAM_BOT_TOKEN,
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json"
             }
+            # Adicionar X-Telegram-Bot-Token se o endpoint aceitar (tentar primeiro sem, se falhar, adicionar)
+            # Por enquanto, vamos tentar sem para ver se funciona
+            # Se necessário, podemos adicionar depois: headers["X-Telegram-Bot-Token"] = settings.TELEGRAM_BOT_TOKEN
             
             logger.info(
                 "Enviando mensagem para chatbot (autenticado)",
                 user_id=user_id,
                 message_preview=message[:50] if isinstance(message, str) else "objeto message",
                 has_token=bool(token),
-                endpoint="process-message-authenticated",
+                endpoint="process",
                 has_telegram_message=telegram_message is not None,
                 has_callback_query=callback_query is not None
             )

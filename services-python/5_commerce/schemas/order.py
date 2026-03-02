@@ -2,7 +2,7 @@
 Schemas Pydantic para pedidos
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
@@ -60,6 +60,15 @@ class OrderResponse(OrderBase):
     confirmed_at: Optional[datetime] = None
     delivered_at: Optional[datetime] = None
     items: List[OrderItemResponse] = []
+    
+    @computed_field
+    def short_id(self) -> str:
+        """Retorna um ID curto para exibição no formato DDMM-XXXXX (data + código)"""
+        # Formata data como DDMM (sem ano)
+        date_str = self.created_at.strftime('%d%m')
+        # Pega primeiros 5 caracteres do UUID (sem hífens) em maiúsculas
+        code = str(self.id).replace('-', '')[:5].upper()
+        return f"{date_str}-{code}"
     
     class Config:
         from_attributes = True

@@ -1,0 +1,47 @@
+{
+  "conversation_id": null,
+  "orders": [
+    {
+      "contact_name": "Dilma",
+      "establishment_name": "Recanto Verde",
+      "contact_phone": "+556296208835",
+      "price_profile_hint": "R$ 2,50",
+      "items": [
+        {
+          "product_id": null,
+          "product_name": "Couve",
+          "qty": 8
+        },
+        {
+          "product_id": null,
+          "product_name": "Coentro",
+          "qty": 4
+        },
+        {
+          "product_id": null,
+          "product_name": "Cebolinha",
+          "qty": 4,
+          "is_palito": false
+        },
+        {
+          "product_id": null,
+          "product_name": "Palito Alface Roxa",
+          "qty": 1,
+          "is_palito": true
+        },
+        {
+          "product_id": null,
+          "product_name": "Palito Alface Crespa Verde",
+          "qty": 1,
+          "is_palito": true
+        },
+        {
+          "product_id": null,
+          "product_name": "Rúcula",
+          "qty": 2,
+          "is_palito": false
+        }
+      ]
+    }
+  ]
+}

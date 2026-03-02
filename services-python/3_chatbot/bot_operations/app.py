@@ -2,9 +2,11 @@
 Configuração da aplicação FastAPI para o chatbot_service
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 import structlog
+import time
 
 from config import settings
 from routes import chat_router, analytics_router, ai_router, telegram_router
@@ -16,6 +18,51 @@ from services.database_service import database_service
 
 logger = structlog.get_logger(__name__)
 
+
+class LoggingMiddleware(BaseHTTPMiddleware):
+    """Middleware para logar todas as requisições HTTP"""
+    
+    async def dispatch(self, request: Request, call_next):
+        # Log da requisição recebida
+        start_time = time.time()
+        
+        logger.info(
+            "🌐 REQUISIÇÃO HTTP RECEBIDA",
+            method=request.method,
+            url=str(request.url),
+            path=request.url.path,
+            query_params=dict(request.query_params),
+            client_host=request.client.host if request.client else None,
+            client_port=request.client.port if request.client else None,
+            headers_keys=[k for k in request.headers.keys() if k.lower() not in ['authorization', 'cookie']]
+        )
+        
+        # Processar requisição
+        try:
+            response = await call_next(request)
+            process_time = time.time() - start_time
+            
+            logger.info(
+                "✅ REQUISIÇÃO PROCESSADA",
+                method=request.method,
+                path=request.url.path,
+                status_code=response.status_code,
+                process_time=f"{process_time:.3f}s"
+            )
+            
+            return response
+        except Exception as e:
+            process_time = time.time() - start_time
+            logger.error(
+                "❌ ERRO AO PROCESSAR REQUISIÇÃO",
+                method=request.method,
+                path=request.url.path,
+                error=str(e),
+                process_time=f"{process_time:.3f}s",
+                exc_info=True
+            )
+            raise
+
 def create_app() -> FastAPI:
     """Cria e configura a aplicação FastAPI"""
     
@@ -26,6 +73,9 @@ def create_app() -> FastAPI:
         docs_url="/docs" if settings.DEBUG else None,
         redoc_url="/redoc" if settings.DEBUG else None,
     )
+    
+    # Middleware de logging (deve ser o primeiro para capturar todas as requisições)
+    app.add_middleware(LoggingMiddleware)
     
     # Middleware de segurança
     app.add_middleware(

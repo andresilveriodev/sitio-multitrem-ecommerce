@@ -31,7 +31,6 @@ class MarketService:
                 base_url=self.base_url
             )
             # Não testa conexão - métodos usarão fallback automaticamente se serviço não estiver disponível
-            logger.info(f"MarketService client created: {self.base_url} (automatic fallback if unavailable)")
         except Exception as e:
             # Não falha se não conseguir criar cliente - sistema continua funcionando
             logger.warning(f"Error creating MarketService client: {e}, using fallback")

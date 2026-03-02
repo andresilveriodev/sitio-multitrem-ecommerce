@@ -20,10 +20,10 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     
     # Configurações do Keycloak
-    KEYCLOAK_SERVER_URL: str = "http://localhost:8080"
-    KEYCLOAK_REALM: str = "sitio-multitrem"
-    KEYCLOAK_CLIENT_ID: str = "commerce-service"
-    KEYCLOAK_CLIENT_SECRET: str = ""
+    KEYCLOAK_SERVER_URL: str = "https://auth.rendacontinua.com/auth"
+    KEYCLOAK_REALM: str = "auth_sso"
+    KEYCLOAK_CLIENT_ID: str = "auth_client"
+    KEYCLOAK_CLIENT_SECRET: str = "e56cf527-d5d9-4b52-bd9f-1e87c8f288de"
     KEYCLOAK_VALIDATE_TOKEN: bool = True
     
     # Configurações do banco de dados

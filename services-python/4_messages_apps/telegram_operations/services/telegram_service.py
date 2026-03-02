@@ -289,13 +289,74 @@ class TelegramService:
                 # Verificar se deve editar mensagem existente (mantém chat limpo)
                 if edit_message and message_id_to_edit:
                     # Editar mensagem existente
-                    await self.edit_message_text(
-                        chat_id=chat_id,
-                        message_id=message_id_to_edit,
-                        text=text_response,
-                        parse_mode=parse_mode,
-                        reply_markup=reply_markup
-                    )
+                    try:
+                        await self.edit_message_text(
+                            chat_id=chat_id,
+                            message_id=message_id_to_edit,
+                            text=text_response,
+                            parse_mode=parse_mode,
+                            reply_markup=reply_markup
+                        )
+                    except ValueError as e:
+                        error_str = str(e)
+                        # Verificar tipo de erro
+                        if "not_modified:" in error_str:
+                            # Mensagem já tem o mesmo conteúdo - não fazer nada (não criar nova mensagem)
+                            logger.info(
+                                "Mensagem já tem o mesmo conteúdo - não precisa editar (texto)",
+                                chat_id=chat_id,
+                                message_id=message_id_to_edit
+                            )
+                            # Não fazer nada - mensagem já está correta
+                        elif "too_old:" in error_str:
+                            # Mensagem muito antiga (>48h) - deletar antiga e enviar nova
+                            logger.warning(
+                                "Mensagem muito antiga - deletando e enviando nova (texto)",
+                                chat_id=chat_id,
+                                message_id=message_id_to_edit
+                            )
+                            # Tentar deletar mensagem antiga
+                            try:
+                                await self.delete_message(chat_id=chat_id, message_id=message_id_to_edit)
+                                logger.info("Mensagem antiga deletada com sucesso", chat_id=chat_id, message_id=message_id_to_edit)
+                            except Exception as delete_error:
+                                logger.warning(
+                                    "Não foi possível deletar mensagem antiga",
+                                    chat_id=chat_id,
+                                    message_id=message_id_to_edit,
+                                    error=str(delete_error)
+                                )
+                            # Enviar nova mensagem
+                            telegram_result = await self.send_message(
+                                chat_id=chat_id,
+                                text=text_response,
+                                parse_mode=parse_mode,
+                                reply_markup=reply_markup
+                            )
+                            logger.info(
+                                "Nova mensagem enviada (mensagem antiga deletada)",
+                                chat_id=chat_id,
+                                new_message_id=telegram_result.get("result", {}).get("message_id") if telegram_result.get("ok") else None
+                            )
+                        else:
+                            # Outro tipo de erro - tentar enviar nova mensagem (mas não deletar)
+                            logger.warning(
+                                "Erro ao editar mensagem - enviando nova mensagem (texto)",
+                                chat_id=chat_id,
+                                message_id=message_id_to_edit,
+                                error=error_str
+                            )
+                            telegram_result = await self.send_message(
+                                chat_id=chat_id,
+                                text=text_response,
+                                parse_mode=parse_mode,
+                                reply_markup=reply_markup
+                            )
+                            logger.info(
+                                "Nova mensagem enviada (fallback)",
+                                chat_id=chat_id,
+                                new_message_id=telegram_result.get("result", {}).get("message_id") if telegram_result.get("ok") else None
+                            )
                 else:
                     # Enviar nova mensagem
                     telegram_result = await self.send_message(
@@ -382,42 +443,21 @@ class TelegramService:
                 message_id=message_id
             )
             
-            # VERIFICAR AUTENTICAÇÃO ANTES DE PROCESSAR
-            print("=" * 80, file=sys.stderr)
-            print(f"VERIFICANDO AUTENTICACAO PARA CALLBACK - user_id={user_id}", file=sys.stderr)
-            print("=" * 80, file=sys.stderr)
-            
+            # Verificar autenticação (mas NÃO bloquear - deixar chatbot retornar erro 401)
+            # Quando chatbot retornar erro 401, vamos editar a mensagem do pedido com link de login
             auth_status = keycloak_auth_service.get_user_auth_status(user_id)
             is_authenticated = auth_status and auth_status.get("is_authenticated", False)
             
-            print(f"auth_status para callback: {auth_status}", file=sys.stderr)
-            print(f"is_authenticated para callback: {is_authenticated}", file=sys.stderr)
-            
-            if not is_authenticated:
-                print("=" * 80, file=sys.stderr)
-                print(f"CALLBACK: USUARIO NAO AUTENTICADO - user_id={user_id}", file=sys.stderr)
-                print("BLOQUEANDO PROCESSAMENTO DO CALLBACK", file=sys.stderr)
-                print("=" * 80, file=sys.stderr)
-                logger.warning("CALLBACK: Usuário não autenticado - bloqueando", telegram_user_id=user_id)
-                # Enviar mensagem de autenticação
-                try:
-                    auth_url, state = keycloak_auth_service.generate_authorization_url(
-                        telegram_user_id=user_id,
-                        telegram_chat_id=str(chat_id)
-                    )
-                    auth_message = (
-                        "🔐 Você precisa estar autenticado para usar este bot.\n\n"
-                        "Por favor, <a href=\"{}\">clique aqui para fazer login</a>.\n\n"
-                        "Após fazer login, você será redirecionado de volta para o Telegram."
-                    ).format(auth_url)
-                    await self.send_message(chat_id=chat_id, text=auth_message, parse_mode="HTML")
-                except Exception as e2:
-                    logger.error(f"Erro ao enviar mensagem de autenticação no callback: {e2}")
-                return  # NÃO PROCESSAR CALLBACK SEM AUTENTICAÇÃO
-            
-            # Usuário autenticado - processar callback
+            # Obter token e userinfo se autenticado (pode ser None se não autenticado)
             access_token = keycloak_auth_service.get_access_token(user_id) if is_authenticated else None
             userinfo = auth_status.get("userinfo") if is_authenticated else None
+            
+            logger.info(
+                "Processando callback (autenticação verificada mas não bloqueando)",
+                telegram_user_id=user_id,
+                is_authenticated=is_authenticated,
+                has_token=bool(access_token)
+            )
             
             # ✅ INTERCEPTAR AÇÃO "SAIR" ANTES DO LOOKUP DE MENUS
             # "sair" não é menu, é ação - tratar aqui para evitar erro "Menu 'sair' não encontrado"
@@ -471,13 +511,15 @@ class TelegramService:
                             chat_id=chat_id,
                             message_id=message_id
                         )
-                    except Exception as e2:
+                    except (ValueError, Exception) as e2:
+                        # Mensagem muito antiga ou outro erro - apenas logar
                         logger.warning(
-                            "Não foi possível editar mensagem para fechar menu",
+                            "Não foi possível editar mensagem para fechar menu (mensagem muito antiga ou outro erro)",
                             chat_id=chat_id,
                             message_id=message_id,
                             error=str(e2)
                         )
+                        # Não enviar nova mensagem aqui - o menu já foi fechado via delete
                 
                 # Retornar imediatamente - não processar com chatbot
                 return
@@ -538,20 +580,100 @@ class TelegramService:
                 reply_markup = chatbot_response.get("reply_markup")
                 parse_mode = chatbot_response.get("parse_mode")
                 edit_message = chatbot_response.get("edit_message", False)
-                message_id_to_edit = chatbot_response.get("message_id") or message_id
+                # IMPORTANTE: Se chatbot_response tem message_id, usar ele (para erros 401, por exemplo)
+                # Caso contrário, usar message_id do callback
+                message_id_to_edit = chatbot_response.get("message_id")
+                if not message_id_to_edit:
+                    message_id_to_edit = message_id
                 delete_user_message = chatbot_response.get("delete_user_message", False)
                 user_message_id = chatbot_response.get("user_message_id")
+                
+                logger.info(
+                    "Processando resposta do chatbot (callback)",
+                    has_text=bool(text_response),
+                    edit_message=edit_message,
+                    message_id_to_edit=message_id_to_edit,
+                    parse_mode=parse_mode,
+                    has_reply_markup=bool(reply_markup)
+                )
                 
                 # Verificar se deve editar mensagem existente (mantém chat limpo)
                 if edit_message and message_id_to_edit:
                     # Editar mensagem existente (RECOMENDADO - mantém chat limpo)
-                    await self.edit_message_text(
+                    logger.info(
+                        "Editando mensagem do pedido (callback)",
                         chat_id=chat_id,
                         message_id=message_id_to_edit,
-                        text=text_response,
-                        parse_mode=parse_mode,
-                        reply_markup=reply_markup
+                        text_preview=text_response[:50]
                     )
+                    try:
+                        await self.edit_message_text(
+                            chat_id=chat_id,
+                            message_id=message_id_to_edit,
+                            text=text_response,
+                            parse_mode=parse_mode,
+                            reply_markup=reply_markup
+                        )
+                    except ValueError as e:
+                        error_str = str(e)
+                        # Verificar tipo de erro
+                        if "not_modified:" in error_str:
+                            # Mensagem já tem o mesmo conteúdo - não fazer nada (não criar nova mensagem)
+                            logger.info(
+                                "Mensagem já tem o mesmo conteúdo - não precisa editar",
+                                chat_id=chat_id,
+                                message_id=message_id_to_edit
+                            )
+                            # Não fazer nada - mensagem já está correta
+                        elif "too_old:" in error_str:
+                            # Mensagem muito antiga (>48h) - deletar antiga e enviar nova
+                            logger.warning(
+                                "Mensagem muito antiga - deletando e enviando nova",
+                                chat_id=chat_id,
+                                message_id=message_id_to_edit
+                            )
+                            # Tentar deletar mensagem antiga
+                            try:
+                                await self.delete_message(chat_id=chat_id, message_id=message_id_to_edit)
+                                logger.info("Mensagem antiga deletada com sucesso", chat_id=chat_id, message_id=message_id_to_edit)
+                            except Exception as delete_error:
+                                logger.warning(
+                                    "Não foi possível deletar mensagem antiga",
+                                    chat_id=chat_id,
+                                    message_id=message_id_to_edit,
+                                    error=str(delete_error)
+                                )
+                            # Enviar nova mensagem
+                            telegram_result = await self.send_message(
+                                chat_id=chat_id,
+                                text=text_response,
+                                parse_mode=parse_mode,
+                                reply_markup=reply_markup
+                            )
+                            logger.info(
+                                "Nova mensagem enviada (mensagem antiga deletada)",
+                                chat_id=chat_id,
+                                new_message_id=telegram_result.get("result", {}).get("message_id") if telegram_result.get("ok") else None
+                            )
+                        else:
+                            # Outro tipo de erro - tentar enviar nova mensagem (mas não deletar)
+                            logger.warning(
+                                "Erro ao editar mensagem - enviando nova mensagem",
+                                chat_id=chat_id,
+                                message_id=message_id_to_edit,
+                                error=error_str
+                            )
+                            telegram_result = await self.send_message(
+                                chat_id=chat_id,
+                                text=text_response,
+                                parse_mode=parse_mode,
+                                reply_markup=reply_markup
+                            )
+                            logger.info(
+                                "Nova mensagem enviada (fallback)",
+                                chat_id=chat_id,
+                                new_message_id=telegram_result.get("result", {}).get("message_id") if telegram_result.get("ok") else None
+                            )
                 else:
                     # Enviar nova mensagem (apenas se não tiver message_id)
                     telegram_result = await self.send_message(
@@ -743,8 +865,22 @@ class TelegramService:
                 
                 # Tratamento específico para erros de autenticação/autorização
                 error_text = ""
+                auth_url = None
                 if status_code == 401:
-                    error_text = "🔐 Seu token de autenticação expirou. Por favor, faça login novamente."
+                    # Gerar link de login quando token expirar
+                    try:
+                        auth_url, state = keycloak_auth_service.generate_authorization_url(
+                            telegram_user_id=user_id,
+                            telegram_chat_id=str(chat_id)
+                        )
+                        error_text = (
+                            "❌ Erro de autenticação: Token inválido ou expirado. Não foi possível salvar o pedido.\n\n"
+                            "Por favor, <a href=\"{}\">clique aqui para fazer login novamente</a>.\n\n"
+                            "Após fazer login, você poderá continuar editando seu pedido."
+                        ).format(auth_url)
+                    except Exception as e:
+                        logger.error(f"Erro ao gerar link de login: {e}", exc_info=True)
+                        error_text = "🔐 Seu token de autenticação expirou. Por favor, faça login novamente."
                 elif status_code == 403:
                     error_text = "🔒 Acesso negado. Você precisa ter o perfil 'colaborador' para usar este recurso. Entre em contato com o administrador."
                 elif "connection" in str(error).lower() or "failed" in str(error).lower() or "unreachable" in str(error).lower():
@@ -752,7 +888,53 @@ class TelegramService:
                 else:
                     error_text = f"Desculpe, ocorreu um erro: {error}"
                 
-                return {"text": error_text, "edit_message": False}
+                # IMPORTANTE: Para callbacks, editar a mensagem do pedido existente (não criar nova)
+                # O message_id do pedido está no callback_query.message.message_id
+                callback_message_id = callback_query.get("message", {}).get("message_id") if callback_query else None
+                if callback_message_id:
+                    # Editar a mensagem do pedido com o erro
+                    # IMPORTANTE: Tentar preservar botões originais da mensagem e adicionar botão de login
+                    original_reply_markup = callback_query.get("message", {}).get("reply_markup")
+                    final_reply_markup = None
+                    
+                    if status_code == 401 and auth_url:
+                        # Criar botão de login
+                        login_button = {
+                            "text": "🔐 Fazer Login",
+                            "url": auth_url
+                        }
+                        
+                        # Se tiver botões originais, tentar adicionar botão de login
+                        if original_reply_markup:
+                            # Tentar adicionar botão de login aos botões existentes
+                            inline_keyboard = original_reply_markup.get("inline_keyboard", [])
+                            # Adicionar linha com botão de login no início
+                            login_row = [[login_button]]
+                            final_keyboard = login_row + inline_keyboard
+                            final_reply_markup = {"inline_keyboard": final_keyboard}
+                        else:
+                            # Se não tiver botões originais, criar apenas botão de login
+                            final_reply_markup = {"inline_keyboard": [[login_button]]}
+                    # Para outros erros, remover botões (final_reply_markup já é None)
+                    
+                    logger.info(
+                        "Retornando erro 401 para editar mensagem do pedido",
+                        callback_message_id=callback_message_id,
+                        chat_id=chat_id,
+                        has_original_keyboard=bool(original_reply_markup),
+                        has_login_button=status_code == 401 and auth_url is not None
+                    )
+                    return {
+                        "text": error_text, 
+                        "edit_message": True, 
+                        "message_id": callback_message_id,
+                        "parse_mode": "HTML",
+                        "reply_markup": final_reply_markup
+                    }
+                else:
+                    # Se não houver message_id, criar nova mensagem
+                    logger.warning("Erro 401 mas sem message_id do callback - criando nova mensagem", chat_id=chat_id)
+                    return {"text": error_text, "edit_message": False, "parse_mode": "HTML"}
                 
         except Exception as e:
             logger.error(f"Erro ao processar callback com chatbot: {e}", exc_info=True)
@@ -929,7 +1111,20 @@ class TelegramService:
                 # Tratamento específico para erros de autenticação/autorização
                 error_text = ""
                 if status_code == 401:
-                    error_text = "🔐 Seu token de autenticação expirou. Por favor, faça login novamente."
+                    # Gerar link de login quando token expirar
+                    try:
+                        auth_url, state = keycloak_auth_service.generate_authorization_url(
+                            telegram_user_id=user_id,
+                            telegram_chat_id=str(chat_id)
+                        )
+                        error_text = (
+                            "❌ Erro de autenticação: Token inválido ou expirado. Não foi possível salvar o pedido.\n\n"
+                            "Por favor, <a href=\"{}\">clique aqui para fazer login novamente</a>.\n\n"
+                            "Após fazer login, você poderá continuar editando seu pedido."
+                        ).format(auth_url)
+                    except Exception as e:
+                        logger.error(f"Erro ao gerar link de login: {e}", exc_info=True)
+                        error_text = "🔐 Seu token de autenticação expirou. Por favor, faça login novamente."
                 elif status_code == 403:
                     error_text = "🔒 Acesso negado. Você precisa ter o perfil 'colaborador' para usar este recurso. Entre em contato com o administrador."
                 elif "connection" in str(error).lower() or "failed" in str(error).lower() or "unreachable" in str(error).lower():
@@ -937,7 +1132,28 @@ class TelegramService:
                 else:
                     error_text = f"Desculpe, ocorreu um erro: {error}"
                 
-                return {"text": error_text}
+                # IMPORTANTE: Verificar se há message_id na resposta do chatbot para editar a mensagem do pedido
+                # Se o chatbot retornou message_id mesmo com erro, significa que há uma mensagem do pedido para editar
+                message_id_to_edit = response.get("message_id") if response else None
+                if message_id_to_edit:
+                    # Editar a mensagem do pedido com o erro
+                    # IMPORTANTE: Remover reply_markup (botões) ao editar com erro de autenticação
+                    logger.info(
+                        "Retornando erro 401 para editar mensagem do pedido (mensagem de texto)",
+                        message_id_to_edit=message_id_to_edit,
+                        chat_id=chat_id
+                    )
+                    return {
+                        "text": error_text, 
+                        "edit_message": True, 
+                        "message_id": message_id_to_edit,
+                        "parse_mode": "HTML",
+                        "reply_markup": None  # Remover botões ao mostrar erro
+                    }
+                else:
+                    # Se não houver message_id, criar nova mensagem
+                    logger.warning("Erro 401 mas sem message_id na resposta - criando nova mensagem", chat_id=chat_id)
+                    return {"text": error_text, "edit_message": False, "parse_mode": "HTML"}
                 
         except Exception as e:
             logger.error(f"Erro ao processar mensagem com chatbot: {e}", exc_info=True)
@@ -1042,6 +1258,41 @@ class TelegramService:
             
             return response.json()
             
+        except httpx.HTTPStatusError as e:
+            # Erro 400 pode ter diferentes causas
+            if e.response.status_code == 400:
+                error_detail = "Mensagem muito antiga ou não pode ser editada"
+                error_type = "unknown"
+                try:
+                    error_json = e.response.json()
+                    error_description = error_json.get("description", "")
+                    error_detail = error_description
+                    
+                    # Identificar tipo de erro
+                    if "message is not modified" in error_description.lower():
+                        # Mensagem já tem o mesmo conteúdo - não precisa fazer nada
+                        error_type = "not_modified"
+                    elif "message can't be edited" in error_description.lower() or "too old" in error_description.lower():
+                        # Mensagem muito antiga (>48h) - precisa deletar e enviar nova
+                        error_type = "too_old"
+                    else:
+                        # Outro tipo de erro 400
+                        error_type = "other"
+                except:
+                    pass
+                
+                logger.warning(
+                    "Não foi possível editar mensagem",
+                    chat_id=chat_id,
+                    message_id=message_id,
+                    error=error_detail,
+                    error_type=error_type
+                )
+                # Lançar exceção específica com tipo de erro para que o código chamador possa tratar
+                raise ValueError(f"Mensagem não pode ser editada: {error_type}:{error_detail}") from e
+            else:
+                logger.error(f"Erro HTTP ao editar mensagem: {e}")
+                raise
         except httpx.HTTPError as e:
             logger.error(f"Erro HTTP ao editar mensagem: {e}")
             raise
@@ -1220,8 +1471,72 @@ class TelegramService:
         except httpx.HTTPError as e:
             # Erro 409 Conflict significa que há webhook configurado
             if hasattr(e, 'response') and e.response and e.response.status_code == 409:
-                logger.warning("Erro 409: Webhook ainda configurado. O serviço deve removê-lo ao iniciar.")
+                # Contador e timestamp para evitar loop infinito (atributo de classe)
+                if not hasattr(self, '_webhook_409_count'):
+                    self._webhook_409_count = 0
+                if not hasattr(self, '_last_webhook_removal_time'):
+                    self._last_webhook_removal_time = 0
+                
+                import time
+                current_time = time.time()
+                time_since_last_removal = current_time - self._last_webhook_removal_time
+                
+                # Se removeu recentemente (menos de 20 segundos), pode ser propagação - aguardar mais
+                if time_since_last_removal < 20 and self._webhook_409_count > 0:
+                    # Log apenas na primeira vez após remoção recente
+                    if self._webhook_409_count == 1:
+                        logger.debug("Erro 409 após remoção recente - aguardando propagação do Telegram (20s)...")
+                    await asyncio.sleep(20)  # Aguardar propagação completa
+                    return []
+                
+                self._webhook_409_count += 1
+                
+                # Se já tentou muitas vezes, apenas logar uma vez e aguardar mais tempo
+                if self._webhook_409_count > 3:
+                    if self._webhook_409_count == 4:
+                        logger.warning("⚠️ Erro 409 persistente. Aguardando 60 segundos antes de tentar novamente...")
+                        logger.warning("Se o problema persistir, verifique se há outro serviço configurando webhook.")
+                    await asyncio.sleep(60)  # Aguardar 60 segundos antes de tentar novamente
+                    return []
+                
+                # Log apenas nas primeiras tentativas
+                if self._webhook_409_count <= 2:
+                    logger.warning(f"Erro 409: Webhook detectado. Removendo... (tentativa {self._webhook_409_count}/3)")
+                
+                try:
+                    # Tentar remover webhook automaticamente
+                    delete_result = await self.delete_webhook(drop_pending_updates=True)
+                    
+                    # Verificar se foi realmente removido
+                    await asyncio.sleep(3)  # Aguardar um pouco antes de verificar
+                    webhook_info = await self.get_webhook_info()
+                    webhook_url = None
+                    if webhook_info and webhook_info.get("ok") and webhook_info.get("result"):
+                        webhook_url = webhook_info.get("result", {}).get("url", "")
+                        if webhook_url:
+                            webhook_url = webhook_url.strip()
+                    
+                    if webhook_url:
+                        # Webhook ainda configurado - pode estar sendo reconfigurado
+                        if self._webhook_409_count <= 2:
+                            logger.warning(f"⚠️ Webhook ainda configurado após remoção (URL: {webhook_url})")
+                        await asyncio.sleep(15)
+                    else:
+                        # Webhook removido com sucesso
+                        if self._webhook_409_count <= 2:
+                            logger.info("✅ Webhook removido. Aguardando propagação (20s)...")
+                        self._webhook_409_count = 0  # Resetar contador
+                        self._last_webhook_removal_time = time.time()  # Registrar tempo da remoção
+                        await asyncio.sleep(20)  # Aguardar propagação completa antes de tentar getUpdates
+                        
+                except Exception as delete_error:
+                    if self._webhook_409_count <= 2:
+                        logger.error(f"Erro ao remover webhook: {delete_error}", exc_info=True)
+                    await asyncio.sleep(15)
             else:
+                # Resetar contador se não for erro 409
+                if hasattr(self, '_webhook_409_count'):
+                    self._webhook_409_count = 0
                 logger.error(f"Erro HTTP ao buscar atualizações: {e}")
             return []
         except Exception as e:

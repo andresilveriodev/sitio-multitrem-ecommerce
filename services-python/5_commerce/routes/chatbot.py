@@ -12,10 +12,15 @@ from auth.keycloak import get_current_user
 from services.chatbot_service import ChatbotService
 from services.order_service import OrderService
 from services.customer_service import CustomerService
+from models.commerce import Customer, CustomerContact, OrderChannel, PriceProfile, Product
+from sqlalchemy import func, and_
+from decimal import Decimal
+import structlog
 from schemas.chatbot import (
     ConversationCreate, ConversationUpdate, ConversationResponse,
     ConversationWithMessages, MessageCreate, MessageResponse,
-    ChatbotOrderCreate, ChatbotOrderItem
+    ChatbotOrderCreate, ChatbotOrderItem,
+    TelegramBulkOrdersCreate, TelegramNormalizedOrder, TelegramNormalizedOrderItem
 )
 from schemas.order import OrderResponse, OrderCreate, OrderItemCreate
 from schemas.customer import CustomerResponse
@@ -208,3 +213,178 @@ async def get_customer_by_phone(
     if not customer:
         raise HTTPException(status_code=404, detail="Cliente não encontrado")
     return customer
+
+
+@router.post("/orders/bulk", response_model=List[OrderResponse], status_code=201)
+async def create_orders_from_telegram(
+    bulk_data: TelegramBulkOrdersCreate,
+    db: Session = Depends(get_db_session),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """
+    Cria múltiplos pedidos a partir de dados normalizados do chatbot Telegram
+    Tenta identificar cliente/contato, mas cria temporário se não encontrar
+    Requer autenticação Keycloak
+    """
+    logger = structlog.get_logger()
+    created_orders = []
+    
+    for order_data in bulk_data.orders:
+        try:
+            # 1. Tenta identificar ou criar cliente
+            customer = None
+            contact = None
+            
+            # Tenta encontrar por nome do estabelecimento
+            if order_data.establishment_name:
+                customers = db.query(Customer).filter(
+                    func.lower(Customer.name).contains(order_data.establishment_name.lower())
+                ).all()
+                
+                if customers:
+                    customer = customers[0]  # Pega o primeiro match
+                    
+                    # Tenta encontrar contato
+                    if order_data.contact_name:
+                        contact = db.query(CustomerContact).filter(
+                            and_(
+                                func.lower(CustomerContact.name).contains(order_data.contact_name.lower()),
+                                CustomerContact.customer_id == customer.id
+                            )
+                        ).first()
+            
+            # Se não encontrou, tenta por telefone do contato
+            if not customer and order_data.contact_phone:
+                contact = CustomerService.get_customer_contact_by_phone(db, order_data.contact_phone)
+                if contact:
+                    customer = db.query(Customer).filter(Customer.id == contact.customer_id).first()
+            
+            # Se ainda não encontrou, tenta buscar cliente pelo telefone diretamente
+            if not customer:
+                phone_to_check = order_data.contact_phone or "+5562999999999"
+                customer = CustomerService.get_customer_by_phone(db, phone_to_check)
+            
+            # Se ainda não encontrou, cria cliente temporário
+            if not customer:
+                # Determina perfil de preço
+                price_profile = PriceProfile.RESTAURANTE_LOW
+                if order_data.price_profile_hint:
+                    hint = order_data.price_profile_hint.replace(',', '.')
+                    if "2.50" in hint:
+                        price_profile = PriceProfile.RESTAURANTE_LOW
+                    elif "3.00" in hint:
+                        price_profile = PriceProfile.RESTAURANTE_HIGH
+                    elif "3.50" in hint:
+                        price_profile = PriceProfile.RESTAURANTE_LOW
+                    elif "4.00" in hint:
+                        price_profile = PriceProfile.VAREJO
+                
+                customer_name = order_data.establishment_name or order_data.contact_name or "Cliente Temporário"
+                phone_e164 = order_data.contact_phone or "+5562999999999"
+                
+                # Tentar criar cliente
+                try:
+                    customer = Customer(
+                        name=customer_name,
+                        phone_e164=phone_e164,
+                        price_profile=price_profile,
+                        notes=f"Cliente criado automaticamente do Telegram. Contato: {order_data.contact_name or 'N/A'}"
+                    )
+                    db.add(customer)
+                    db.flush()
+                except Exception as create_error:
+                    # Se falhar por constraint única, tentar buscar novamente
+                    if "UniqueViolation" in str(create_error) or "duplicate key" in str(create_error).lower():
+                        logger.warning(
+                            "Tentativa de criar cliente duplicado, buscando existente",
+                            phone_e164=phone_e164,
+                            error=str(create_error)
+                        )
+                        # Rollback da tentativa de criação
+                        db.rollback()
+                        # Buscar cliente existente
+                        customer = CustomerService.get_customer_by_phone(db, phone_e164)
+                        if not customer:
+                            # Se ainda não encontrou, re-raise o erro original
+                            raise
+                    else:
+                        # Se for outro erro, re-raise
+                        raise
+                
+                # Cria contato se tiver nome
+                if order_data.contact_name and order_data.contact_name != customer_name:
+                    contact = CustomerContact(
+                        customer_id=customer.id,
+                        name=order_data.contact_name,
+                        phone_e164=order_data.contact_phone,
+                        active=True
+                    )
+                    db.add(contact)
+                    db.flush()
+            
+            # 2. Prepara itens do pedido (filtra apenas produtos identificados)
+            order_items = []
+            unmatched_products = []
+            
+            for item in order_data.items:
+                if item.product_id:
+                    # Busca produto para verificar se é palito (para notes)
+                    product = db.query(Product).filter(Product.id == item.product_id).first()
+                    is_palito = product and ("palito" in product.name.lower() or (product.sku and "palito" in product.sku.lower()))
+                    
+                    order_items.append(OrderItemCreate(
+                        product_id=item.product_id,
+                        qty=Decimal(str(item.qty)),
+                        unit_price=Decimal("0"),  # Será calculado
+                        notes=item.product_name if is_palito else None
+                    ))
+                else:
+                    unmatched_products.append(item.product_name)
+            
+            if not order_items:
+                logger.warning(
+                    "Nenhum produto identificado no pedido",
+                    contact_name=order_data.contact_name,
+                    establishment_name=order_data.establishment_name
+                )
+                continue  # Pula este pedido
+            
+            # 3. Cria pedido
+            order_create = OrderCreate(
+                customer_id=customer.id,
+                channel=OrderChannel.TELEGRAM,
+                price_list_id=1,  # Lista padrão
+                notes=f"Pedido do Telegram. Contato: {order_data.contact_name or 'N/A'}. "
+                      f"Estabelecimento: {order_data.establishment_name or 'N/A'}. "
+                      f"Produtos não identificados: {', '.join(unmatched_products) if unmatched_products else 'Nenhum'}",
+                items=order_items  # Passar items diretamente no construtor
+            )
+            
+            order = OrderService.create_order(db, order_create)
+            created_orders.append(order)
+            
+            # 4. Atualiza conversa se tiver conversation_id
+            if bulk_data.conversation_id:
+                ChatbotService.update_conversation(
+                    db,
+                    bulk_data.conversation_id,
+                    ConversationUpdate(current_order_id=order.id)
+                )
+            
+        except Exception as e:
+            logger.error(
+                "Erro ao criar pedido do Telegram",
+                error=str(e),
+                contact_name=order_data.contact_name,
+                establishment_name=order_data.establishment_name
+            )
+            # Continua com próximo pedido
+            continue
+    
+    if not created_orders:
+        raise HTTPException(
+            status_code=400,
+            detail="Nenhum pedido foi criado. Verifique se os produtos foram identificados corretamente."
+        )
+    
+    return created_orders

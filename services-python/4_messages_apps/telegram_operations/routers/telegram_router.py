@@ -106,16 +106,69 @@ async def auth_callback(
             )
         
         # Completar autenticação
+        logger.info(
+            "Iniciando troca de code por tokens",
+            has_code=bool(code),
+            has_state=bool(state),
+            code_preview=code[:10] + "..." if code else "None",
+            state_preview=state[:10] + "..." if state else "None"
+        )
+        
         result = await keycloak_auth_service.exchange_code_for_tokens(code=code, state=state)
         
         if not result:
-            logger.error("Falha ao completar autenticação", state=state[:8] + "...")
+            logger.error("Falha ao completar autenticação", state=state[:8] + "..." if state else "None")
             return HTMLResponse(
                 content="""
                 <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Falha na Autenticação</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                text-align: center;
+                                padding: 50px;
+                                background-color: #f5f5f5;
+                            }
+                            .error-box {
+                                background-color: white;
+                                border-radius: 8px;
+                                padding: 30px;
+                                max-width: 500px;
+                                margin: 0 auto;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                            }
+                            h1 {
+                                color: #d32f2f;
+                                margin-bottom: 20px;
+                            }
+                            p {
+                                color: #666;
+                                line-height: 1.6;
+                            }
+                            .retry-button {
+                                display: inline-block;
+                                margin-top: 20px;
+                                padding: 10px 20px;
+                                background-color: #0088cc;
+                                color: white;
+                                text-decoration: none;
+                                border-radius: 4px;
+                            }
+                            .retry-button:hover {
+                                background-color: #006ba3;
+                            }
+                        </style>
+                    </head>
                     <body>
-                        <h1>Falha na Autenticação</h1>
-                        <p>Não foi possível completar a autenticação. Por favor, tente novamente.</p>
+                        <div class="error-box">
+                            <h1>❌ Falha na Autenticação</h1>
+                            <p><strong>Não foi possível completar a autenticação.</strong></p>
+                            <p>O servidor de autenticação pode estar temporariamente indisponível (erro 502 Bad Gateway).</p>
+                            <p>Por favor, aguarde alguns instantes e tente novamente.</p>
+                            <a href="https://web.telegram.org/k/#@BaculejoBot" class="retry-button">Voltar para o Telegram</a>
+                        </div>
                     </body>
                 </html>
                 """,
@@ -133,10 +186,14 @@ async def auth_callback(
         )
         
         # Enviar mensagem de confirmação no Telegram
+        # IMPORTANTE: Enviar como nova mensagem para aparecer no topo e não perder a lógica da conversa
         if telegram_chat_id and telegram_service:
             try:
                 username = userinfo.get("preferred_username", "Usuário")
-                success_message = f"✅ Login realizado com sucesso!\n\nOlá, {username}! Você está autenticado e pode usar o bot."
+                success_message = (
+                    f"✅ Login realizado com sucesso!\n\n"
+                    f"Olá, {username}! Você está autenticado e pode continuar editando seu pedido."
+                )
                 await telegram_service.send_message(
                     chat_id=int(telegram_chat_id),
                     text=success_message
@@ -149,24 +206,14 @@ async def auth_callback(
         # Redirecionar para o bot do Telegram Web
         telegram_redirect_url = "https://web.telegram.org/k/#@BaculejoBot"
         
-        return HTMLResponse(
-            content=f"""
-            <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Autenticação Concluída</title>
-                    <meta http-equiv="refresh" content="3;url={telegram_redirect_url}">
-                </head>
-                <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
-                    <h1 style="color: #0088cc;">✅ Autenticação Concluída!</h1>
-                    <p>Olá, <strong>{userinfo.get('preferred_username', 'Usuário')}</strong>!</p>
-                    <p>Sua autenticação foi realizada com sucesso.</p>
-                    <p>Você será redirecionado para o Telegram em alguns segundos...</p>
-                    <p><a href="{telegram_redirect_url}" style="color: #0088cc;">Clique aqui se não for redirecionado</a></p>
-                </body>
-            </html>
-            """
+        logger.info(
+            "Redirecionando para Telegram após autenticação",
+            telegram_user_id=telegram_user_id,
+            redirect_url=telegram_redirect_url
         )
+        
+        # Usar redirect HTTP 302 ao invés de meta refresh para garantir que funcione
+        return RedirectResponse(url=telegram_redirect_url, status_code=302)
         
     except Exception as e:
         logger.error(f"Erro no callback de autenticação: {e}", exc_info=True)

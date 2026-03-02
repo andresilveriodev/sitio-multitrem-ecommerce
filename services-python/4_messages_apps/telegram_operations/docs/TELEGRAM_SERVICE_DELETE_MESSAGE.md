@@ -66,7 +66,7 @@ async def handle_callback_query(callback_query: dict, keycloak_token: str):
         # 1. Chamar Chatbot Service com callback_query
         async with httpx.AsyncClient(timeout=30.0) as client:
             chatbot_response = await client.post(
-                f"{CHATBOT_SERVICE_URL}/chatbot/process-message-authenticated",
+                f"{CHATBOT_SERVICE_URL}/chatbot/process",
                 headers={
                     "X-Telegram-Bot-Token": TELEGRAM_BOT_TOKEN,
                     "Authorization": f"Bearer {keycloak_token}",
@@ -184,7 +184,7 @@ async def handle_message(message: dict, keycloak_token: str):
         # Chamar Chatbot Service
         async with httpx.AsyncClient(timeout=30.0) as client:
             chatbot_response = await client.post(
-                f"{CHATBOT_SERVICE_URL}/chatbot/process-message-authenticated",
+                f"{CHATBOT_SERVICE_URL}/chatbot/process",
                 headers={
                     "X-Telegram-Bot-Token": TELEGRAM_BOT_TOKEN,
                     "Authorization": f"Bearer {keycloak_token}",

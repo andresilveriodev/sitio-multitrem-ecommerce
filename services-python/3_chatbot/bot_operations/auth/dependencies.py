@@ -17,7 +17,30 @@ def get_current_user(request: Request) -> Dict[str, Any]:
     
     O FastAPI injeta automaticamente o Request quando usado como Depends.
     """
-    return verify_bearer_token_or_401(request)
+    logger.info(
+        "🔐 get_current_user chamado",
+        path=request.url.path,
+        method=request.method,
+        has_authorization="authorization" in [k.lower() for k in request.headers.keys()]
+    )
+    
+    try:
+        user = verify_bearer_token_or_401(request)
+        logger.info(
+            "✅ Usuário autenticado com sucesso",
+            path=request.url.path,
+            user_id=user.get('sub'),
+            username=user.get('preferred_username')
+        )
+        return user
+    except Exception as e:
+        logger.error(
+            "❌ Erro ao autenticar usuário",
+            path=request.url.path,
+            error=str(e),
+            error_type=type(e).__name__
+        )
+        raise
 
 
 def require_colaborador_role(

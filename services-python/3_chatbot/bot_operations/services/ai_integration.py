@@ -28,7 +28,6 @@ class AIServiceIntegration:
             timeout=self.timeout,
             base_url=self.base_url
         )
-        logger.info(f"HTTP client initialized for AI Service: {self.base_url}")
     
     async def disconnect(self):
         """Fecha cliente HTTP"""

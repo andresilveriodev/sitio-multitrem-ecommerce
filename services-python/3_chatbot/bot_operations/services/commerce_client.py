@@ -22,10 +22,15 @@ class CommerceServiceClient:
         method: str,
         endpoint: str,
         data: Optional[Dict[str, Any]] = None,
-        params: Optional[Dict[str, Any]] = None
+        params: Optional[Dict[str, Any]] = None,
+        token: Optional[str] = None
     ) -> Dict[str, Any]:
         """Faz uma requisição HTTP para o Commerce Service"""
         url = f"{self.base_url}{endpoint}"
+        
+        headers = {}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
         
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -33,19 +38,50 @@ class CommerceServiceClient:
                     method=method,
                     url=url,
                     json=data,
-                    params=params
+                    params=params,
+                    headers=headers
                 )
                 response.raise_for_status()
                 return response.json() if response.content else {}
         except httpx.HTTPStatusError as e:
+            status_code = e.response.status_code
+            error_text = e.response.text if hasattr(e.response, 'text') else ""
+            
+            # Log detalhado do erro HTTP
             logger.error(
-                f"Erro HTTP ao chamar Commerce Service: {e.response.status_code} - {e.response.text}",
+                "ERRO HTTP ao chamar Commerce Service",
+                status_code=status_code,
                 endpoint=endpoint,
-                method=method
+                method=method,
+                url=url,
+                error_text=error_text[:500] if error_text else "",  # Limitar tamanho do log
+                has_token=bool(token),
+                token_preview=token[:20] + "..." if token else None
             )
+            
+            # Tentar extrair detalhes do erro se for JSON
+            try:
+                if error_text:
+                    error_json = e.response.json()
+                    logger.error(
+                        "Detalhes do erro JSON",
+                        error_json=error_json
+                    )
+            except:
+                pass
+            
             raise
         except httpx.RequestError as e:
-            logger.error(f"Erro de conexão com Commerce Service: {e}", endpoint=endpoint)
+            logger.error(
+                "ERRO DE CONEXAO com Commerce Service",
+                error=str(e),
+                error_type=type(e).__name__,
+                endpoint=endpoint,
+                method=method,
+                url=url,
+                timeout=self.timeout,
+                has_token=bool(token)
+            )
             raise
     
     # ========== PRODUTOS ==========
@@ -87,6 +123,110 @@ class CommerceServiceClient:
     ) -> Dict[str, Any]:
         """Atualiza um produto"""
         return await self._request("PUT", f"/api/v1/products/{product_id}", data=product_data)
+    
+    async def search_products(
+        self,
+        search: str,
+        token: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Busca produtos por nome (usado para identificar produtos em pedidos)"""
+        # Endpoint conforme guia: GET v1/products?search={nome}
+        params = {"search": search}
+        try:
+            response = await self._request("GET", "/v1/products", params=params, token=token)
+            return response.get("items", []) if isinstance(response, dict) else response
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                # Tenta com /api se o endpoint sem /api não existir
+                logger.info("Tentando endpoint alternativo com /api")
+                response = await self._request("GET", "/api/v1/products", params=params, token=token)
+                return response.get("items", []) if isinstance(response, dict) else response
+            raise
+    
+    async def search_customers(
+        self,
+        search: str,
+        token: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Busca clientes por nome (usado para identificar clientes em pedidos)"""
+        # Endpoint conforme guia: GET v1/customers?search={nome}
+        params = {"search": search}
+        try:
+            response = await self._request("GET", "/v1/customers", params=params, token=token)
+            return response.get("items", []) if isinstance(response, dict) else response
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                # Tenta com /api se o endpoint sem /api não existir
+                logger.info("Tentando endpoint alternativo com /api")
+                response = await self._request("GET", "/api/v1/customers", params=params, token=token)
+                return response.get("items", []) if isinstance(response, dict) else response
+            raise
+    
+    async def create_orders_bulk(
+        self,
+        orders_data: Dict[str, Any],
+        token: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Cria múltiplos pedidos em uma única requisição (endpoint bulk do chatbot)"""
+        # LOG ANTES DE ENVIAR
+        logger.info("=" * 70)
+        logger.info("COMMERCE_CLIENT: Enviando pedidos bulk")
+        logger.info(
+            "Dados que serao enviados",
+            endpoint="/v1/chatbot/orders/bulk",
+            base_url=self.base_url,
+            conversation_id=orders_data.get("conversation_id"),
+            orders_count=len(orders_data.get("orders", [])),
+            has_token=bool(token),
+            token_preview=token[:20] + "..." if token else None,
+            data_keys=list(orders_data.keys())
+        )
+        
+        # Endpoint conforme guia: POST v1/chatbot/orders/bulk
+        # Tenta primeiro sem /api, depois com /api para compatibilidade
+        try:
+            logger.info("Tentando endpoint /v1/chatbot/orders/bulk")
+            response = await self._request("POST", "/v1/chatbot/orders/bulk", data=orders_data, token=token)
+            logger.info(
+                "Resposta recebida do endpoint /v1/chatbot/orders/bulk",
+                response_type=type(response).__name__,
+                is_list=isinstance(response, list),
+                response_preview=str(response)[:500] if response else None
+            )
+            return response if isinstance(response, list) else response.get("orders", [])
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                # Tenta com /api se o endpoint sem /api não existir
+                logger.info("Endpoint /v1 nao encontrado, tentando /api/v1/chatbot/orders/bulk")
+                try:
+                    response = await self._request("POST", "/api/v1/chatbot/orders/bulk", data=orders_data, token=token)
+                    logger.info(
+                        "Resposta recebida do endpoint /api/v1/chatbot/orders/bulk",
+                        response_type=type(response).__name__,
+                        is_list=isinstance(response, list),
+                        response_preview=str(response)[:500] if response else None
+                    )
+                    return response if isinstance(response, list) else response.get("orders", [])
+                except httpx.HTTPStatusError as e2:
+                    # Log detalhado do erro
+                    error_text = e2.response.text if hasattr(e2.response, 'text') else ""
+                    logger.error(
+                        "ERRO ao chamar /api/v1/chatbot/orders/bulk",
+                        status_code=e2.response.status_code,
+                        error_text=error_text[:500],
+                        response_headers=dict(e2.response.headers) if hasattr(e2.response, 'headers') else None
+                    )
+                    raise
+            else:
+                # Log detalhado do erro
+                error_text = e.response.text if hasattr(e.response, 'text') else ""
+                logger.error(
+                    "ERRO ao chamar /v1/chatbot/orders/bulk",
+                    status_code=e.response.status_code,
+                    error_text=error_text[:500],
+                    response_headers=dict(e.response.headers) if hasattr(e.response, 'headers') else None
+                )
+                raise
     
     async def list_categories(self) -> List[Dict[str, Any]]:
         """Lista categorias de produtos"""
