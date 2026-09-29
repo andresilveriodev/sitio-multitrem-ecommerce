@@ -12,6 +12,39 @@ from app.config import (
 
 logger = logging.getLogger(__name__)
 
+# Indicadores de contexto de registro de pedido (fluxo Chatbot Operations)
+_ORDER_CONTEXT_MARKERS = (
+    "registrar um pedido",
+    "pedido da horta",
+    "Pedido atual",
+    "ORDER_DATA:",
+    "Mensagem do usuário:",
+)
+
+
+def _is_order_registration_context(message: str) -> bool:
+    """Detecta se a mensagem contém o contexto de registro de pedido montado pelo Chatbot."""
+    if not message or len(message) < 50:
+        return False
+    msg_lower = message.lower()
+    return (
+        "contexto:" in msg_lower
+        and any(marker.lower() in msg_lower for marker in _ORDER_CONTEXT_MARKERS)
+    )
+
+
+# Instruções de sistema para o fluxo de pedido (reforçam o formato esperado pelo Chatbot)
+_ORDER_FLOW_SYSTEM_PROMPT = """Você está ajudando no registro de pedidos da horta. Regras:
+- Responda sempre em português, de forma natural e curta.
+- Quando extrair ou atualizar dados do pedido (nome do cliente, itens com quantidade), termine a resposta com exatamente UMA linha no formato:
+ORDER_DATA: {"customer_name": "nome ou null", "items": [{"product_name": "...", "quantity": n}, ...], "can_save_now": true ou false}
+- customer_name: string com o nome do cliente ou null.
+- items: lista com product_name (string) e quantity (número inteiro).
+- can_save_now: true só quando tiver customer_name preenchido, pelo menos um item e o usuário confirmou (ou a frase já trouxe pedido completo); senão false.
+- Mescle com o "Pedido atual" enviado no contexto: mantenha cliente/itens já informados e acrescente os novos.
+- Não inclua a linha ORDER_DATA quando a mensagem for só conversa (obrigado, cancelar) ou quando não houver dados de pedido a extrair."""
+
+
 class AIService:
     def __init__(self):
         self.openai_client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
@@ -22,10 +55,19 @@ class AIService:
     
     async def send(self, message: str, model: str = "gpt-4o-mini", max_tokens: int = 1000, temperature: float = 0.7) -> str:
         """
-        Método simples para enviar mensagem e receber resposta
-        Usa o provider padrão (openai)
+        Método simples para enviar mensagem e receber resposta.
+        Usa o provider padrão (openai).
+        Quando a mensagem contém contexto de registro de pedido (ex.: [Contexto: ... pedido da horta]),
+        injeta instruções de sistema para a IA responder em português e terminar com ORDER_DATA: {...}
+        quando extrair dados, conforme contrato com o Chatbot Operations.
         """
         messages = [{"role": "user", "content": message}]
+        if _is_order_registration_context(message):
+            messages = [
+                {"role": "system", "content": _ORDER_FLOW_SYSTEM_PROMPT},
+                {"role": "user", "content": message},
+            ]
+            logger.debug("Fluxo de registro de pedido detectado: instruções de sistema injetadas")
         return await self.generate_response(
             messages=messages,
             provider="openai",

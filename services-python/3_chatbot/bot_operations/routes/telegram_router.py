@@ -12,22 +12,15 @@ from pydantic import BaseModel
 
 from services.product_conversation_flow import product_flow
 from services.security import input_validator, ValidationLevel, permission_manager, PermissionLevel
-from services.commands.analyzer import CommandAnalyzer
-from services.commands.executor import CommandExecutor
-from services.commands.types import CommandRequest, CommandAnalysis
 from services.telegram_menu_handler import telegram_menu_handler
 from services.telegram_order_parser import telegram_order_parser
+from services.message_orchestrator import message_orchestrator
 from auth.dependencies import get_current_user, check_colaborador_role
 from config import settings
 
 logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/chatbot", tags=["telegram"])
-
-# Instâncias dos serviços de comandos
-command_analyzer = CommandAnalyzer()
-command_executor = CommandExecutor()
-
 
 class TelegramMessage(BaseModel):
     """Modelo de mensagem do Telegram"""
@@ -288,6 +281,31 @@ async def process_telegram_message(
             sanitized=sanitized_message[:100] if sanitized_message else "(vazia)",
             was_sanitized=(security_validation.sanitized_content != message_text)
         )
+
+        # Comandos slash do Telegram devem ser tratados antes da IA
+        if sanitized_message.startswith("/"):
+            command_result = await telegram_menu_handler.handle_command(sanitized_message)
+            if command_result.get("handled"):
+                logger.info(
+                    "✅ Comando Telegram processado pelo menu handler",
+                    user_id=user_id,
+                    command=sanitized_message.split()[0]
+                )
+                response_data = {
+                    "success": True,
+                    "response": command_result.get("response", ""),
+                    "metadata": {
+                        "user_id": user_id,
+                        "username": username,
+                        "is_command": True
+                    }
+                }
+                if command_result.get("has_keyboard") and command_result.get("reply_markup"):
+                    response_data["has_keyboard"] = True
+                    response_data["keyboard_type"] = command_result.get("keyboard_type", "inline")
+                    response_data["reply_markup"] = command_result["reply_markup"]
+                    response_data["edit_message"] = command_result.get("edit_message", False)
+                return response_data
         
         # Ignorar palavras que são apenas callbacks de botões (não devem ser processadas como comandos)
         # Isso evita que "sair", "voltar", etc. sejam interpretados como comandos quando o usuário
@@ -310,115 +328,8 @@ async def process_telegram_message(
                 }
             }
         
-        # Verificar se a mensagem parece ser um pedido (contém padrão de pedido)
-        # Padrão: "Nome: quantidade produto" ou "Nome quantidade produto"
-        # Aceita com ou sem espaços: "Dona Dilma:08 Couve04 Coentros" ou "Dona Dilma: 08 Couve 04 Coentros"
-        # Exemplo: "Dona Dilma:08 Couve04 Coentros04 Cebolinhas01 palito alface roxa"
-        is_order_pattern = (
-            # Padrão com dois pontos seguido de número (com ou sem espaço)
-            re.search(r':\s*\d+[A-Za-zÀ-ÿ]', sanitized_message, re.IGNORECASE) or
-            # Padrão: número seguido de letra (com ou sem espaço)
-            re.search(r'\d+\s*[A-Za-zÀ-ÿ]', sanitized_message, re.IGNORECASE) or
-            # Padrão: letra seguida de número seguido de letra (com ou sem espaços)
-            re.search(r'[A-Za-zÀ-ÿ]+\s*\d+\s*[A-Za-zÀ-ÿ]', sanitized_message, re.IGNORECASE)
-        )
-        
-        # LOG: Verificação de padrão de pedido
-        logger.info(
-            "🔍 Verificando padrão de pedido",
-            user_id=user_id,
-            is_order_pattern=bool(is_order_pattern),
-            starts_with_slash=sanitized_message.startswith('/'),
-            message_preview=sanitized_message[:100]
-        )
-        
-        if is_order_pattern and not sanitized_message.startswith('/'):
-            # Tentar processar como pedido
-            logger.info("📦 Tentando processar mensagem como pedido", user_id=user_id, message=sanitized_message)
-            
-            try:
-                # Extrair token do header Authorization
-                token = extract_bearer_token(request)
-                
-                logger.info(
-                    "Token extraido do request",
-                    user_id=user_id,
-                    has_token=bool(token),
-                    token_preview=token[:20] + "..." if token else None,
-                    authorization_header=request.headers.get("Authorization", "N/A")[:30] if request.headers.get("Authorization") else "N/A"
-                )
-                
-                # Parsear pedidos do texto
-                logger.info("🔍 Parseando pedidos do texto", user_id=user_id, text_length=len(sanitized_message))
-                orders = telegram_order_parser.parse_order_text(sanitized_message)
-                
-                logger.info(
-                    "📋 Pedidos parseados",
-                    user_id=user_id,
-                    orders_count=len(orders) if orders else 0,
-                    orders_details=[{
-                        "contact_name": o.get("contact_name"),
-                        "items_count": len(o.get("items", []))
-                    } for o in (orders or [])]
-                )
-                
-                if orders:
-                    # Processar pedidos (buscar produtos e enviar para e-commerce)
-                    # Gerar UUID válido para conversation_id (não usar string)
-                    conversation_id = str(uuid.uuid4())
-                    
-                    logger.info(
-                        "Iniciando processamento de pedidos",
-                        user_id=user_id,
-                        orders_count=len(orders),
-                        conversation_id=conversation_id,
-                        has_token=bool(token),
-                        token_preview=token[:20] + "..." if token else None,
-                        message_id=message_data.get('message_id')
-                    )
-                    
-                    success, message, created_orders = await telegram_order_parser.process_orders(
-                        orders,
-                        conversation_id=conversation_id,
-                        token=token
-                    )
-                    
-                    logger.info(
-                        "Pedidos processados - RESULTADO",
-                        user_id=user_id,
-                        success=success,
-                        orders_count=len(orders),
-                        created_count=len(created_orders) if created_orders else 0,
-                        message=message,
-                        has_created_orders=bool(created_orders)
-                    )
-                    
-                    if not success:
-                        logger.error(
-                            "FALHA ao processar pedidos",
-                            user_id=user_id,
-                            error_message=message,
-                            orders_count=len(orders)
-                        )
-                    
-                    return {
-                        "success": success,
-                        "response": message,
-                        "metadata": {
-                            "user_id": user_id,
-                            "username": username,
-                            "is_order": True,
-                            "orders_count": len(orders),
-                            "created_orders": created_orders
-                        }
-                    }
-                else:
-                    logger.info("Mensagem não contém pedidos válidos", user_id=user_id)
-                    # Continuar processamento normal
-            except Exception as e:
-                logger.error(f"Erro ao processar pedido: {e}", exc_info=True, user_id=user_id)
-                # Em caso de erro, continuar processamento normal (não bloquear)
-                pass
+        # Toda a conversa vai para o orquestrador/IA com histórico. Sem interceptar padrão de pedido
+        # aqui (evita duas respostas: uma da IA com contexto e outra fixa "Para quem é o pedido?").
         
         # Verificar se está aguardando input de pedido inline (ANTES de processar comandos)
         from services.pedido_inline_service import pedido_inline_service
@@ -517,201 +428,54 @@ async def process_telegram_message(
             permissions=user_permissions
         )
         
-        # Verificar se é um comando que começa com "/" (comando direto do Telegram)
-        # Comandos do Telegram começam com "/" e devem ser processados antes de qualquer outra coisa
-        if message_text.startswith('/'):
-            logger.info("⚡ Comando direto detectado (começa com /)", user_id=user_id, command=message_text)
-            
-            # Verificar se é um comando conhecido diretamente (fallback rápido)
-            command_text = message_text.lower().strip().lstrip('/').split()[0]  # Pega apenas o primeiro "palavra"
-            if command_text in ['menu', 'm', 'início', 'inicio', 'home']:
-                logger.info(f"Comando /menu detectado diretamente", user_id=user_id)
-                # Criar análise direta para o comando menu
-                command_analysis = CommandAnalysis(
-                    is_command=True,
-                    confidence=0.95,
-                    command_id='show_menu',
-                    parameters={},
-                    original_message=message_text,
-                    processed_message=message_text
-                )
-            elif command_text in ['pedidos', 'p']:
-                logger.info(f"Comando /pedidos detectado diretamente", user_id=user_id)
-                # Criar análise direta para o comando pedidos
-                command_analysis = CommandAnalysis(
-                    is_command=True,
-                    confidence=0.95,
-                    command_id='show_pedidos_menu',
-                    parameters={},
-                    original_message=message_text,
-                    processed_message=message_text
-                )
-            else:
-                # Analisar mensagem para detectar comandos
-                command_analysis = await command_analyzer.analyze_message(
-                    message_text,  # Usar mensagem original, não sanitizada, para preservar "/"
-                    user_permissions
-                )
-        else:
-            # Verificar se é um comando antes de processar no fluxo de produtos
-            # Analisar mensagem para detectar comandos
-            logger.info("🔍 Analisando mensagem para detectar comandos", user_id=user_id, message_preview=sanitized_message[:50])
-            command_analysis = await command_analyzer.analyze_message(
-                sanitized_message,
-                user_permissions
-            )
-            
-            logger.info(
-                "🔍 Análise de comando concluída",
-                user_id=user_id,
-                is_command=command_analysis.is_command,
-                command_id=command_analysis.command_id,
-                confidence=command_analysis.confidence,
-                parameters=command_analysis.parameters
-            )
-        
-        # Ignorar se o comando detectado for relacionado a "sair" ou "menu sair"
-        # Isso evita que palavras de callback sejam interpretadas como comandos
-        if command_analysis.is_command:
-            command_id = command_analysis.command_id or ""
-            # Se o comando detectado for show_menu e a mensagem for apenas "sair", ignorar
-            if command_id == "show_menu" and sanitized_message.lower().strip() in ["sair", "menu sair"]:
-                logger.info(
-                    "Ignorando comando show_menu para palavra 'sair' (é apenas callback)",
-                    user_id=user_id
-                )
-                return {
-                    "success": True,
-                    "response": "",  # Resposta vazia - não exibir nada
-                    "metadata": {
-                        "user_id": user_id,
-                        "username": username,
-                        "ignored_callback_word": True
-                    }
-                }
-        
-        # Se for um comando com boa confiança, executar comando
-        # Para comandos que começam com "/", aceitar confiança menor (0.3)
-        confidence_threshold = 0.3 if message_text.startswith('/') else 0.5
-        
+        # Tudo vai para a IA: ela identifica intents e parâmetros. Depois de aprender, pode-se restringir.
         logger.info(
-            "⚖️ Verificando se deve executar comando",
+            "🤖 Enviando para IA (identifica intents e parâmetros)",
             user_id=user_id,
-            is_command=command_analysis.is_command,
-            confidence=command_analysis.confidence,
-            threshold=confidence_threshold,
-            will_execute=(command_analysis.is_command and command_analysis.confidence >= confidence_threshold)
+            message_preview=sanitized_message[:50]
         )
         
-        if command_analysis.is_command and command_analysis.confidence >= confidence_threshold:
-            logger.info(
-                "✅ Comando detectado no Telegram - executando",
-                user_id=user_id,
-                command_id=command_analysis.command_id,
-                confidence=command_analysis.confidence,
-                parameters=command_analysis.parameters
-            )
-            
-            # Criar requisição de comando
-            command_request = CommandRequest(
-                command_id=command_analysis.command_id,
-                parameters=command_analysis.parameters or {},
-                user_id=user_id
-            )
-            
-            # Executar comando
-            success, message, result, confirmation = await command_executor.execute_command(
-                command_request,
-                user_permissions
-            )
-            
-            if success:
-                if confirmation:
-                    # Comando requer confirmação
-                    return {
-                        "success": True,
-                        "response": confirmation.message,
-                        "requires_confirmation": True,
-                        "confirmation_id": confirmation.execution_id,
-                        "metadata": {
-                            "user_id": user_id,
-                            "username": username,
-                            "command_id": command_analysis.command_id,
-                            "is_command": True
-                        }
-                    }
-                else:
-                    # Comando executado diretamente
-                    response_message = result.message if result else message
-                    response_data = {
-                        "success": True,
-                        "response": response_message,
-                        "metadata": {
-                            "user_id": user_id,
-                            "username": username,
-                            "command_id": command_analysis.command_id,
-                            "is_command": True,
-                            "command_result": result.data if result else None
-                        }
-                    }
-                    
-                    # Verifica se o comando retornou botões do Telegram
-                    if result and result.data:
-                        command_data = result.data
-                        # Verificar se tem reply_markup ou telegram_keyboard
-                        reply_markup = command_data.get("reply_markup") or command_data.get("telegram_keyboard")
-                        
-                        if command_data.get("target") == "telegram" and reply_markup:
-                            # Formato correto para Telegram: reply_markup com inline_keyboard
-                            response_data["reply_markup"] = reply_markup
-                            # Flags explícitas para facilitar processamento no Telegram Service
-                            response_data["has_keyboard"] = command_data.get("has_keyboard", True)
-                            response_data["keyboard_type"] = command_data.get("keyboard_type", "inline")
-                            # Também manter telegram_keyboard para compatibilidade
-                            response_data["telegram_keyboard"] = reply_markup
-                            logger.info(
-                                "Botões do Telegram adicionados à resposta",
-                                command_id=command_analysis.command_id,
-                                buttons_count=len(reply_markup.get("inline_keyboard", [])),
-                                keyboard_type=response_data.get("keyboard_type")
-                            )
-                    
-                    return response_data
-            else:
-                # Erro na execução do comando
-                return {
-                    "success": False,
-                    "response": message or "Erro ao executar comando",
-                    "metadata": {
-                        "user_id": user_id,
-                        "username": username,
-                        "command_id": command_analysis.command_id,
-                        "is_command": True
-                    }
-                }
+        # Obter estado do usuário (fluxos ativos, etc)
+        user_state = {}
+        from services.pedido_inline_service import pedido_inline_service
+        pedido = pedido_inline_service.user_pedidos.get(user_id)
+        if pedido and pedido.get("status") == "EM_EDICAO":
+            user_state["active_flow"] = "pedido_inline"
+            user_state["flow_data"] = pedido
         
-        # Se não for comando, processa no fluxo de produtos
-        logger.info("🔄 Processando mensagem no fluxo de produtos", user_id=user_id, message_preview=sanitized_message[:50])
-        result = await product_flow.process_message(user_id, sanitized_message)
+        # Extrair token do request
+        token = extract_bearer_token(request)
+        
+        # Processar com orchestrator
+        orchestrator_result = await message_orchestrator.process_message(
+            message=sanitized_message,
+            user_id=user_id,
+            token=token,
+            user_state=user_state if user_state else None
+        )
         
         logger.info(
-            "✅ Mensagem do Telegram processada no fluxo de produtos",
+            "✅ Mensagem processada pelo Message Orchestrator",
             user_id=user_id,
             username=username,
-            state=result.get("state", {}).value if hasattr(result.get("state"), 'value') else str(result.get("state")),
-            completed=result.get("completed", False),
-            has_product=bool(result.get("product"))
+            route_used=orchestrator_result.get("route_used"),
+            intent=orchestrator_result.get("intent"),
+            confidence=orchestrator_result.get("confidence"),
+            tools_called=orchestrator_result.get("tools_called", [])
         )
         
+        # Retornar resultado do orchestrator
         return {
             "success": True,
-            "response": result["response"],
+            "response": orchestrator_result.get("response", "Desculpe, não consegui processar sua mensagem."),
             "metadata": {
                 "user_id": user_id,
                 "username": username,
-                "state": result["state"].value,
-                "completed": result["completed"],
-                "product_id": result["product"].id if result["product"] else None
+                "route_used": orchestrator_result.get("route_used"),
+                "intent": orchestrator_result.get("intent"),
+                "confidence": orchestrator_result.get("confidence"),
+                "tools_called": orchestrator_result.get("tools_called", []),
+                **orchestrator_result.get("metadata", {})
             }
         }
         

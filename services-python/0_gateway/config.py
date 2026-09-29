@@ -3,7 +3,9 @@ Configurações do Gateway Service
 """
 
 import os
-from typing import List
+from typing import List, Optional
+
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
 
 
@@ -72,6 +74,7 @@ class Settings(BaseSettings):
     # Configurações do Keycloak
     KEYCLOAK_AUTH_SERVER_URL: str = os.getenv("KEYCLOAK_AUTH_SERVER_URL", "https://auth.rendacontinua.com/auth")
     KEYCLOAK_REALM: str = os.getenv("KEYCLOAK_REALM", "auth_sso")
+    KEYCLOAK_ISSUER: Optional[str] = None
     
     # Configurações do Redis
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/1")
@@ -79,13 +82,14 @@ class Settings(BaseSettings):
     REDIS_PORT: int = int(os.getenv("REDIS_PORT", "6379"))
     REDIS_DB: int = int(os.getenv("REDIS_DB", "1"))
     
-    @property
-    def KEYCLOAK_ISSUER(self) -> str:
-        """Retorna o issuer do Keycloak baseado na URL e realm"""
-        issuer = os.getenv("KEYCLOAK_ISSUER")
-        if issuer:
-            return issuer
-        return f"{self.KEYCLOAK_AUTH_SERVER_URL}/realms/{self.KEYCLOAK_REALM}"
+    @model_validator(mode="after")
+    def resolve_keycloak_issuer(self) -> "Settings":
+        """Preenche o issuer a partir da URL e do realm quando não vier no ambiente."""
+        if not self.KEYCLOAK_ISSUER:
+            self.KEYCLOAK_ISSUER = (
+                f"{self.KEYCLOAK_AUTH_SERVER_URL}/realms/{self.KEYCLOAK_REALM}"
+            )
+        return self
     
     @property
     def REDIS_URL_FALLBACK(self) -> str:

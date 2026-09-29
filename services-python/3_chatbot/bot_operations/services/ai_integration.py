@@ -14,6 +14,26 @@ from config import settings
 logger = structlog.get_logger(__name__)
 
 
+def _ai_http_error(status_code: int, body: str) -> str:
+    """Texto curto do erro devolvido pelo AI Service."""
+    detail = (body or "").strip()
+    try:
+        parsed = json.loads(body) if body else {}
+        if isinstance(parsed, dict) and parsed.get("detail"):
+            detail = str(parsed["detail"])
+    except json.JSONDecodeError:
+        pass
+    lowered = detail.lower()
+    if "credit_balance_exhausted" in lowered or "no credits remaining" in lowered:
+        return (
+            "A OpenAI recusou a chamada: a conta está sem créditos. "
+            "Recarregue em platform.openai.com ou troque o provedor do AI Users (porta 8006)."
+        )
+    if len(detail) > 500:
+        detail = detail[:500]
+    return f"AI Service respondeu {status_code}: {detail or 'sem corpo'}"
+
+
 class AIServiceIntegration:
     """Integração com o AI Service"""
     
@@ -21,6 +41,7 @@ class AIServiceIntegration:
         self.base_url = settings.AI_SERVICE_URL
         self.timeout = settings.AI_SERVICE_TIMEOUT
         self.client: Optional[httpx.AsyncClient] = None
+        self.last_error: Optional[str] = None
     
     async def connect(self):
         """Inicializa cliente HTTP"""
@@ -657,28 +678,42 @@ class AIServiceIntegration:
             logger.error(f"Erro na comunicação com AI Service: {e}")
             return None
     
-    async def chat_simple(self, message: str) -> Optional[str]:
+    async def chat_simple(
+        self,
+        message: str,
+        *,
+        intent: Optional[str] = None,
+        confidence: Optional[float] = None,
+        intent_reason: Optional[str] = None,
+        user_id: Optional[str] = None,
+    ) -> Optional[str]:
         """
-        Método simplificado para chat - envia apenas a mensagem para o AI Service.
-        Retorna apenas a resposta (reply) da IA.
+        Chat com o AI Service. Envia mensagem e, opcionalmente, intent do router
+        para o AI Service registrar e aprender com conversas reais (base de intents).
         
-        Este método faz uma requisição simplificada para /ai/chat do AI Service
-        com apenas {"message": "..."} e retorna o campo "reply" da resposta.
+        Retorna o campo "reply" da resposta.
         """
         start_time = time.time()
         url = f"{self.base_url}/ai/chat"
         
+        request_data: Dict[str, Any] = {"message": message}
+        if intent is not None:
+            request_data["intent"] = intent
+        if confidence is not None:
+            request_data["confidence"] = confidence
+        if intent_reason is not None:
+            request_data["intent_reason"] = intent_reason
+        if user_id is not None:
+            request_data["user_id"] = user_id
+        
         try:
-            # Requisição simplificada - apenas a mensagem
-            request_data = {
-                "message": message
-            }
-            
             logger.info(
-                "Enviando requisição simplificada para AI Service",
+                "Enviando requisição para AI Service",
                 url=url,
                 method="POST",
-                message_length=len(message)
+                message_length=len(message),
+                intent=intent,
+                confidence=confidence,
             )
             
             response = await self.client.post("/ai/chat", json=request_data)
@@ -687,6 +722,7 @@ class AIServiceIntegration:
             if response.status_code == 200:
                 result = response.json()
                 reply = result.get("reply", "")
+                self.last_error = None
                 
                 logger.info(
                     "Resposta recebida com sucesso",
@@ -697,17 +733,19 @@ class AIServiceIntegration:
                 
                 return reply
             else:
+                self.last_error = _ai_http_error(response.status_code, response.text)
                 logger.error(
                     "Erro ao obter resposta do AI Service",
                     status_code=response.status_code,
                     elapsed_time=f"{elapsed_time:.3f}s",
-                    response_text=response.text[:500] if response.text else None,
+                    response_text=self.last_error,
                     url=url
                 )
                 return None
                 
         except httpx.TimeoutException as e:
             elapsed_time = time.time() - start_time
+            self.last_error = f"AI Service não respondeu a tempo ({self.timeout}s)"
             logger.error(
                 "Timeout na comunicação com AI Service",
                 elapsed_time=f"{elapsed_time:.3f}s",
@@ -718,6 +756,7 @@ class AIServiceIntegration:
             return None
         except httpx.RequestError as e:
             elapsed_time = time.time() - start_time
+            self.last_error = f"Não foi possível falar com o AI Service em {url}: {e}"
             logger.error(
                 "Erro de requisição para AI Service",
                 elapsed_time=f"{elapsed_time:.3f}s",
@@ -728,6 +767,7 @@ class AIServiceIntegration:
             return None
         except Exception as e:
             elapsed_time = time.time() - start_time
+            self.last_error = f"Erro ao falar com o AI Service: {e}"
             logger.error(
                 "Erro inesperado na comunicação com AI Service",
                 elapsed_time=f"{elapsed_time:.3f}s",

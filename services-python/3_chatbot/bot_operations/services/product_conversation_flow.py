@@ -9,6 +9,7 @@ import structlog
 
 from models.product_models import ProductCreate, ProductUpdate
 from services.product_service import product_service
+from services.ai_integration import ai_integration
 
 logger = structlog.get_logger(__name__)
 
@@ -130,16 +131,59 @@ class ProductConversationFlow:
             return await self._handle_delete_confirmation(user_id, message)
         
         # Estado IDLE - não está em nenhum fluxo
-        return {
-            "response": (
-                "Olá! Como posso ajudar com produtos?\n\n"
+        # Verificar se é um cumprimento e gerar resposta com AI service
+        message_lower = message.lower().strip()
+        is_greeting = any(greeting in message_lower for greeting in ["oi", "olá", "ola", "hey", "hi", "hello", "tudo bem", "tudo bom"])
+        
+        if is_greeting:
+            # Gerar resposta personalizada com AI service
+            try:
+                ai_response = await ai_integration.chat_simple(
+                    f"O usuário disse: '{message}'. "
+                    "Responda de forma amigável e profissional, apresentando os comandos principais do sistema. "
+                    "Os comandos disponíveis são: /menu (menu principal), /hoje (resumo do dia), /pedidos (listar pedidos), /estoque (ver estoque), /financeiro (resumo financeiro). "
+                    "Seja breve e direto."
+                )
+                
+                if ai_response:
+                    response_text = ai_response
+                else:
+                    # Fallback se AI service não responder
+                    response_text = (
+                        "Olá! Como posso ajudá-lo hoje?\n\n"
+                        "Comandos disponíveis:\n"
+                        "/menu - Abrir menu principal do sistema\n"
+                        "/hoje - Resumo operacional do dia\n"
+                        "/pedidos - Listar pedidos\n"
+                        "/estoque - Ver estoque atual\n"
+                        "/financeiro - Resumo financeiro"
+                    )
+            except Exception as e:
+                logger.error(f"Erro ao gerar resposta com AI service: {e}", exc_info=True)
+                # Fallback em caso de erro
+                response_text = (
+                    "Olá! Como posso ajudá-lo hoje?\n\n"
+                    "Comandos disponíveis:\n"
+                    "/menu - Abrir menu principal do sistema\n"
+                    "/hoje - Resumo operacional do dia\n"
+                    "/pedidos - Listar pedidos\n"
+                    "/estoque - Ver estoque atual\n"
+                    "/financeiro - Resumo financeiro"
+                )
+        else:
+            # Resposta padrão para outros casos
+            response_text = (
+                "Olá! Como posso ajudá-lo hoje?\n\n"
                 "Comandos disponíveis:\n"
-                "/produto - Cadastrar novo produto\n"
-                "/listar - Listar meus produtos\n"
-                "/editar - Editar um produto\n"
-                "/deletar - Deletar um produto\n"
-                "/cancelar - Cancelar operação atual"
-            ),
+                "/menu - Abrir menu principal do sistema\n"
+                "/hoje - Resumo operacional do dia\n"
+                "/pedidos - Listar pedidos\n"
+                "/estoque - Ver estoque atual\n"
+                "/financeiro - Resumo financeiro"
+            )
+        
+        return {
+            "response": response_text,
             "state": ProductFlowState.IDLE,
             "completed": False,
             "product": None

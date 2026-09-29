@@ -15,6 +15,50 @@ logger = structlog.get_logger(__name__)
 
 class TelegramMenuHandler:
     """Gerencia menus e callbacks do Telegram"""
+
+    async def handle_command(self, command_text: str) -> Dict[str, Any]:
+        """
+        Processa comandos slash do Telegram (ex.: /menu, /pedidos).
+        """
+        normalized = (command_text or "").strip().lower()
+        if not normalized.startswith("/"):
+            return {
+                "response": "",
+                "has_keyboard": False,
+                "handled": False
+            }
+
+        # Aceita comandos no formato /menu@nome_do_bot
+        cmd = normalized.split()[0].split("@")[0]
+
+        if cmd in ("/start", "/menu"):
+            menu = self._get_main_menu()
+            menu["handled"] = True
+            return menu
+        if cmd == "/pedidos":
+            menu = self._get_pedidos_menu()
+            menu["handled"] = True
+            return menu
+        if cmd == "/estoque":
+            menu = self._get_estoque_menu()
+            menu["handled"] = True
+            return menu
+        if cmd == "/financeiro":
+            menu = self._get_financeiro_menu()
+            menu["handled"] = True
+            return menu
+        if cmd == "/hoje":
+            return {
+                "response": "Resumo de hoje: use o menu para ver pedidos, estoque e financeiro.",
+                "has_keyboard": False,
+                "handled": True
+            }
+
+        return {
+            "response": "",
+            "has_keyboard": False,
+            "handled": False
+        }
     
     async def handle_callback(self, callback_data: str) -> Dict[str, Any]:
         """

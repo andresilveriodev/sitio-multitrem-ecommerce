@@ -1,0 +1,347 @@
+* { box-sizing: border-box; }
+
+.menu {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 1px solid #ccc;
+}
+
+.cadastro { padding: 20px; background: #fff; min-height: calc(100vh - 58px); }
+.conteudo { display: contents; }
+.cadastro.com-chat { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+.cadastro.duas.com-chat { grid-template-columns: 220px minmax(280px, 1fr) 320px; }
+.chat-lado { border: 1px solid #ccc; background: #fafafa; min-height: 480px; display: flex; flex-direction: column; position: sticky; top: 8px; }
+.chat-lado h2 { margin: 0; padding: 12px 12px 0; font-size: 18px; }
+.chat-log { flex: 1; overflow: auto; max-height: calc(100vh - 280px); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.balao { margin: 0; padding: 8px 10px; white-space: pre-wrap; }
+.balao.voce { background: #e7f5ee; align-self: flex-end; }
+.balao.bot { background: #fff; border: 1px solid #ddd; }
+.chat-lado form { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-top: 1px solid #ddd; }
+.chat-lado textarea { min-height: 72px; }
+.chat-lado .confirmar { margin: 0 12px 12px; padding: 10px; background: #fff4cc; border: 1px solid #e6d48a; }
+input.pendente, select.pendente, textarea.pendente, tr.pendente td { background: #fff4cc; }
+.gravado { display: block; font-weight: normal; color: #666; font-size: 12px; }
+.pessoa { border: 1px solid #ddd; padding: 10px; margin: 0 0 10px; max-width: 520px; }
+.papeis { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 10px; font-weight: normal; }
+.papeis label { display: flex; gap: 6px; align-items: center; }
+.cadastro h1, .cadastro h2 { margin: 0 0 8px; font-size: 20px; }
+.cadastro p { margin: 0 0 12px; color: #444; }
+.linha { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+.linha input, .linha select { width: 220px; padding: 6px 8px; border: 1px solid #bbb; }
+.campo { display: grid; gap: 4px; margin: 0 0 12px; max-width: 360px; font-weight: bold; }
+.campo input, .campo select, .campo textarea, .grade input { font-weight: normal; padding: 6px 8px; border: 1px solid #bbb; width: 100%; }
+.campo textarea { min-height: 72px; }
+.lista { list-style: none; padding: 0; margin: 0; }
+.lista button { width: 100%; text-align: left; margin-bottom: 6px; }
+.lista small { display: block; font-weight: normal; color: #555; }
+.grade { width: 100%; max-width: 1100px; border-collapse: collapse; }
+.produto-nome { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.formato select, .formato input { width: auto; }
+.formato .linha { margin: 6px 0 0; }
+.grade th, .grade td { border-bottom: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+.desconto-box { margin-top: 24px; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #111;
+  background: #f6f6f4;
+}
+
+button, input, textarea, select { font: inherit; }
+
+.app {
+  min-height: calc(100vh - 58px);
+}
+
+.app.com-popup .notes { padding-right: 400px; }
+
+.pedido-popup {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 360px;
+  height: min(640px, calc(100vh - 90px));
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+
+.pedido-popup header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.pedido-popup .chat-log { max-height: none; }
+
+.pedido-incluir {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 12px 12px;
+}
+
+.pedido-incluir button { width: 100%; }
+
+.pedido-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 12px 12px;
+}
+
+.pedido-opcoes button { width: 100%; text-align: left; }
+.pedido-opcoes small { display: block; font-weight: normal; color: #555; }
+
+.pedido-popup form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid #ddd;
+}
+
+.pedido-popup textarea { min-height: 88px; flex: none; }
+
+.pedido-abrir {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 20;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+}
+
+.conversation {
+  padding: 20px;
+  border-right: 1px solid #ccc;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.conversation h1 { font-size: 20px; margin: 0; }
+
+.conversation p { margin: 0; color: #444; font-size: 14px; }
+
+textarea {
+  width: 100%;
+  min-height: 320px;
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #bbb;
+  resize: vertical;
+}
+
+.actions { display: flex; gap: 8px; align-items: center; }
+
+button {
+  padding: 8px 14px;
+  border: 1px solid #222;
+  background: #fff;
+  cursor: pointer;
+}
+
+button.primary { background: #173; color: #fff; border-color: #173; }
+button.danger { background: #fff; color: #b42318; border-color: #b42318; }
+button.danger:hover { background: #b42318; color: #fff; }
+
+button:disabled { opacity: 0.6; cursor: wait; }
+
+.error { color: #a30; font-size: 14px; display: block; white-space: pre-wrap; }
+
+.notes { padding: 20px; }
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.toolbar-busca { width: 100%; margin-bottom: 0; }
+
+.toolbar-acoes { display: flex; gap: 8px; }
+
+.page {
+  display: grid;
+  grid-template-columns: minmax(680px, 880px);
+  gap: 16px;
+}
+.page > .pedido { min-width: 0; }
+
+.pedido { border: 1px solid #000; background: #fff; }
+.folha {
+  border: none;
+  background: transparent;
+  max-width: none;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 84px;
+  column-gap: 16px;
+  align-items: start;
+}
+.caixa { grid-column: 1; background: #fff; border: 1px solid #000; border-bottom: 0; }
+.faixa { display: contents; }
+.nota-linha { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: stretch; }
+.miolo {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) 64px 84px 132px 88px 108px;
+  background: #fff;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+}
+.miolo > * {
+  border-bottom: 1px solid #000;
+  border-right: 1px solid #000;
+  padding: 6px 8px;
+  min-height: 38px;
+  vertical-align: middle;
+}
+.miolo .num { width: auto; max-width: none; text-align: right; }
+.miolo .num input { width: 100%; }
+.miolo .descontos input { width: 42px; }
+.miolo > *:last-child { border-right: 0; }
+.miolo.titulo > * { font-weight: bold; }
+.miolo.faixa-total { grid-template-columns: 1fr 96px max-content; font-weight: bold; }
+.miolo.faixa-total > :first-child { grid-column: 1; }
+.miolo.uma { display: block; border-bottom: 1px solid #000; }
+.miolo.falta { background: #fff0e6; }
+.miolo.unknown { background: #fff6d8; }
+.entrega-campo, .entrega-rotulo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  font-weight: bold;
+}
+.entrega-campo input, .entrega-rotulo input {
+  width: 64px;
+  text-align: center;
+  border: 1px solid #bbb;
+  background: #fff;
+  padding: 4px 6px;
+}
+.entrega-campo.menor input { border-color: #c45c00; background: #fff0e6; }
+.folha > .origem, .folha > .empty { grid-column: 1; }
+.pedido-acoes { display: flex; gap: 8px; padding: 8px; justify-content: flex-end; }
+
+.cabecalho { display: grid; gap: 0; border-bottom: 1px solid #000; }
+
+.cabecalho label {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #000;
+  font-weight: bold;
+}
+
+.cabecalho label:last-child { border-bottom: 0; }
+.caixa .cabecalho label:last-child { border-bottom: 1px solid #000; }
+
+.cabecalho input {
+  width: 100%;
+  border: 0;
+  font-weight: normal;
+  font-size: 15px;
+  padding: 2px 0;
+}
+
+.pedido table { width: 100%; border-collapse: collapse; }
+
+.pedido td, .pedido th {
+  border: 1px solid #000;
+  padding: 6px 8px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.pedido th:first-child, .pedido td.produto { width: 46%; }
+
+.pedido select {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font-size: 14px;
+}
+
+.num { width: 88px; text-align: right; }
+
+.num input { width: 72px; text-align: right; border: 0; background: transparent; font-size: 14px; }
+
+.linha-acao { width: auto; }
+.linha-acao button { padding: 4px 8px; font-size: 13px; }
+.confirma-linha { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+
+.descontos { display: flex; gap: 4px; justify-content: flex-end; align-items: center; }
+.descontos span { font-size: 12px; color: #444; font-weight: normal; }
+
+.descontos input { width: 64px; text-align: right; border: 0; background: transparent; }
+
+.extrato { max-width: 760px; }
+.extrato article { background: #fff; border: 1px solid #000; margin: 0 0 16px; padding: 12px 14px; break-inside: avoid; }
+.extrato h2 { font-size: 18px; }
+.extrato table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.extrato td, .extrato th { border-bottom: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 14px; }
+.extrato .num { text-align: right; }
+.extrato .nota { margin-top: 14px; }
+.extrato .periodo { font-weight: bold; }
+
+.missing { background: #fff6d8; }
+
+.origem { display: block; font-size: 11px; font-weight: normal; color: #555; }
+
+.total td { font-weight: bold; }
+
+.unknown { background: #fff6d8; }
+.falta { background: #fff0e6; }
+
+.empty { color: #666; }
+
+.print-only { display: none; }
+.so-impressao { display: none; }
+
+@media print {
+  body { background: #fff; }
+  .conversation, .toolbar, .menu, .no-print, .pedido-popup, .pedido-abrir { display: none !important; }
+  .notes { padding: 0 !important; }
+  .print-only { display: inline; }
+  .screen-only { display: none !important; }
+  .app { display: block; }
+  .app.com-popup .notes { padding-right: 0 !important; }
+  .page {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    align-items: start;
+  }
+  .folha { display: block; border: 1px solid #000; background: #fff; }
+  .pedido {
+    order: var(--print-order);
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin: 0;
+  }
+  .so-impressao { display: table; width: 100%; border-collapse: collapse; }
+  .so-impressao td, .so-impressao th { font-size: 10px; padding: 2px 3px; }
+  .so-impressao .topo td { font-weight: bold; }
+  .so-impressao .qtde { width: 28px; text-align: center; }
+  .so-impressao .valor { text-align: right; }
+  .missing, .unknown, .falta { background: transparent !important; }
+  .origem { display: none; }
+  @page { margin: 8mm; }
+}

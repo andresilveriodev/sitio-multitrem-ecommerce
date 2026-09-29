@@ -9,7 +9,7 @@ import structlog
 import time
 
 from config import settings
-from routes import chat_router, analytics_router, ai_router, telegram_router
+from routes import chat_router, analytics_router, ai_router, telegram_router, messages_debug_router, order_intake_router, cadastro_chat_router
 from services.cache_service import cache_service
 from services.context_service import context_service
 from services.ai_integration import ai_integration
@@ -132,6 +132,9 @@ def create_app() -> FastAPI:
     app.include_router(analytics_router)
     app.include_router(ai_router)
     app.include_router(telegram_router)
+    app.include_router(messages_debug_router)
+    app.include_router(order_intake_router)
+    app.include_router(cadastro_chat_router)
     
     @app.get("/health")
     async def health_check():

@@ -9,6 +9,8 @@ from .payments import router as payments_router
 from .deliveries import router as deliveries_router
 from .shipping import router as shipping_router
 from .chatbot import router as chatbot_router
+from .cadastro import router as cadastro_router
+from .boletas import router as boletas_router
 
 __all__ = [
     "products_router",
@@ -18,4 +20,6 @@ __all__ = [
     "deliveries_router",
     "shipping_router",
     "chatbot_router",
+    "cadastro_router",
+    "boletas_router",
 ]

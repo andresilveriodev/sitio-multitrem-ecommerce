@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mensagens salvas (DB) – Debug</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 1rem; background: #1a1a2e; color: #eee; }
+    h1 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+    .sub { color: #888; font-size: 0.9rem; margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.25rem; color: #aaa; }
+    input, select, button { padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a3e; color: #eee; }
+    button { cursor: pointer; margin-right: 0.5rem; }
+    button:hover { background: #3a3a4e; }
+    .row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 1rem; }
+    .row label { margin-bottom: 0; }
+    .users-list { margin-bottom: 1.5rem; }
+    .users-list table { width: 100%; border-collapse: collapse; }
+    .users-list th, .users-list td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #333; }
+    .users-list th { color: #888; }
+    .users-list tr:hover { background: #252538; }
+    .users-list tr[data-user-id] { cursor: pointer; }
+    .messages { margin-top: 1rem; }
+    .msg { padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 8px; border-left: 4px solid #555; }
+    .msg.user { border-left-color: #4a9; background: #1e2a2a; }
+    .msg.bot { border-left-color: #94a; background: #2a1e2a; }
+    .msg.system { border-left-color: #a94; background: #2a2a1e; }
+    .msg-meta { font-size: 0.8rem; color: #888; margin-bottom: 0.25rem; }
+    .msg-content { white-space: pre-wrap; word-break: break-word; }
+    .error { color: #e88; margin: 0.5rem 0; }
+    .loading { color: #8a8; }
+  </style>
+</head>
+<body>
+  <h1>Mensagens salvas no banco (PostgreSQL)</h1>
+  <p class="sub">Tabela <code>conversation_messages</code> – conferir se as mensagens estão sendo gravadas.</p>
+
+  <div class="row">
+    <div>
+      <label for="user-id">User ID (Telegram)</label>
+      <input type="text" id="user-id" placeholder="Ex: 178999227" />
+    </div>
+    <button type="button" id="btn-load">Carregar mensagens</button>
+    <button type="button" id="btn-refresh-users">Atualizar lista de usuários</button>
+  </div>
+
+  <div id="error" class="error" style="display: none;"></div>
+
+  <section class="users-list">
+    <h2>Usuários com mensagens</h2>
+    <p class="sub">Clique em um usuário para carregar as mensagens.</p>
+    <div id="users-placeholder" class="loading">Carregando usuários…</div>
+    <table id="users-table" style="display: none;">
+      <thead>
+        <tr><th>User ID</th><th>Qtd mensagens</th><th>Última mensagem</th></tr>
+      </thead>
+      <tbody id="users-tbody"></tbody>
+    </table>
+  </section>
+
+  <section class="messages" id="messages-section" style="display: none;">
+    <h2>Mensagens do usuário: <span id="current-user-id"></span></h2>
+    <div id="messages-placeholder" class="loading">Carregando…</div>
+    <div id="messages-list"></div>
+  </section>
+
+  <script>
+    const base = window.location.pathname.replace(/\/$/, '') || '/debug/messages';
+    const apiUsers = base + '/api/users';
+    const apiUser = (id) => base + '/api/users/' + encodeURIComponent(id);
+
+    function showError(msg) {
+      const el = document.getElementById('error');
+      el.textContent = msg;
+      el.style.display = msg ? 'block' : 'none';
+    }
+
+    async function loadUsers() {
+      showError('');
+      const ph = document.getElementById('users-placeholder');
+      const table = document.getElementById('users-table');
+      const tbody = document.getElementById('users-tbody');
+      ph.textContent = 'Carregando usuários…';
+      ph.style.display = 'block';
+      table.style.display = 'none';
+      try {
+        const r = await fetch(apiUsers);
+        if (!r.ok) throw new Error(r.status + ' ' + (await r.text()));
+        const users = await r.json();
+        ph.style.display = 'none';
+        if (users.length === 0) {
+          ph.textContent = 'Nenhum usuário com mensagens no banco.';
+          ph.style.display = 'block';
+        } else {
+          table.style.display = 'table';
+          tbody.innerHTML = users.map(u => `
+            <tr data-user-id="${escapeHtml(u.user_id)}">
+              <td>${escapeHtml(u.user_id)}</td>
+              <td>${u.message_count}</td>
+              <td>${escapeHtml(u.last_at)}</td>
+            </tr>
+          `).join('');
+          tbody.querySelectorAll('tr[data-user-id]').forEach(tr => {
+            tr.addEventListener('click', () => {
+              document.getElementById('user-id').value = tr.dataset.userId;
+              loadMessages(tr.dataset.userId);
+            });
+          });
+        }
+      } catch (e) {
+        ph.textContent = '';
+        showError('Erro ao carregar usuários: ' + e.message);
+      }
+    }
+
+    function escapeHtml(s) {
+      if (s == null) return '';
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    async function loadMessages(userId) {
+      if (!userId) return;
+      showError('');
+      const section = document.getElementById('messages-section');
+      const placeholder = document.getElementById('messages-placeholder');
+      const list = document.getElementById('messages-list');
+      section.style.display = 'block';
+      document.getElementById('current-user-id').textContent = userId;
+      placeholder.style.display = 'block';
+      list.innerHTML = '';
+      try {
+        const r = await fetch(apiUser(userId));
+        if (!r.ok) throw new Error(r.status + ' ' + (await r.text()));
+        const messages = await r.json();
+        placeholder.style.display = 'none';
+        if (messages.length === 0) {
+          list.innerHTML = '<p class="sub">Nenhuma mensagem para este usuário.</p>';
+        } else {
+          list.innerHTML = messages.map(m => `
+            <div class="msg ${escapeHtml(m.message_type)}">
+              <div class="msg-meta">${escapeHtml(m.created_at)} · ${escapeHtml(m.message_type)} (id ${m.id})</div>
+              <div class="msg-content">${escapeHtml(m.content)}</div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        placeholder.style.display = 'none';
+        showError('Erro ao carregar mensagens: ' + e.message);
+      }
+    }
+
+    document.getElementById('btn-load').addEventListener('click', () => {
+      const id = document.getElementById('user-id').value.trim();
+      if (id) loadMessages(id);
+      else showError('Informe o User ID.');
+    });
+    document.getElementById('btn-refresh-users').addEventListener('click', loadUsers);
+
+    loadUsers();
+  </script>
+</body>
+</html>

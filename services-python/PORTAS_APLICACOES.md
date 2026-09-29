@@ -1,3 +1,112 @@
+# Rodando os serviços Python
+
+## Abrir só esta pasta no Cursor (menos memória)
+
+O monorepo inteiro (frontend, Android, `services/` Node) pesa no indexador. Para os microserviços Python:
+
+1. **File → Open Folder…** (`Ctrl+K` `Ctrl+O`)
+2. Pasta: `F:\repositorios\sitio-multitrem-ecommerce\services-python`
+3. No Explorer devem aparecer `0_gateway`, `5_commerce`, `PORTAS_APLICACOES.md` na raiz — não o repo pai.
+
+O Git continua o da pasta acima. Não abra `frontend` nem `services` nesta janela.
+
+Comandos abaixo: terminal com cwd em `services-python`. Não precisa ativar venv.
+
+## Todos de uma vez
+
+```powershell
+.\start-python-services.ps1 -Action restart
+.\start-python-services.ps1 -Action stop
+```
+
+Vários ao mesmo tempo (vírgula, sem espaço obrigatório):
+
+```powershell
+.\start-python-services.ps1 -Only commerce,bot_operations,telegram_operations -Action restart
+```
+
+Se faltar `.venv` / `venv` na pasta do serviço:
+
+```powershell
+.\start-python-services.ps1 -Only gateway -Action restart -EnsureVenv
+```
+
+## Um serviço por vez
+
+| Porta | Serviço | Comando |
+|-------|---------|---------|
+| 8000 | Gateway | `.\start-python-services.ps1 -Only gateway -Action restart` |
+| 8001 | User Service | `.\start-python-services.ps1 -Only users -Action restart` |
+| 8002 | Commerce (backend) | `.\start-python-services.ps1 -Only commerce -Action restart` |
+| 8003 | Commerce (frontend) | `.\start-python-services.ps1 -Only commerce_frontend -Action restart` |
+| 8005 | AI Operations | `.\start-python-services.ps1 -Only ai_operations -Action restart` |
+| 8006 | AI Users | `.\start-python-services.ps1 -Only ai_users -Action restart` |
+| 8010 | Chatbot Users | `.\start-python-services.ps1 -Only bot_users -Action restart` |
+| 8011 | Chatbot Operations | `.\start-python-services.ps1 -Only bot_operations -Action restart` |
+| 8021 | Telegram Operations | `.\start-python-services.ps1 -Only telegram_operations -Action restart` |
+
+Copiar e colar:
+
+```powershell
+.\start-python-services.ps1 -Only gateway -Action restart
+.\start-python-services.ps1 -Only users -Action restart
+.\start-python-services.ps1 -Only commerce -Action restart
+.\start-python-services.ps1 -Only commerce_frontend -Action restart
+.\start-python-services.ps1 -Only ai_operations -Action restart
+.\start-python-services.ps1 -Only ai_users -Action restart
+.\start-python-services.ps1 -Only bot_users -Action restart
+.\start-python-services.ps1 -Only bot_operations -Action restart
+.\start-python-services.ps1 -Only telegram_operations -Action restart
+```
+
+Para **parar** só um, troque `restart` por `stop` (mesmo `-Only`).
+
+WhatsApp (8020) ainda não tem script (serviço planejado).
+
+## Debug no Cursor
+
+O script acima **não** entra no debugger. Ele só abre janelas do PowerShell. Para parar no breakpoint, use o debug da IDE (**F5**), **um serviço por vez**.
+
+### Rotina
+
+1. Pare o serviço na porta que vai debugar, senão dá conflito:
+   ```powershell
+   .\start-python-services.ps1 -Only commerce -Action stop
+   ```
+   (troque `commerce` pelo `-Only` da tabela acima.)
+2. Os outros serviços podem continuar rodando pelo script.
+3. Painel **Run and Debug** (`Ctrl+Shift+D`).
+4. `Ctrl+Shift+P` → **Python: Select Interpreter** → escolha o `python.exe` **da pasta daquele serviço** (tabela abaixo). Não use o Python global.
+5. Abra o `main.py` daquele serviço.
+6. Clique na margem do código para o ponto vermelho (breakpoint).
+7. **F5** (ou Debug Python File).
+8. Dispare o fluxo (`/docs` da porta, Telegram, etc.). A execução para no Cursor; variáveis ficam no painel esquerdo.
+
+### Interpretador por serviço
+
+| Porta | Serviço | Interpretador (Cursor em `services-python`) |
+|-------|---------|---------------|
+| 8000 | Gateway | `0_gateway/venv/Scripts/python.exe` |
+| 8001 | User Service | `1_users/.venv/Scripts/python.exe` |
+| 8002 | Commerce (backend) | `5_commerce/commerce_backend/venv/Scripts/python.exe` |
+| 8003 | Commerce (frontend) | Vite: `npm run dev` em `5_commerce/commerce_frontend` |
+| 8005 | AI Operations | `2_artificial_intelligence/ai_operations/venv/Scripts/python.exe` |
+| 8006 | AI Users | `2_artificial_intelligence/ai_users/venv/Scripts/python.exe` |
+| 8010 | Chatbot Users | `3_chatbot/bot_users/.venv/Scripts/python.exe` |
+| 8011 | Chatbot Operations | `3_chatbot/bot_operations/.venv/Scripts/python.exe` |
+| 8021 | Telegram Operations | `4_messages_apps/telegram_operations/venv/Scripts/python.exe` |
+
+Se a pasta tiver só `venv` ou só `.venv`, use o que existir. Faltou venv: rode o start com `-EnsureVenv`.
+
+### Se não parar no breakpoint
+
+- Interpretador de outro serviço.
+- Processo antigo ainda na mesma porta (confira a janela do script).
+- Breakpoint em código que aquela requisição não executa.
+- Debugar os 8 ao mesmo tempo: não faça. Debug só o que está falhando.
+
+---
+
 # Portas das Aplicações Python
 
 Este documento organiza as portas utilizadas por cada aplicação Python **implementada** no projeto, seguindo uma sequência lógica.
@@ -8,7 +117,8 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 |-------|---------|--------|
 | 8000 | Gateway Service | ✅ |
 | 8001 | User Service | ✅ |
-| 8002 | Commerce Service | ✅ |
+| 8002 | Commerce Service (backend) | ✅ |
+| 8003 | Commerce Frontend | ✅ |
 | 8005 | AI Service Operations | ✅ |
 | 8006 | AI Service Users | ✅ |
 | 8010 | Chatbot Users Service | ✅ |
@@ -24,8 +134,9 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 |-------|---------|-----------|--------|-----------|
 | **8000** | Gateway Service | `0_gateway/` | ✅ Implementado | Gateway principal que roteia requisições para outros serviços |
 | **8001** | User Service | `1_users/` | ✅ Implementado | Serviço de autenticação e gerenciamento de usuários |
-| **8002** | Commerce Service | `5_commerce/` | ✅ Implementado | Serviço de processamento de pedidos do e-commerce |
-| **8003-8004** | Reservado | - | 🔜 Reservado | Portas reservadas para serviços futuros |
+| **8002** | Commerce Service (backend) | `5_commerce/commerce_backend/` | ✅ Implementado | API de produtos, clientes, pedidos, pagamentos e entregas |
+| **8003** | Commerce Frontend | `5_commerce/commerce_frontend/` | ✅ Implementado | Tela React. Converte a conversa pelo chatbot de operações (8011) |
+| **8004** | Reservado | - | 🔜 Reservado | Porta reservada para serviços futuros |
 | **8005** | AI Service | `2_artificial_intelligence/ai_operations/` | ✅ Implementado | Serviço de inteligência artificial |
 | **8006-8009** | Reservado | - | 🔜 Reservado | Portas reservadas para serviços futuros |
 | **8010** | Chatbot Users Service | `3_chatbot/bot_users/` | ✅ Implementado | Serviço de chatbot para usuários - middleware entre frontend e AI Service |
@@ -166,15 +277,22 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 
 #### 3. Commerce Service (Porta 8002)
 - **Porta:** `8002`
-- **Diretório:** `5_commerce/`
-- **Arquivo Principal:** `5_commerce/main.py`
-- **Arquivo de Configuração:** `5_commerce/config.py`
+- **Diretório:** `5_commerce/commerce_backend/`
+- **Arquivo Principal:** `5_commerce/commerce_backend/main.py`
+- **Arquivo de Configuração:** `5_commerce/commerce_backend/config.py`
 - **URL Padrão:** `http://localhost:8002`
 - **Base Path:** `/api/v1`
 - **Documentação:** `http://localhost:8002/docs`
 - **Health Check:** `http://localhost:8002/health`
 - **Variável de Ambiente:** `PORT` (padrão: `8002`)
 - **Descrição:** Serviço de processamento de pedidos do e-commerce Sítio Multitrem. Gerencia produtos, clientes, pedidos, pagamentos e entregas.
+
+#### 3b. Commerce Frontend (Porta 8003)
+- **Porta:** `8003`
+- **Diretório:** `5_commerce/commerce_frontend/`
+- **Arquivo Principal:** `5_commerce/commerce_frontend/package.json`
+- **URL Padrão:** `http://localhost:8003`
+- **Descrição:** Tela React (Vite). Cola a conversa e chama o chatbot de operações na porta 8011.
 
 ---
 
@@ -185,10 +303,11 @@ Gateway Service (8000)
   ├── User Service (8001)
   ├── E-Commerce (8002)
   ├── AI Service (8005)
+  ├── AI Operations (8006)
   ├── Chatbot Users Service (8010)
   │   └── AI Service (8005)
   ├── Chatbot Operations Service (8011)
-  │   ├── AI Service (8005)
+  │   ├── AI Operations (8006)
   │   └── Market Data Service (8000)
   └── Message Apps Services (8020-8029)
       ├── WhatsApp Service (8020)
@@ -307,8 +426,11 @@ PORT=8000
 # User Service (1_users/.env)
 PORT=8001
 
-# Commerce Service (5_commerce/.env)
+# Commerce backend (5_commerce/commerce_backend/.env)
 PORT=8002
+
+# Commerce frontend (5_commerce/commerce_frontend) — opcional
+# VITE_BOT_URL=http://localhost:8011
 
 # AI Service (2_artificial_intelligence/ai_operations/.env)
 AI_SERVICE_PORT=8005
@@ -327,9 +449,6 @@ PORT=8020
 
 # Telegram Service (4_messages_apps/telegram_operations/.env)
 PORT=8021
-
-# Commerce Service (5_commerce/.env)
-PORT=8002
 ```
 
 ---

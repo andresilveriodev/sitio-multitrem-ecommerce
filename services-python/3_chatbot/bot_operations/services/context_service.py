@@ -1,5 +1,6 @@
 """
-Serviço de gerenciamento de contexto de conversas
+Serviço de gerenciamento de contexto de conversas.
+Mensagens são persistidas permanentemente no PostgreSQL; Redis é usado como cache/fallback.
 """
 
 import json
@@ -8,6 +9,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 import redis.asyncio as redis
 import structlog
+from sqlalchemy import select
 
 from config import settings
 from models.conversation_context import (
@@ -17,6 +19,13 @@ from models.conversation_context import (
     UserPreferences,
     SessionData
 )
+
+try:
+    from services.database_service import database_service
+    from models.conversation_message_model import ConversationMessage
+except ImportError:
+    database_service = None
+    ConversationMessage = None
 
 logger = structlog.get_logger(__name__)
 
@@ -54,7 +63,51 @@ class ContextService:
     def _get_preferences_key(self, user_id: str) -> str:
         """Gera chave para preferências do usuário"""
         return f"preferences:{user_id}"
-    
+
+    def _get_order_state_key(self, user_id: str) -> str:
+        """Gera chave para estado do pedido em construção (compartilhado entre workers)."""
+        return f"order_state:{user_id}"
+
+    async def get_order_state(self, user_id: str) -> Optional[Dict]:
+        """Retorna o estado do pedido em construção (persistido no Redis)."""
+        if not self.redis:
+            return None
+        try:
+            data = await self.redis.get(self._get_order_state_key(user_id))
+            if not data:
+                return None
+            raw = data.decode("utf-8") if isinstance(data, bytes) else data
+            return json.loads(raw)
+        except Exception as e:
+            logger.warning("Falha ao carregar order_state do Redis", user_id=user_id, error=str(e))
+            return None
+
+    async def save_order_state(self, user_id: str, state: Dict) -> bool:
+        """Persiste o estado do pedido no Redis (compartilhado entre workers)."""
+        if not self.redis:
+            return False
+        try:
+            await self.redis.setex(
+                self._get_order_state_key(user_id),
+                7200,  # 2 horas
+                json.dumps(state, ensure_ascii=False),
+            )
+            return True
+        except Exception as e:
+            logger.warning("Falha ao salvar order_state no Redis", user_id=user_id, error=str(e))
+            return False
+
+    async def clear_order_state(self, user_id: str) -> bool:
+        """Remove o estado do pedido do Redis."""
+        if not self.redis:
+            return False
+        try:
+            await self.redis.delete(self._get_order_state_key(user_id))
+            return True
+        except Exception as e:
+            logger.warning("Falha ao limpar order_state no Redis", user_id=user_id, error=str(e))
+            return False
+
     async def create_session(self, user_id: str, metadata: Dict = None) -> SessionData:
         """Cria nova sessão para o usuário"""
         session_id = str(uuid.uuid4())
@@ -141,16 +194,49 @@ class ContextService:
         return True
     
     async def get_conversation_context(self, user_id: str) -> ConversationContext:
-        """Busca contexto de conversa do usuário"""
+        """Busca contexto de conversa do usuário. Preferência: PostgreSQL (permanente), depois Redis (cache)."""
+        # 1) PostgreSQL: histórico permanente (últimas 50 mensagens)
+        if database_service and ConversationMessage and getattr(database_service, "is_connected", False):
+            try:
+                async with database_service.get_session() as session:
+                    result = await session.execute(
+                        select(ConversationMessage)
+                        .where(ConversationMessage.user_id == user_id)
+                        .order_by(ConversationMessage.created_at.desc())
+                        .limit(50)
+                    )
+                    rows = list(result.scalars().all())
+                    rows.reverse()  # ordem cronológica (mais antiga primeiro)
+                    messages = []
+                    for row in rows:
+                        msg_type = MessageType(row.message_type) if row.message_type in ("user", "bot", "system") else MessageType.USER
+                        messages.append(Message(
+                            id=str(row.id),
+                            user_id=row.user_id,
+                            content=row.content or "",
+                            timestamp=row.created_at,
+                            message_type=msg_type,
+                        ))
+                    if messages:
+                        return ConversationContext(
+                            user_id=user_id,
+                            session_id=str(uuid.uuid4()),
+                            message_history=messages,
+                            last_interaction=messages[-1].timestamp if messages else datetime.utcnow(),
+                        )
+            except Exception as e:
+                logger.warning("Falha ao carregar histórico do PostgreSQL, usando Redis", user_id=user_id, error=str(e))
+
+        # 2) Redis (cache/fallback)
         if self.redis:
             try:
                 context_data = await self.redis.get(self._get_context_key(user_id))
                 if context_data:
-                    return ConversationContext.parse_raw(context_data)
+                    raw = context_data.decode("utf-8") if isinstance(context_data, bytes) else context_data
+                    return ConversationContext.parse_raw(raw)
             except Exception as e:
                 logger.error(f"Erro ao buscar contexto no Redis: {e}")
-        
-        # Cria novo contexto se não existir
+
         return ConversationContext(
             user_id=user_id,
             session_id=str(uuid.uuid4())
@@ -175,16 +261,42 @@ class ContextService:
         return True
     
     async def add_message_to_context(self, user_id: str, message: Message) -> bool:
-        """Adiciona mensagem ao contexto"""
+        """Adiciona mensagem ao contexto. Persiste no PostgreSQL (permanente) e no Redis (cache)."""
+        saved_to_db = False
+        # 1) PostgreSQL: persistência permanente
+        if database_service and ConversationMessage and getattr(database_service, "is_connected", False):
+            try:
+                async with database_service.get_session() as session:
+                    row = ConversationMessage(
+                        user_id=user_id,
+                        content=message.content or "",
+                        message_type=message.message_type.value if hasattr(message.message_type, "value") else str(message.message_type),
+                    )
+                    session.add(row)
+                    await session.commit()
+                    saved_to_db = True
+                    logger.debug("Mensagem salva no PostgreSQL", user_id=user_id, type=message.message_type.value, content_len=len(message.content or ""))
+            except Exception as e:
+                content_preview = (message.content or "")[:100].replace("\n", " ")
+                logger.warning(
+                    "Falha ao salvar mensagem no PostgreSQL",
+                    user_id=user_id,
+                    error=str(e),
+                    content_len=len(message.content or ""),
+                    content_preview=content_preview,
+                )
+
+        # 2) Redis: atualizar cache (se salvou no DB, recarregar do DB para não duplicar; senão append)
         context = await self.get_conversation_context(user_id)
-        context.message_history.append(message)
+        if not saved_to_db:
+            context.message_history.append(message)
+        # se saved_to_db, o get_conversation_context já trouxe a mensagem do DB
         context.last_interaction = datetime.utcnow()
-        
-        # Limita histórico a 50 mensagens
         if len(context.message_history) > 50:
             context.message_history = context.message_history[-50:]
-        
-        return await self.save_conversation_context(context)
+        if self.redis:
+            await self.save_conversation_context(context)
+        return True
     
     async def update_context_summary(self, user_id: str, summary: str) -> bool:
         """Atualiza resumo do contexto"""

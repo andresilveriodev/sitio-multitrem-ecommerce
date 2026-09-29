@@ -12,8 +12,9 @@ from config import settings
 from models.product_models import Base
 from models.order_models import Base as OrderBase
 
-# Importar modelos para garantir que sejam registrados
+# Importar modelos para garantir que sejam registrados (e criar tabelas)
 from models import order_models  # noqa
+from models import conversation_message_model  # noqa
 
 logger = structlog.get_logger(__name__)
 
@@ -49,7 +50,7 @@ class DatabaseService:
             
             # Testa a conexão e cria tabelas
             async with self.engine.begin() as conn:
-                # Criar todas as tabelas (Product, Order, OrderItem)
+                # Criar todas as tabelas (Product, Order, OrderItem, ConversationMessage)
                 await conn.run_sync(Base.metadata.create_all)
                 await conn.run_sync(OrderBase.metadata.create_all)
             

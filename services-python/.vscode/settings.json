@@ -1,0 +1,22 @@
+{
+  "git.openRepositoryInParentFolders": "always",
+  "files.watcherExclude": {
+    "**/venv/**": true,
+    "**/.venv/**": true,
+    "**/__pycache__/**": true,
+    "**/logs/**": true,
+    "**/.pytest_cache/**": true
+  },
+  "search.exclude": {
+    "**/venv": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/logs": true,
+    "**/.pytest_cache": true
+  },
+  "python.analysis.exclude": [
+    "**/venv/**",
+    "**/.venv/**",
+    "**/__pycache__/**"
+  ]
+}

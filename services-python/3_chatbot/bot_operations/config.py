@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     
     # AI Service (serviço existente)
-    AI_SERVICE_URL: str = "http://localhost:8005"
+    AI_SERVICE_URL: str = "http://localhost:8006"
     AI_SERVICE_TIMEOUT: int = 30
     
     # Market Data Service
@@ -28,7 +28,12 @@ class Settings(BaseSettings):
     COMMERCE_SERVICE_TIMEOUT: int = 30
     
     # CORS
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8080"]
+    ALLOWED_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://localhost:8003",
+        "http://127.0.0.1:8003",
+    ]
     ALLOWED_HOSTS: List[str] = ["*"]
     
     # Banco de dados

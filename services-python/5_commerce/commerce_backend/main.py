@@ -20,7 +20,9 @@ from routes import (
     payments_router,
     deliveries_router,
     shipping_router,
-    chatbot_router
+    chatbot_router,
+    cadastro_router,
+    boletas_router,
 )
 
 logger = structlog.get_logger()
@@ -82,6 +84,8 @@ def create_app() -> FastAPI:
     app.include_router(shipping_router, prefix="/api/v1")
     # Rotas de chatbot com autenticação Keycloak
     app.include_router(chatbot_router, prefix="/api/v1")
+    app.include_router(cadastro_router, prefix="/api/v1")
+    app.include_router(boletas_router, prefix="/api/v1")
     
     # Exception handler para erros de validação (422)
     @app.exception_handler(RequestValidationError)

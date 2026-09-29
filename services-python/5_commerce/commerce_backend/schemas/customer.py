@@ -11,7 +11,7 @@ from models.commerce import PriceProfile
 
 class CustomerBase(BaseModel):
     name: str = Field(..., max_length=200)
-    phone_e164: str = Field(..., max_length=20)  # +5562...
+    phone_e164: Optional[str] = Field(None, max_length=20)  # +5562...
     document: Optional[str] = Field(None, max_length=20)  # CPF/CNPJ
     price_profile: PriceProfile = Field(default=PriceProfile.VAREJO)
     default_price_list_id: Optional[int] = None

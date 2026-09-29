@@ -86,7 +86,7 @@ class Product(Base):
     category_id = Column(Integer, ForeignKey('commerce.product_category.id'), nullable=False, index=True)
     sku = Column(String(50), unique=True, nullable=True, index=True)
     name = Column(String(200), nullable=False)
-    unit = Column(String(20), nullable=False)  # un, maço, bandeja, dz, pct
+    unit = Column(String(60), nullable=False)  # unidade, maço, kg, peso fixo, ou outro como "c/ 03 unidades"
     active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
     
@@ -148,11 +148,15 @@ class Customer(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(200), nullable=False)
-    phone_e164 = Column(String(20), unique=True, nullable=False, index=True)  # +5562...
+    phone_e164 = Column(String(20), unique=True, nullable=True, index=True)  # +5562...
+    phone2_e164 = Column(String(20), nullable=True)
+    kind = Column(String(20), nullable=False, default="pessoa")  # pessoa ou comercio
+    order_discount_percent = Column(Numeric(5, 2), nullable=True)  # desconto geral do pedido, em %
     document = Column(String(20), nullable=True)  # CPF/CNPJ
     price_profile = Column(SQLEnum(PriceProfile), nullable=False, default=PriceProfile.VAREJO, index=True)
     default_price_list_id = Column(Integer, ForeignKey('commerce.price_list.id'), nullable=True)
     notes = Column(Text, nullable=True)
+    active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
     
     # Relacionamentos

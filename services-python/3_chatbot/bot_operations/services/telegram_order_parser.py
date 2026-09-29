@@ -318,6 +318,16 @@ class TelegramOrderParser:
         if not orders:
             return False, "Nenhum pedido encontrado no texto", []
         
+        # Não enviar pedidos sem nome do cliente (evita 400 do e-commerce)
+        valid_orders = [o for o in orders if (o.get("contact_name") or "").strip()]
+        if len(valid_orders) < len(orders):
+            missing = len(orders) - len(valid_orders)
+            return False, f"Informe o nome do cliente para o(s) pedido(s). Faltam {missing} pedido(s) sem cliente.", []
+        if not valid_orders:
+            return False, "Nenhum pedido com nome do cliente. Use o formato: Nome do cliente: quantidade produto.", []
+
+        orders = valid_orders
+
         # Buscar produtos para cada pedido
         for order in orders:
             for item in order.get("items", []):

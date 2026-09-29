@@ -255,42 +255,42 @@ async def process_message(request: Request):
                 router_response = intent_classifier.get_escape_response(intent)
             
             if router_response:
-            response_data = {
-                "response": router_response,
-                "confidence": intent_metadata.get("confidence", 0.8),
-                "category": f"intent_{intent.value.lower()}"
-            }
-            
-            # Cache da resposta
-            context_hash = await _get_context_hash(chat_request.user_id)
-            await cache_service.cache_response(
-                chat_request.user_id,
-                sanitized_message,
-                response_data,
-                context_hash,
-                ttl=3600  # 1 hora
-            )
-            
-            logger.info(
-                "Resposta de template enviada (sem IA)",
-                user_id=chat_request.user_id,
-                intent=intent.value,
-                decision=decision
-            )
-            
-            return {
-                "success": True,
-                "response": response_data,
-                "metadata": {
-                    "processing_time": time.time() - start_time,
-                    "requires_ai": False,  # NÃO chama IA
-                    "cache_hit": False,
-                    "intent": intent.value,
-                    "decision": decision,
-                    "score": score,
-                    "security_validation": security_validation.details
+                response_data = {
+                    "response": router_response,
+                    "confidence": intent_metadata.get("confidence", 0.8),
+                    "category": f"intent_{intent.value.lower()}"
                 }
-            }
+                
+                # Cache da resposta
+                context_hash = await _get_context_hash(chat_request.user_id)
+                await cache_service.cache_response(
+                    chat_request.user_id,
+                    sanitized_message,
+                    response_data,
+                    context_hash,
+                    ttl=3600  # 1 hora
+                )
+                
+                logger.info(
+                    "Resposta de template enviada (sem IA)",
+                    user_id=chat_request.user_id,
+                    intent=intent.value,
+                    decision=decision
+                )
+                
+                return {
+                    "success": True,
+                    "response": response_data,
+                    "metadata": {
+                        "processing_time": time.time() - start_time,
+                        "requires_ai": False,  # NÃO chama IA
+                        "cache_hit": False,
+                        "intent": intent.value,
+                        "decision": decision,
+                        "score": score,
+                        "security_validation": security_validation.details
+                    }
+                }
         
         # DECISÃO: ASK_CLARIFY (UNKNOWN)
         if decision == "ASK_CLARIFY" and router_response:
