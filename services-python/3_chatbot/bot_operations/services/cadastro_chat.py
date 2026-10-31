@@ -269,6 +269,12 @@ def normalize_actions(raw: Any, produtos: List[str]) -> List[Dict[str, Any]]:
             lista = _lista(item.get("preco_base"))
             if lista:
                 action["preco_base"] = lista
+            papel = _text(item.get("papel"))
+            if papel and _fold(papel) == "fornecedor":
+                action["papel"] = "fornecedor"
+            proprietario = _text(item.get("proprietario"))
+            if proprietario:
+                action["proprietario"] = proprietario
             actions.append(action)
         elif kind == "preco":
             produto = _produto(item.get("produto"), produtos)
@@ -298,7 +304,11 @@ def describe_actions(actions: List[Dict[str, Any]]) -> str:
     for action in actions:
         if action["tipo"] == "cliente":
             changes = [f"{label} para {action[key]}" for key, label in labels.items() if action.get(key)]
-            if changes:
+            if action.get("papel") == "fornecedor":
+                dono = f", proprietário {action['proprietario']}" if action.get("proprietario") else ""
+                lugar = f", em {action['localizacao']}" if action.get("localizacao") else ""
+                lines.append(f"Abri o fornecedor {action['nome']}{dono}{lugar}")
+            elif changes:
                 lines.append(f"Atualizei {action['nome']}: " + ", ".join(changes))
             else:
                 lines.append(f"Abri o cliente {action['nome']}")
@@ -319,9 +329,10 @@ def describe_actions(actions: List[Dict[str, Any]]) -> str:
     return ". ".join(lines) + ". Confirme para salvar."
 
 
-def build_prompt(message: str, clientes: List[Dict[str, Any]], produtos: List[str]) -> str:
+def build_prompt(message: str, clientes: List[Dict[str, Any]], produtos: List[str], contexto: str = "") -> str:
     pessoas = ", ".join(_text(item.get("nome")) or "" for item in clientes if _text(item.get("nome"))) or "nenhum"
     catalogo = ", ".join(produtos) or "nenhum"
+    bloco = f"Contexto da tela:\n{contexto.strip()}\n" if contexto.strip() else ""
     return (
         "Você atualiza clientes e preços do Sítio Multitrem a partir de uma frase. "
         "Não explique fora do JSON. Responda somente um objeto JSON.\n"
@@ -329,6 +340,9 @@ def build_prompt(message: str, clientes: List[Dict[str, Any]], produtos: List[st
         "reply descreve só o que a frase pediu, em uma frase.\n"
         "Cliente, só com os campos que a frase mudou, e o nome para achar a pessoa: "
         '{"tipo":"cliente","nome":"Waldeth","celular1":"62 981414141","celular2":"","endereco":"","localizacao":"","observacao":"","preco_base":"Varejo"}\n'
+        "Fornecedor, quando a frase cadastra quem vende para o sítio: "
+        '{"tipo":"cliente","nome":"Hidroponia Gyn","papel":"fornecedor","localizacao":"Setor Santa Genoveva","proprietario":"Seu Pedro"}\n'
+        "papel fornecedor só se a frase disser fornecedor ou quem vende para o sítio. proprietario é a pessoa, como Seu Pedro.\n"
         "Omita campo vazio.\n"
         "Preço de um produto: "
         '{"tipo":"preco","produto":"Couve","lista":"Varejo","valor":4}\n'
@@ -339,6 +353,7 @@ def build_prompt(message: str, clientes: List[Dict[str, Any]], produtos: List[st
         "Não diga que gravou. A tela mostra e a pessoa confirma depois.\n"
         f"Clientes: {pessoas}.\n"
         f"Produtos: {catalogo}.\n"
+        f"{bloco}"
         f"Frase: {message}"
     )
 
@@ -347,8 +362,12 @@ async def interpret_cadastro(
     message: str,
     clientes: List[Dict[str, Any]],
     produtos: List[str],
+    contexto: str = "",
 ) -> Dict[str, Any]:
-    reply = await ai_integration.chat_simple(build_prompt(message, clientes, produtos), intent="CADASTRO")
+    reply = await ai_integration.chat_simple(
+        build_prompt(message, clientes, produtos, contexto[:8000]),
+        intent="CADASTRO",
+    )
     if not reply:
         raise RuntimeError(ai_integration.last_error or "O AI Service não respondeu")
     try:

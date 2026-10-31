@@ -17,6 +17,9 @@ router = APIRouter(prefix="/chatbot/orders", tags=["order-intake"])
 
 class ConversationIn(BaseModel):
     conversation: str = Field(..., min_length=1)
+    contexto: str = ""
+    cliente: str = ""
+    observacao_com: bool = False
 
 
 def _log(message: str) -> None:
@@ -38,7 +41,12 @@ async def orders_from_conversation(body: ConversationIn, request: Request):
         _log("recusado: conversa vazia")
         raise HTTPException(status_code=400, detail="Cole a conversa do pedido")
     try:
-        orders = await convert_conversation(text)
+        orders = await convert_conversation(
+            text,
+            contexto=body.contexto[:8000],
+            cliente_fixo=body.cliente.strip()[:200],
+            observacao_com=body.observacao_com,
+        )
     except ValueError as exc:
         _log(f"conversa sem pedido legível: {exc}")
         raise HTTPException(status_code=422, detail=str(exc)) from exc

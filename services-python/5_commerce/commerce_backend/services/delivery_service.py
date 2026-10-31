@@ -2,9 +2,10 @@
 Serviço de entregas
 """
 
-from typing import List, Optional
+from typing import List, Optional, Any, Dict
 from sqlalchemy.orm import Session
 from datetime import datetime, date
+import json
 import structlog
 
 from models.commerce import DeliveryRoute, DeliveryStop, DeliveryRouteStatus, DeliveryStopStatus
@@ -39,6 +40,57 @@ class DeliveryService:
     def get_route(db: Session, route_id: int) -> Optional[DeliveryRoute]:
         """Busca uma rota por ID"""
         return db.query(DeliveryRoute).filter(DeliveryRoute.id == route_id).first()
+
+    @staticmethod
+    def _rota_operacao_query(db: Session, route_date: date, marca: str):
+        return (
+            db.query(DeliveryRoute)
+            .filter(
+                DeliveryRoute.date == route_date,
+                DeliveryRoute.status == DeliveryRouteStatus.PLANNED,
+                DeliveryRoute.notes.isnot(None),
+                DeliveryRoute.notes.contains(marca),
+            )
+            .order_by(DeliveryRoute.id.desc())
+        )
+
+    @staticmethod
+    def obter_rota_operacao(db: Session, route_date: date, marca: str) -> Optional[DeliveryRoute]:
+        return DeliveryService._rota_operacao_query(db, route_date, marca).first()
+
+    @staticmethod
+    def salvar_rota_operacao(
+        db: Session,
+        route_date: date,
+        partida: str,
+        rota: Dict[str, Any],
+        marca: str,
+    ) -> DeliveryRoute:
+        """Upsert da rota operacional do dia (ordem manual + snapshot JSON em notes)."""
+        pacote = {
+            "tipo": marca,
+            "partida": (partida or "").strip(),
+            "rota": rota,
+            "salva_em": datetime.utcnow().isoformat() + "Z",
+        }
+        notes = json.dumps(pacote, ensure_ascii=False)
+        existente = DeliveryService._rota_operacao_query(db, route_date, marca).first()
+        if existente:
+            existente.notes = notes
+            existente.driver_name = existente.driver_name or "operacao"
+            db_route = existente
+        else:
+            db_route = DeliveryRoute(
+                date=route_date,
+                driver_name="operacao",
+                status=DeliveryRouteStatus.PLANNED,
+                notes=notes,
+            )
+            db.add(db_route)
+        db.commit()
+        db.refresh(db_route)
+        logger.info("Rota operacional salva", route_id=db_route.id, date=route_date)
+        return db_route
     
     @staticmethod
     def create_route(db: Session, route: DeliveryRouteCreate) -> DeliveryRoute:

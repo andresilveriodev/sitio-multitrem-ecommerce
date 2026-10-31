@@ -8,19 +8,25 @@ export function CadastroChat({
   onSend,
   onConfirm,
   onDiscard,
+  intro,
+  placeholder,
 }: {
   pending: boolean;
   saving: boolean;
   onSend: (text: string) => Promise<string>;
   onConfirm: () => Promise<void>;
   onDiscard: () => void;
+  intro?: string;
+  placeholder?: string;
 }) {
   const [texto, setTexto] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [alerta, setAlerta] = useState("");
   const [mensagens, setMensagens] = useState<Mensagem[]>([
     {
       papel: "bot",
       texto:
+        intro ??
         "Pode pedir a alteração. Exemplo: atualiza o celular da Waldeth para 62 981414141. A tela muda na hora e só grava quando você confirmar.",
     },
   ]);
@@ -49,11 +55,23 @@ export function CadastroChat({
     } catch (err) {
       const motivo = err instanceof Error ? err.message : "Não salvou";
       setMensagens((atual) => [...atual, { papel: "bot", texto: motivo }]);
+      setAlerta(motivo);
     }
   }
 
   return (
     <aside className="chat-lado">
+      {alerta ? (
+        <div className="produto-popup-fundo" role="alertdialog" aria-modal="true" aria-labelledby="aviso-salvar">
+          <div className="produto-popup aviso-popup">
+            <h2 id="aviso-salvar">Não deu para salvar</h2>
+            <p>{alerta}</p>
+            <button className="primary" type="button" autoFocus onClick={() => setAlerta("")}>
+              Entendi
+            </button>
+          </div>
+        </div>
+      ) : null}
       <h2>Chat</h2>
       <div className="chat-log">
         {mensagens.map((mensagem, index) => (
@@ -83,7 +101,7 @@ export function CadastroChat({
       >
         <textarea
           value={texto}
-          placeholder="Atualiza o celular da Waldeth para 62 981414141"
+          placeholder={placeholder ?? "Atualiza o celular da Waldeth para 62 981414141"}
           onChange={(event) => setTexto(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) {

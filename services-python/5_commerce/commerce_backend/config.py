@@ -57,6 +57,17 @@ class Settings(BaseSettings):
     # Configurações de auditoria
     AUDIT_LOG_ENABLED: bool = True
     AUDIT_LOG_LEVEL: str = "INFO"
+
+    # Rota de entregas (OSRM local + Nominatim)
+    OSRM_URL: str = "http://127.0.0.1:5000"
+    NOMINATIM_URL: str = "https://nominatim.openstreetmap.org"
+    ROTA_USER_AGENT: str = "SitioMultitremRota/1.0 (operacao local)"
+    ROTA_PARTIDA_PADRAO: str = "Setor Urias Magalhães, Goiânia, GO"
+
+    # WhatsApp Gateway (envio de listas)
+    WHATSAPP_GATEWAY_URL: str = "http://127.0.0.1:8020"
+    WHATSAPP_GATEWAY_TOKEN: str = ""
+    WHATSAPP_GATEWAY_TIMEOUT: int = 45
     
     class Config:
         env_file = ".env"

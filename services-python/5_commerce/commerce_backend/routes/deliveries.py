@@ -2,13 +2,16 @@
 Rotas para entregas
 """
 
+import json
 from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List, Optional, Any, Dict
 from datetime import date
 
 from db_session import get_db_session
 from services.delivery_service import DeliveryService
+from services.rota_service import otimizar_rota, osrm_disponivel
 from models.commerce import DeliveryRouteStatus
 from schemas.delivery import (
     DeliveryRouteCreate, DeliveryRouteUpdate, DeliveryRouteResponse,
@@ -16,6 +19,89 @@ from schemas.delivery import (
 )
 
 router = APIRouter(prefix="/deliveries", tags=["deliveries"])
+
+MARCA_ROTA_OPERACAO = "rota_operacao_v1"
+
+
+class ParadaRotaIn(BaseModel):
+    cliente: str = ""
+    endereco: str = ""
+    cliente_id: Optional[int] = None
+    order_id: Optional[str] = None
+    localizacao: Optional[str] = None
+
+
+class OtimizarRotaIn(BaseModel):
+    partida: str = ""
+    paradas: List[ParadaRotaIn] = Field(default_factory=list)
+
+
+class RotaDoDiaIn(BaseModel):
+    data: date
+    partida: str = ""
+    rota: Dict[str, Any]
+
+
+class RotaDoDiaOut(BaseModel):
+    id: int
+    data: date
+    partida: str = ""
+    rota: Dict[str, Any]
+
+
+@router.get("/osrm")
+def status_osrm():
+    return {"ok": osrm_disponivel()}
+
+
+@router.post("/otimizar")
+def criar_rota_otimizada(body: OtimizarRotaIn, db: Session = Depends(get_db_session)) -> dict[str, Any]:
+    """Monta a ordem das entregas (OSRM quando disponível) a partir das paradas da tela."""
+    if not body.paradas:
+        raise HTTPException(status_code=400, detail="Informe ao menos uma parada")
+    return otimizar_rota(
+        db,
+        body.partida,
+        [p.model_dump() for p in body.paradas],
+    )
+
+
+@router.put("/rota-do-dia", response_model=RotaDoDiaOut)
+def salvar_rota_do_dia(body: RotaDoDiaIn, db: Session = Depends(get_db_session)):
+    """Grava a rota montada/reordenada do dia (ordem manual incluída)."""
+    if not isinstance(body.rota, dict) or not body.rota.get("paradas"):
+        raise HTTPException(status_code=400, detail="Informe a rota com paradas")
+    salvo = DeliveryService.salvar_rota_operacao(
+        db,
+        body.data,
+        body.partida,
+        body.rota,
+        marca=MARCA_ROTA_OPERACAO,
+    )
+    return RotaDoDiaOut(
+        id=salvo.id,
+        data=salvo.date,
+        partida=body.partida,
+        rota=body.rota,
+    )
+
+
+@router.get("/rota-do-dia", response_model=RotaDoDiaOut)
+def obter_rota_do_dia(data: date = Query(...), db: Session = Depends(get_db_session)):
+    """Carrega a última rota salva daquele dia."""
+    salvo = DeliveryService.obter_rota_operacao(db, data, marca=MARCA_ROTA_OPERACAO)
+    if not salvo:
+        raise HTTPException(status_code=404, detail="Nenhuma rota salva neste dia")
+    try:
+        pacote = json.loads(salvo.notes or "{}")
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=500, detail="Rota salva inválida") from exc
+    return RotaDoDiaOut(
+        id=salvo.id,
+        data=salvo.date,
+        partida=str(pacote.get("partida") or ""),
+        rota=pacote.get("rota") if isinstance(pacote.get("rota"), dict) else {},
+    )
 
 
 @router.get("/routes", response_model=List[DeliveryRouteResponse])

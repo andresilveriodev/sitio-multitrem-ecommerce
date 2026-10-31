@@ -20,7 +20,8 @@ from .commerce import (
     Payment,
     DeliveryRoute,
     DeliveryStop,
-    AuditLog
+    AuditLog,
+    Collaborator,
 )
 
 from .chatbot import (
@@ -49,6 +50,7 @@ __all__ = [
     "DeliveryRoute",
     "DeliveryStop",
     "AuditLog",
+    "Collaborator",
     # Chatbot models
     "ChannelAccount",
     "Conversation",

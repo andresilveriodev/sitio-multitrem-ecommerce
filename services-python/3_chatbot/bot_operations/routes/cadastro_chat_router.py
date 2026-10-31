@@ -21,6 +21,7 @@ class CadastroChatIn(BaseModel):
     clientes: List[Dict[str, Any]] = Field(default_factory=list)
     produtos: List[str] = Field(default_factory=list)
     listas: List[str] = Field(default_factory=list)
+    contexto: str = ""
 
 
 def _log(message: str) -> None:
@@ -36,7 +37,7 @@ async def interpret(body: CadastroChatIn, request: Request):
     if not text:
         raise HTTPException(status_code=400, detail="Escreva o que quer alterar")
     try:
-        result = await interpret_cadastro(text, body.clientes, body.produtos)
+        result = await interpret_cadastro(text, body.clientes, body.produtos, body.contexto)
     except ValueError as exc:
         _log(f"comando ilegível: {exc}")
         raise HTTPException(status_code=422, detail=str(exc)) from exc

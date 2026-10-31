@@ -88,6 +88,13 @@ $Catalog = @(
         Env         = @{ PORT = "8011" }
     }
     @{
+        Id          = "whatsapp"
+        Name        = "WhatsApp Gateway"
+        RelPath     = "4_messages_apps\whatsapp"
+        Port        = 8020
+        Env         = @{ PORT = "8020" }
+    }
+    @{
         Id          = "telegram_operations"
         Name        = "Telegram Operations"
         RelPath     = "4_messages_apps\telegram_operations"

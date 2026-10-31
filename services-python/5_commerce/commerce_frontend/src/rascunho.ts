@@ -2,6 +2,14 @@ export type Pessoa = {
   nome: string;
   celular: string;
   papeis: string[];
+  tratamento: string;
+};
+
+export type EnderecoForm = {
+  rotulo: string;
+  endereco: string;
+  localizacao: string;
+  padrao: boolean;
 };
 
 export type Formulario = {
@@ -10,9 +18,12 @@ export type Formulario = {
   celular2: string;
   endereco: string;
   localizacao: string;
+  enderecos: EnderecoForm[];
   observacao: string;
   lista: number | null;
-  tipo: "pessoa" | "comercio";
+  tipo: "pessoa" | "comercio" | "fornecedor";
+  tratamento: string;
+  nomeFunil: string;
   pessoas: Pessoa[];
   descontoPedido: string;
 };
@@ -39,12 +50,61 @@ export const formularioVazio: Formulario = {
   celular2: "",
   endereco: "",
   localizacao: "",
+  enderecos: [{ rotulo: "Entrega", endereco: "", localizacao: "", padrao: true }],
   observacao: "",
   lista: null,
   tipo: "pessoa",
+  tratamento: "",
+  nomeFunil: "",
   pessoas: [],
   descontoPedido: "",
 };
+
+export function enderecoPadrao(form: Formulario): EnderecoForm {
+  return form.enderecos.find((item) => item.padrao) || form.enderecos[0] || formularioVazio.enderecos[0];
+}
+
+export function sincronizarEnderecoPrincipal(form: Formulario): Formulario {
+  const lista =
+    form.enderecos.length > 0
+      ? form.enderecos
+      : [{ rotulo: "Entrega", endereco: form.endereco, localizacao: form.localizacao, padrao: true }];
+  const temPadrao = lista.some((item) => item.padrao);
+  const enderecos = lista.map((item, index) => ({
+    ...item,
+    padrao: temPadrao ? item.padrao : index === 0,
+  }));
+  const padrao = enderecos.find((item) => item.padrao) || enderecos[0];
+  return {
+    ...form,
+    enderecos,
+    endereco: padrao?.endereco || "",
+    localizacao: padrao?.localizacao || "",
+  };
+}
+
+/** Nomes que podem aparecer na grade: cadastro, tratamento da pessoa, ou como cada contato quer ser chamado. */
+export function opcoesNomeFunil(form: Formulario): { valor: string; rotulo: string }[] {
+  const vistos = new Set<string>();
+  const lista: { valor: string; rotulo: string }[] = [];
+  function por(valor: string, rotulo: string) {
+    const chave = valor.trim().toLocaleLowerCase("pt-BR");
+    if (!chave || vistos.has(chave)) return;
+    vistos.add(chave);
+    lista.push({ valor: valor.trim(), rotulo });
+  }
+  if (form.nome.trim()) por(form.nome.trim(), form.nome.trim());
+  if (form.tipo === "pessoa" && form.tratamento.trim()) {
+    por(form.tratamento.trim(), `${form.tratamento.trim()} (como quer ser chamado)`);
+  }
+  for (const pessoa of form.pessoas) {
+    const nome = pessoa.nome.trim();
+    const chamado = pessoa.tratamento.trim();
+    if (chamado) por(chamado, nome && chamado.toLocaleLowerCase("pt-BR") !== nome.toLocaleLowerCase("pt-BR") ? `${chamado} (${nome})` : chamado);
+    else if (nome) por(nome, nome);
+  }
+  return lista;
+}
 
 export function acaoDaFrase(
   frase: string,
@@ -169,7 +229,7 @@ function casarProduto(nome: string, produtos: ItemPreco[]): string[] {
     return achado ? [rotuloProduto(achado.nome, achado.formato)] : [];
   }
   if (linha.includes("ovo") && (linha.includes("duzia") || /\b12\b/.test(linha))) {
-    const achado = produtos.find((produto) => fold(produto.nome) === "ovos");
+    const achado = produtos.find((produto) => fold(produto.nome) === "duzia de ovos");
     return achado ? [rotuloProduto(achado.nome, achado.formato)] : [];
   }
   const separado = separarFormato(nome);
@@ -265,9 +325,28 @@ export function lerRascunho(): Rascunho | null {
     if (!raw) return null;
     const data = JSON.parse(raw) as Rascunho;
     if (!data || typeof data !== "object" || !data.form) return null;
-    if (data.form.tipo !== "comercio") data.form.tipo = "pessoa";
+    if (data.form.tipo !== "comercio" && data.form.tipo !== "fornecedor") data.form.tipo = "pessoa";
     if (!Array.isArray(data.form.pessoas)) data.form.pessoas = [];
+    data.form.pessoas = data.form.pessoas.map((pessoa) => ({
+      nome: pessoa.nome || "",
+      celular: pessoa.celular || "",
+      papeis: Array.isArray(pessoa.papeis) ? pessoa.papeis : [],
+      tratamento: pessoa.tratamento || "",
+    }));
+    if (typeof data.form.tratamento !== "string") data.form.tratamento = "";
+    if (typeof data.form.nomeFunil !== "string") data.form.nomeFunil = "";
     if (typeof data.form.descontoPedido !== "string") data.form.descontoPedido = "";
+    if (!Array.isArray(data.form.enderecos) || data.form.enderecos.length === 0) {
+      data.form.enderecos = [
+        {
+          rotulo: "Entrega",
+          endereco: data.form.endereco || "",
+          localizacao: data.form.localizacao || "",
+          padrao: true,
+        },
+      ];
+    }
+    data.form = sincronizarEnderecoPrincipal(data.form);
     return data;
   } catch {
     return null;
@@ -298,6 +377,8 @@ type AcaoCliente = {
   localizacao?: string;
   observacao?: string;
   preco_base?: string;
+  papel?: "fornecedor";
+  proprietario?: string;
 };
 
 export function mesclarCliente(
@@ -363,11 +444,35 @@ export function mesclarCliente(
     form = { ...form, [campo]: valor };
     marcados[campo] = true;
   }
+  if (marcados.endereco || marcados.localizacao) {
+    const lista =
+      form.enderecos.length > 0
+        ? form.enderecos.map((item) => ({ ...item }))
+        : [{ rotulo: "Entrega", endereco: "", localizacao: "", padrao: true }];
+    const idx = Math.max(0, lista.findIndex((item) => item.padrao));
+    lista[idx] = {
+      ...lista[idx],
+      endereco: form.endereco || lista[idx].endereco,
+      localizacao: form.localizacao || lista[idx].localizacao,
+      padrao: true,
+    };
+    form = sincronizarEnderecoPrincipal({ ...form, enderecos: lista });
+  }
   if (acao.preco_base) {
     const lista = listaId(acao.preco_base);
     if (lista && form.lista !== lista) {
       form = { ...form, lista };
       marcados.lista = true;
+    }
+  }
+  if (acao.papel === "fornecedor") {
+    form = { ...form, tipo: "fornecedor" };
+    marcados.tipo = true;
+    if (acao.proprietario) {
+      form = {
+        ...form,
+        pessoas: [{ nome: acao.proprietario, celular: "", papeis: ["proprietario"], tratamento: "" }],
+      };
     }
   }
   return { form, id, pendente: true, marcados, original, bloqueado: false };

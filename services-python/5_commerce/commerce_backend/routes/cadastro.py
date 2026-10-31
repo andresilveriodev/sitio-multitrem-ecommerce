@@ -13,7 +13,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
-from sqlalchemy import text
+from sqlalchemy import func, or_, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -106,6 +106,14 @@ class PessoaIn(BaseModel):
     name: str = ""
     phone_e164: Optional[str] = None
     papeis: List[str] = []
+    nickname: Optional[str] = None
+
+
+class EnderecoIn(BaseModel):
+    rotulo: str = "Entrega"
+    endereco: str = ""
+    localizacao: str = ""
+    padrao: bool = False
 
 
 class CustomerIn(BaseModel):
@@ -115,9 +123,12 @@ class CustomerIn(BaseModel):
     phone2_e164: Optional[str] = None
     endereco: Optional[str] = None
     localizacao: Optional[str] = None
+    enderecos: List[EnderecoIn] = Field(default_factory=list)
     observacao: Optional[str] = None
     kind: str = "pessoa"
     pessoas: List[PessoaIn] = []
+    nickname: Optional[str] = None
+    funnel_name: Optional[str] = None
     desconto_pedido: Optional[Decimal] = Field(None, ge=0, le=100)
 
 
@@ -134,6 +145,9 @@ def _ensure_phone_optional(db: Session) -> None:
     db.execute(text("ALTER TABLE commerce.product ALTER COLUMN unit TYPE VARCHAR(60)"))
     db.execute(text("UPDATE commerce.customer SET kind = 'pessoa' WHERE kind IS NULL"))
     db.execute(text("ALTER TABLE commerce.customer ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE"))
+    db.execute(text("ALTER TABLE commerce.customer ADD COLUMN IF NOT EXISTS nickname VARCHAR(200)"))
+    db.execute(text("ALTER TABLE commerce.customer ADD COLUMN IF NOT EXISTS funnel_name VARCHAR(200)"))
+    db.execute(text("ALTER TABLE commerce.customer_contact ADD COLUMN IF NOT EXISTS nickname VARCHAR(200)"))
     db.commit()
 
 
@@ -148,18 +162,59 @@ def _phone(value: Optional[str]) -> Optional[str]:
     return digits[:20]
 
 
+def _enderecos_uteis(body: CustomerIn) -> List[EnderecoIn]:
+    rows = [
+        EnderecoIn(
+            rotulo=(item.rotulo or "Entrega").strip() or "Entrega",
+            endereco=(item.endereco or "").strip(),
+            localizacao=(item.localizacao or "").strip(),
+            padrao=bool(item.padrao),
+        )
+        for item in (body.enderecos or [])
+        if (item.endereco or "").strip() or (item.localizacao or "").strip()
+    ]
+    if rows:
+        return rows
+    end = (body.endereco or "").strip()
+    loc = (body.localizacao or "").strip()
+    if end or loc:
+        return [EnderecoIn(rotulo="Entrega", endereco=end or loc, localizacao=loc or end, padrao=True)]
+    return []
+
+
 def _require_customer(body: CustomerIn) -> None:
     missing = []
+    enderecos = _enderecos_uteis(body)
+    if body.kind == "fornecedor":
+        if not body.name.strip():
+            missing.append("nome do fornecedor")
+        if not enderecos:
+            missing.append("localização")
+        if missing:
+            raise HTTPException(status_code=422, detail="Para salvar precisa de " + ", ".join(missing))
+        primeiro = enderecos[0]
+        body.endereco = primeiro.endereco or primeiro.localizacao
+        body.localizacao = primeiro.localizacao or primeiro.endereco
+        body.enderecos = enderecos
+        return
     if not body.name.strip():
         missing.append("nome completo")
     if not _phone(body.phone_e164):
         missing.append("celular 1")
-    if not (body.endereco or "").strip():
-        missing.append("endereço")
-    if not (body.localizacao or "").strip():
-        missing.append("localização")
+    if not enderecos:
+        missing.append("endereço e localização")
+    else:
+        for item in enderecos:
+            if not item.endereco.strip():
+                missing.append(f"endereço de {item.rotulo}")
+            if not item.localizacao.strip():
+                missing.append(f"localização de {item.rotulo}")
     if missing:
         raise HTTPException(status_code=422, detail="Para salvar precisa de " + ", ".join(missing))
+    body.enderecos = enderecos
+    padrao = next((item for item in enderecos if item.padrao), enderecos[0])
+    body.endereco = padrao.endereco
+    body.localizacao = padrao.localizacao
 
 
 def _default_address(customer: Customer) -> Optional[CustomerAddress]:
@@ -170,23 +225,55 @@ def _default_address(customer: Customer) -> Optional[CustomerAddress]:
     return rows[0] if rows else None
 
 
-def _upsert_address(db: Session, customer: Customer, endereco: str, localizacao: str) -> None:
-    address = _default_address(customer)
-    if not address:
+def _aplicar_coords(address: CustomerAddress, localizacao: Optional[str]) -> None:
+    nova_loc = (localizacao or "")[:500] or None
+    if (address.location_url or "") != (nova_loc or ""):
+        address.lat = None
+        address.lng = None
+    address.location_url = nova_loc
+    if not nova_loc:
+        return
+    try:
+        from services.rota_service import coords_de_localizacao
+
+        coords = coords_de_localizacao(nova_loc)
+        if coords:
+            address.lat = Decimal(str(round(coords[0], 8)))
+            address.lng = Decimal(str(round(coords[1], 8)))
+    except Exception:
+        pass
+
+
+def _replace_addresses(db: Session, customer: Customer, enderecos: List[EnderecoIn]) -> None:
+    db.query(CustomerAddress).filter(CustomerAddress.customer_id == customer.id).delete()
+    if not enderecos:
+        return
+    tem_padrao = any(item.padrao for item in enderecos)
+    for i, item in enumerate(enderecos):
+        street = (item.endereco or item.localizacao or "").strip()[:200]
+        if not street:
+            continue
         address = CustomerAddress(
             customer_id=customer.id,
-            label="Entrega",
-            street=endereco[:200],
+            label=(item.rotulo or "Entrega").strip()[:100] or "Entrega",
+            street=street,
             district="—",
             city="Goiânia",
             state="GO",
             zip="74000000",
-            is_default=True,
+            is_default=bool(item.padrao) if tem_padrao else i == 0,
         )
+        _aplicar_coords(address, item.localizacao or item.endereco)
         db.add(address)
-    address.street = endereco[:200]
-    address.location_url = localizacao[:500]
-    address.is_default = True
+
+
+def _upsert_address(db: Session, customer: Customer, endereco: str, localizacao: str) -> None:
+    """Compat: um único endereço (legado). Preferir _replace_addresses."""
+    _replace_addresses(
+        db,
+        customer,
+        [EnderecoIn(rotulo="Entrega", endereco=endereco, localizacao=localizacao, padrao=True)],
+    )
 
 
 def _ensure_catalog(db: Session) -> None:
@@ -396,6 +483,17 @@ def _customer_payload(db: Session, customer: Customer) -> dict:
             }
         )
     address = _default_address(customer)
+    enderecos = []
+    for row in sorted(customer.addresses or [], key=lambda item: (not item.is_default, item.id or 0)):
+        enderecos.append(
+            {
+                "id": row.id,
+                "rotulo": row.label or "Entrega",
+                "endereco": row.street,
+                "localizacao": row.location_url,
+                "padrao": bool(row.is_default),
+            }
+        )
     return {
         "id": customer.id,
         "name": customer.name,
@@ -403,10 +501,13 @@ def _customer_payload(db: Session, customer: Customer) -> dict:
         "phone2_e164": customer.phone2_e164,
         "endereco": address.street if address else None,
         "localizacao": address.location_url if address else None,
+        "enderecos": enderecos,
         "observacao": customer.notes,
         "price_list_id": customer.default_price_list_id,
         "price_list_name": price_list.name if price_list else None,
         "kind": customer.kind or "pessoa",
+        "tratamento": customer.nickname,
+        "nome_funil": customer.funnel_name,
         "pessoas": _pessoas(db, customer),
         "desconto_pedido": _money(customer.order_discount_percent),
         "descontos": descontos,
@@ -414,7 +515,7 @@ def _customer_payload(db: Session, customer: Customer) -> dict:
 
 
 def _pessoas(db: Session, customer: Customer) -> list:
-    if (customer.kind or "pessoa") != "comercio":
+    if (customer.kind or "pessoa") == "pessoa":
         return []
     rows = (
         db.query(CustomerContact)
@@ -427,13 +528,18 @@ def _pessoas(db: Session, customer: Customer) -> list:
         papeis = [parte for parte in (row.role or "").split(",") if parte in PAPEIS]
         if not papeis:
             continue
-        pessoas.append({"nome": row.name, "celular": row.phone_e164, "papeis": papeis})
+        pessoas.append({
+            "nome": row.name,
+            "celular": row.phone_e164,
+            "papeis": papeis,
+            "tratamento": row.nickname or "",
+        })
     return pessoas
 
 
 def _replace_pessoas(db: Session, customer: Customer, pessoas: List[PessoaIn]) -> None:
     db.query(CustomerContact).filter(CustomerContact.customer_id == customer.id).delete()
-    if (customer.kind or "pessoa") != "comercio":
+    if (customer.kind or "pessoa") == "pessoa":
         return
     for person in pessoas:
         nome = person.name.strip()
@@ -446,6 +552,7 @@ def _replace_pessoas(db: Session, customer: Customer, pessoas: List[PessoaIn]) -
             CustomerContact(
                 customer_id=customer.id,
                 name=nome[:200],
+                nickname=((person.nickname or "").strip()[:200] or None),
                 phone_e164=_phone(person.phone_e164),
                 role=",".join(papeis),
                 active=True,
@@ -456,17 +563,19 @@ def _replace_pessoas(db: Session, customer: Customer, pessoas: List[PessoaIn]) -
 def _write_customer(db: Session, customer: Customer, body: CustomerIn, price_list: PriceList) -> dict:
     _require_customer(body)
     customer.name = body.name.strip()
+    customer.nickname = (body.nickname or "").strip()[:200] or None
+    customer.funnel_name = (body.funnel_name or "").strip()[:200] or None
     customer.phone_e164 = _phone(body.phone_e164)
     customer.phone2_e164 = _phone(body.phone2_e164)
     customer.notes = (body.observacao or "").strip() or None
-    customer.kind = "comercio" if body.kind == "comercio" else "pessoa"
+    customer.kind = body.kind if body.kind in ("comercio", "fornecedor") else "pessoa"
     customer.order_discount_percent = body.desconto_pedido
     customer.default_price_list_id = price_list.id
     customer.price_profile = PROFILE_BY_LIST.get(price_list.name, PriceProfile.VAREJO)
-    db.flush()
-    _upsert_address(db, customer, body.endereco.strip(), body.localizacao.strip())
-    _replace_pessoas(db, customer, body.pessoas)
     try:
+        db.flush()
+        _replace_addresses(db, customer, _enderecos_uteis(body))
+        _replace_pessoas(db, customer, body.pessoas)
         db.commit()
     except IntegrityError as exc:
         db.rollback()
@@ -475,10 +584,60 @@ def _write_customer(db: Session, customer: Customer, body: CustomerIn, price_lis
     return _customer_payload(db, customer)
 
 
+def _sem_acento(coluna):
+    return func.translate(
+        func.lower(coluna),
+        "áàâãäéèêëíìîïóòôõöúùûüç",
+        "aaaaaeeeeiiiiooooouuuuc",
+    )
+
+
+@router.get("/clientes/busca")
+def buscar_clientes(q: str = Query(""), db: Session = Depends(get_db_session)):
+    """Achados pelo nome, pela razão social, pelo apelido ou por um responsável."""
+    _ensure_catalog(db)
+    termo = _fold(q)
+    if len(termo) < 2:
+        return []
+    like = f"%{termo.replace('%', '').replace('_', '')}%"
+    nome = _sem_acento(Customer.name)
+    contato = _sem_acento(CustomerContact.name)
+    apelido = _sem_acento(Customer.nickname)
+    chamado = _sem_acento(CustomerContact.nickname)
+    funil = _sem_acento(Customer.funnel_name)
+    rows = (
+        db.query(Customer.id, Customer.name, CustomerContact.name)
+        .outerjoin(
+            CustomerContact,
+            (CustomerContact.customer_id == Customer.id) & (CustomerContact.active == True),
+        )
+        .filter(Customer.active == True, Customer.kind != "eventual")
+        .filter(or_(nome.like(like), contato.like(like), apelido.like(like), chamado.like(like), funil.like(like)))
+        .order_by(Customer.name, CustomerContact.name)
+        .limit(80)
+        .all()
+    )
+    achados: dict = {}
+    for cliente_id, razao, responsavel in rows:
+        item = achados.get(cliente_id)
+        if item is None:
+            item = {"id": cliente_id, "name": razao, "detalhe": ""}
+            achados[cliente_id] = item
+        if responsavel and termo in _fold(responsavel) and termo not in _fold(razao) and not item["detalhe"]:
+            item["detalhe"] = responsavel
+    return list(achados.values())[:12]
+
+
 @router.get("/clientes")
 def list_registered_customers(db: Session = Depends(get_db_session)):
     _ensure_catalog(db)
-    customers = db.query(Customer).filter(Customer.active == True).order_by(Customer.name).all()
+    # Eventual fica só na boleta — não aparece no cadastro.
+    customers = (
+        db.query(Customer)
+        .filter(Customer.active == True, Customer.kind != "eventual")
+        .order_by(Customer.name)
+        .all()
+    )
     return [_customer_payload(db, customer) for customer in customers]
 
 

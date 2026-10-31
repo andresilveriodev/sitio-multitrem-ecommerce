@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, Query, Depends, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Dict, Optional, Union
-from services.ai_service import ai_service
+from services.ai_service import FalhaExtracao, ai_service
 from services.subscription_service import subscription_service
-from app.config import SUPPORTED_PROVIDERS, DEFAULT_AI_PROVIDER
+from app.config import SUPPORTED_PROVIDERS, DEFAULT_AI_PROVIDER, OPENAI_MODEL
 from app.db import get_db
 from sqlalchemy.orm import Session
 import logging
@@ -46,6 +46,8 @@ class ProviderInfo(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str
+    response_schema: Optional[Dict] = None
+    max_tokens: Optional[int] = None
 
 class ChatResponse(BaseModel):
     reply: str
@@ -103,7 +105,18 @@ async def chat(req: ChatRequest):
     """
     Endpoint simples de chat
     """
-    reply = await ai_service.send(req.message)
+    try:
+        reply = await ai_service.send(
+            req.message,
+            model=OPENAI_MODEL if req.response_schema else "gpt-4o-mini",
+            max_tokens=req.max_tokens or 1000,
+            response_schema=req.response_schema,
+        )
+    except FalhaExtracao as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except Exception:
+        logger.exception("Falha interna em /ai/chat")
+        raise HTTPException(status_code=500, detail="Falha interna ao consultar a IA.")
     return ChatResponse(reply=reply)
 
 @router.post("/chat-simple", response_model=ChatResponse)

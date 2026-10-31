@@ -43,6 +43,7 @@ Se faltar `.venv` / `venv` na pasta do serviço:
 | 8006 | AI Users | `.\start-python-services.ps1 -Only ai_users -Action restart` |
 | 8010 | Chatbot Users | `.\start-python-services.ps1 -Only bot_users -Action restart` |
 | 8011 | Chatbot Operations | `.\start-python-services.ps1 -Only bot_operations -Action restart` |
+| 8020 | WhatsApp Gateway | `.\start-python-services.ps1 -Only whatsapp -Action restart` |
 | 8021 | Telegram Operations | `.\start-python-services.ps1 -Only telegram_operations -Action restart` |
 
 Copiar e colar:
@@ -56,12 +57,11 @@ Copiar e colar:
 .\start-python-services.ps1 -Only ai_users -Action restart
 .\start-python-services.ps1 -Only bot_users -Action restart
 .\start-python-services.ps1 -Only bot_operations -Action restart
+.\start-python-services.ps1 -Only whatsapp -Action restart
 .\start-python-services.ps1 -Only telegram_operations -Action restart
 ```
 
 Para **parar** só um, troque `restart` por `stop` (mesmo `-Only`).
-
-WhatsApp (8020) ainda não tem script (serviço planejado).
 
 ## Debug no Cursor
 
@@ -94,6 +94,7 @@ O script acima **não** entra no debugger. Ele só abre janelas do PowerShell. P
 | 8006 | AI Users | `2_artificial_intelligence/ai_users/venv/Scripts/python.exe` |
 | 8010 | Chatbot Users | `3_chatbot/bot_users/.venv/Scripts/python.exe` |
 | 8011 | Chatbot Operations | `3_chatbot/bot_operations/.venv/Scripts/python.exe` |
+| 8020 | WhatsApp Gateway | `4_messages_apps/whatsapp/venv/Scripts/python.exe` |
 | 8021 | Telegram Operations | `4_messages_apps/telegram_operations/venv/Scripts/python.exe` |
 
 Se a pasta tiver só `venv` ou só `.venv`, use o que existir. Faltou venv: rode o start com `-EnsureVenv`.
@@ -123,7 +124,7 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 | 8006 | AI Service Users | ✅ |
 | 8010 | Chatbot Users Service | ✅ |
 | 8011 | Chatbot Operations Service | ✅ |
-| 8020 | WhatsApp Service | 🔜 |
+| 8020 | WhatsApp Gateway (Evolution) | ✅ |
 | 8021 | Telegram Service Operations (Colaboradores) | ✅ |
 
 ---
@@ -142,7 +143,7 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 | **8010** | Chatbot Users Service | `3_chatbot/bot_users/` | ✅ Implementado | Serviço de chatbot para usuários - middleware entre frontend e AI Service |
 | **8011** | Chatbot Operations Service | `3_chatbot/bot_operations/` | ✅ Implementado | Serviço de chatbot para operações - middleware entre frontend e AI Service |
 | **8012-8019** | Reservado | - | 🔜 Reservado | Portas reservadas para serviços futuros |
-| **8020** | WhatsApp Service | `4_messages_apps/whatsapp/` | 🔜 Planejado | Serviço de integração com WhatsApp |
+| **8020** | WhatsApp Gateway | `4_messages_apps/whatsapp/` | ✅ Implementado | Gateway Evolution API → Chatbot Users (só canal) |
 | **8021** | Telegram Service | `4_messages_apps/telegram_operations/` | ✅ Implementado | Serviço de integração com Telegram |
 | **8022-8029** | Outros Message Apps | `4_messages_apps/` | 🔜 Reservado | Portas reservadas para futuros serviços de mensagens |
 
@@ -160,7 +161,7 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 
 
 ### Serviços de Mensagens (8020-8029)
-- **8020**: WhatsApp Service
+- **8020**: WhatsApp Gateway (Evolution)
 - **8021**: Telegram Service
 - **8022-8029**: Reservado para futuros serviços de mensagens (Instagram, Facebook Messenger, Discord, etc.)
 
@@ -243,14 +244,21 @@ Este documento organiza as portas utilizadas por cada aplicação Python **imple
 
 ### Serviços de Mensagens
 
-#### 9. WhatsApp Service (Porta 8020)
+#### 9. WhatsApp Gateway (Porta 8020)
 - **Porta:** `8020`
 - **Diretório:** `4_messages_apps/whatsapp/`
-- **Status:** 🔜 Planejado
+- **Arquivo Principal:** `4_messages_apps/whatsapp/main.py`
+- **Arquivo de Configuração:** `4_messages_apps/whatsapp/config.py`
+- **URL Padrão:** `http://localhost:8020`
+- **Documentação:** `http://localhost:8020/docs`
+- **Health Check:** `http://localhost:8020/health`
+- **Webhook:** `POST /api/webhooks/evolution`
+- **Status:** ✅ Implementado (gateway canal)
 - **Variável de Ambiente:** `PORT` (padrão: `8020`)
-- **Descrição:** Serviço de integração com WhatsApp Business API. Recebe mensagens do WhatsApp e as encaminha para o Chatbot Service.
+- **Descrição:** Gateway fino Evolution API → Chatbot. Autentica webhook, responde 200 e encaminha mensagens IN. Sem lógica de negócio.
 - **Dependências:**
   - Chatbot Users Service (porta 8010)
+  - Evolution API (Contabo) + Cloudflare Tunnel no protótipo local
 
 #### 10. Telegram Service (Porta 8021)
 - **Porta:** `8021`

@@ -156,6 +156,8 @@ class Customer(Base):
     price_profile = Column(SQLEnum(PriceProfile), nullable=False, default=PriceProfile.VAREJO, index=True)
     default_price_list_id = Column(Integer, ForeignKey('commerce.price_list.id'), nullable=True)
     notes = Column(Text, nullable=True)
+    nickname = Column(String(200), nullable=True)  # como a pessoa física quer ser chamada
+    funnel_name = Column(String(200), nullable=True)  # nome exibido na grade do funil
     active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
     
@@ -237,6 +239,7 @@ class CustomerContact(Base):
     id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey('commerce.customer.id'), nullable=False, index=True)
     name = Column(String(200), nullable=False)  # Nome do contato (ex: "João Batista", "Dona Dilma")
+    nickname = Column(String(200), nullable=True)  # como deseja ser chamado (ex.: Willy)
     phone_e164 = Column(String(20), nullable=True, index=True)  # Telefone do contato (opcional)
     email = Column(String(200), nullable=True, index=True)  # Email para login (opcional)
     role = Column(String(100), nullable=True)  # Função: "proprietario", "cozinheira", "gerente", etc.
@@ -365,3 +368,21 @@ class AuditLog(Base):
     action = Column(String(50), nullable=False, index=True)  # "create", "update", "delete"
     data = Column(Text, nullable=True)  # JSONB seria melhor, mas Text funciona
     created_at = Column(DateTime, default=func.now(), nullable=False, index=True)
+
+
+class Collaborator(Base):
+    """Colaborador da empresa (dono, funcionário, entregador)."""
+    __tablename__ = "collaborator"
+    __table_args__ = {'schema': 'commerce'}
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(200), nullable=False)
+    phone_e164 = Column(String(20), nullable=False, unique=True, index=True)
+    # Funções CSV: "dono,colheiteiro,entregador,granjeiro"
+    role = Column(String(200), nullable=False, default="funcionario", index=True)
+    address = Column(String(300), nullable=True)  # endereço textual
+    location_url = Column(String(500), nullable=True)  # link Maps / pin (partida da rota)
+    active = Column(Boolean, default=True, nullable=False)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=func.now(), nullable=False)
+

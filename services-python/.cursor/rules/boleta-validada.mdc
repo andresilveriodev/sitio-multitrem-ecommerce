@@ -1,0 +1,32 @@
+---
+description: Boleta de pedidos validada — não alterar o componente nem o CSS dela salvo pedido explícito
+alwaysApply: true
+---
+
+# Boleta de pedidos validada
+
+A nota (boleta) já foi validada. Não altere o componente nem o CSS dela, salvo o usuário pedir de forma explícita para alterar a boleta (por exemplo: "muda a boleta", "ajusta o CSS da nota").
+
+## Fechado
+
+- `5_commerce/commerce_frontend/src/OrderSheet.tsx`
+- Em `5_commerce/commerce_frontend/src/styles.css`, só as regras da nota:
+  - `.funil-pedido-boleta` e filhos
+  - `.pedido` da folha (`.pedido`, `.pedido.compra`, `.pedido.concluido`, `.pedido table`, `.pedido td`, `.pedido th`, `.pedido select`). Fora disto: `.pedido-popup`, `.pedido-acoes`, `.pedido-limpar`, `.pedido-incluir`, `.pedido-opcoes`, `.pedido-abrir`, `.pedido-igual-popup`
+  - `.folha`, `.miolo`, `.faixa` e filhos
+  - `.boleta-comandos`, `.boleta-campos`, `.confirma-boleta`, `.reagenda-conflito-boleta`
+  - impressão: `body.imprimindo-boleta`, `.imprimindo-esta`
+
+## Como trabalhar
+
+- Tarefa que não é a boleta: não edite `OrderSheet.tsx` e não edite esses seletores. CSS novo usa classe raiz própria. Não reaproveite `.miolo`, `.folha`, `.faixa` nem `.pedido`.
+- Se o diff incluir esses trechos e o pedido não foi alterar a boleta, reverta esse pedaço antes de concluir.
+- Se a nota desandar, restaure o trecho do commit em que ela foi validada. Não reescreva para consertar.
+
+## Exemplo
+
+Pedido: ajustar o funil.
+
+Ruim: mudar padding de `.miolo` ou `.pedido` em `styles.css`.
+
+Certo: classe nova sob a raiz da tela (`.funil-...` ou outra) e `OrderSheet.tsx` intocado.

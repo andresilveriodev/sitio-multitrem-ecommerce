@@ -2,7 +2,10 @@ import type { ConvertResponse } from "./types";
 
 const BOT_URL = import.meta.env.VITE_BOT_URL ?? "http://localhost:8011";
 
-export async function convertConversation(conversation: string): Promise<ConvertResponse> {
+export async function convertConversation(
+  conversation: string,
+  extra?: { contexto?: string; cliente?: string; observacaoCom?: boolean },
+): Promise<ConvertResponse> {
   const url = `${BOT_URL}/chatbot/orders/from-conversation`;
   const origin = window.location.origin;
   console.info("[commerce-frontend] POST", url, { origin, chars: conversation.length });
@@ -11,7 +14,12 @@ export async function convertConversation(conversation: string): Promise<Convert
     response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ conversation }),
+      body: JSON.stringify({
+        conversation,
+        contexto: extra?.contexto || "",
+        cliente: extra?.cliente || "",
+        observacao_com: Boolean(extra?.observacaoCom),
+      }),
     });
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);

@@ -1,6 +1,7 @@
 from openai import OpenAI
 import httpx
 import json
+import re
 from typing import List, Dict, Optional, AsyncGenerator
 import logging
 from app.config import (
@@ -12,6 +13,63 @@ from app.config import (
 
 logger = logging.getLogger(__name__)
 
+
+class FalhaExtracao(Exception):
+    """Mensagem segura para quem chamou. O detalhe técnico fica no log."""
+
+
+def _sem_segredo(texto: str) -> str:
+    limpo = re.sub(r"sk-[A-Za-z0-9_\-]{8,}", "sk-…", texto or "")
+    return limpo[:500]
+
+
+def _validar_pedidos(parsed: object) -> None:
+    if not isinstance(parsed, dict) or set(parsed) != {"pedidos"}:
+        raise FalhaExtracao("A resposta da extração não veio no formato esperado.")
+    pedidos = parsed.get("pedidos")
+    if not isinstance(pedidos, list):
+        raise FalhaExtracao("A resposta da extração não veio no formato esperado.")
+    for pedido in pedidos:
+        if not isinstance(pedido, dict) or set(pedido) != {"data", "itens"}:
+            raise FalhaExtracao("A resposta da extração não veio no formato esperado.")
+        if not isinstance(pedido.get("data"), str) or not isinstance(pedido.get("itens"), list):
+            raise FalhaExtracao("A resposta da extração não veio no formato esperado.")
+        for item in pedido["itens"]:
+            if not isinstance(item, dict) or set(item) != {"produto", "qtd", "tipo", "observacao"}:
+                raise FalhaExtracao("A resposta da extração não veio no formato esperado.")
+            qtd = item.get("qtd")
+            if isinstance(qtd, bool) or not isinstance(qtd, int):
+                raise FalhaExtracao("A resposta da extração não veio no formato esperado.")
+            if not all(isinstance(item.get(campo), str) for campo in ("produto", "tipo", "observacao")):
+                raise FalhaExtracao("A resposta da extração não veio no formato esperado.")
+
+
+def _texto_pedidos_validados(response) -> str:
+    choices = getattr(response, "choices", None) or []
+    if not choices:
+        logger.info("Extração sem choices")
+        raise FalhaExtracao("A resposta da extração veio incompleta.")
+    choice = choices[0]
+    finish = getattr(choice, "finish_reason", None)
+    message = choice.message
+    if getattr(message, "refusal", None):
+        logger.info("OpenAI recusou a extração")
+        raise FalhaExtracao("A OpenAI não concluiu a extração.")
+    content = message.content or ""
+    parsed = None
+    if str(content).strip():
+        try:
+            parsed = json.loads(content)
+        except json.JSONDecodeError:
+            parsed = None
+    if parsed is not None:
+        _validar_pedidos(parsed)
+        return json.dumps(parsed, ensure_ascii=False)
+    logger.info("Extração sem JSON utilizável finish=%s chars=%s", finish, len(str(content)))
+    if finish == "length" or not str(content).strip():
+        raise FalhaExtracao("A resposta da extração veio incompleta.")
+    raise FalhaExtracao("A resposta da extração não veio no formato esperado.")
+
 class AIService:
     def __init__(self):
         self.openai_client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
@@ -20,7 +78,14 @@ class AIService:
             base_url=DEEPSEEK_BASE_URL
         ) if DEEPSEEK_API_KEY else None
     
-    async def send(self, message: str, model: str = "gpt-4o-mini", max_tokens: int = 1000, temperature: float = 0.7) -> str:
+    async def send(
+        self,
+        message: str,
+        model: str = "gpt-4o-mini",
+        max_tokens: int = 1000,
+        temperature: float = 0.7,
+        response_schema: Optional[Dict] = None,
+    ) -> str:
         """
         Método simples para enviar mensagem e receber resposta
         Usa o provider padrão (openai)
@@ -31,7 +96,8 @@ class AIService:
             provider="openai",
             model=model,
             max_tokens=max_tokens,
-            temperature=temperature
+            temperature=temperature,
+            response_schema=response_schema,
         )
     
     async def generate_response(
@@ -40,7 +106,8 @@ class AIService:
         provider: Optional[str] = None,
         model: Optional[str] = None,
         max_tokens: int = 1000,
-        temperature: float = 0.7
+        temperature: float = 0.7,
+        response_schema: Optional[Dict] = None,
     ) -> str:
         """
         Gera uma resposta usando o provedor de IA especificado
@@ -76,7 +143,9 @@ class AIService:
         
         try:
             if provider == "openai":
-                result = await self._generate_openai_response(messages, model or OPENAI_MODEL, max_tokens, temperature)
+                result = await self._generate_openai_response(
+                    messages, model or OPENAI_MODEL, max_tokens, temperature, response_schema
+                )
                 if is_gpt41nano:
                     print(f"\n[OK] AI_SERVICE.generate_response concluído com sucesso!")
                 return result
@@ -85,17 +154,22 @@ class AIService:
             elif provider == "ollama":
                 return await self._generate_ollama_response(messages, model or OLLAMA_MODEL)
         
+        except FalhaExtracao:
+            raise
         except Exception as e:
-            error_msg = f"Erro na comunicação com a IA ({provider}): {str(e)}"
-            if is_gpt41nano:
-                print(f"\n[ERRO] AI_SERVICE.generate_response falhou:")
-                print(f"  Erro: {error_msg}")
-                import traceback
-                print(f"  Traceback: {traceback.format_exc()}")
-            logger.error(f"Erro ao gerar resposta da IA ({provider}): {str(e)}")
-            raise Exception(error_msg)
+            logger.error("Erro ao gerar resposta da IA (%s): %s", provider, _sem_segredo(str(e)))
+            if response_schema:
+                raise FalhaExtracao("Falha interna ao consultar a IA.") from e
+            raise Exception(f"Erro na comunicação com a IA ({provider})") from e
     
-    async def _generate_openai_response(self, messages: List[Dict[str, str]], model: str, max_tokens: int = 1000, temperature: float = 0.7) -> str:
+    async def _generate_openai_response(
+        self,
+        messages: List[Dict[str, str]],
+        model: str,
+        max_tokens: int = 1000,
+        temperature: float = 0.7,
+        response_schema: Optional[Dict] = None,
+    ) -> str:
         """Gera resposta usando OpenAI - Versão simplificada que funciona"""
         if not self.openai_client:
             raise Exception("OpenAI API key não configurada")
@@ -115,20 +189,30 @@ class AIService:
                 print(f"  Message {i+1}: role={msg.get('role')}, content={msg.get('content', '')[:50]}...")
             print("-" * 80)
         
-        logger.info(f"Chamando OpenAI com modelo: {model}, messages: {messages}")
-        
-        # Usa a mesma lógica simples do ai_service_simple que funciona
-        # Usa apenas max_tokens (max_completion_tokens não existe nesta versão da lib)
+        logger.info(
+            "Chamando OpenAI modelo=%s mensagens=%s chars=%s schema=%s",
+            model,
+            len(messages),
+            sum(len(str(item.get("content") or "")) for item in messages),
+            bool(response_schema),
+        )
+
         try:
             if is_gpt41nano:
                 print("[*] Enviando requisição para OpenAI...")
-            
-            response = self.openai_client.chat.completions.create(
-                model=model,
-                messages=messages,
-                max_tokens=max_tokens,
-                temperature=temperature
-            )
+
+            pedido = {"model": model, "messages": messages}
+            if "gpt-5" in model.lower():
+                # O teto inclui o raciocínio interno. Sem folga, o JSON volta vazio.
+                pedido["max_completion_tokens"] = max(max_tokens, 8000) if response_schema else max_tokens
+                if response_schema:
+                    pedido["reasoning_effort"] = "minimal"
+            else:
+                pedido["max_tokens"] = max_tokens
+                pedido["temperature"] = temperature
+            if response_schema:
+                pedido["response_format"] = {"type": "json_schema", "json_schema": response_schema}
+            response = self.openai_client.chat.completions.create(**pedido)
             
             if is_gpt41nano:
                 print("[OK] Requisição bem-sucedida!")
@@ -140,9 +224,14 @@ class AIService:
                 print(f"  Mensagem: {str(e)}")
                 import traceback
                 print(f"  Traceback: {traceback.format_exc()}")
-            logger.error(f"Erro ao chamar OpenAI: {e}")
+            logger.error("Erro ao chamar OpenAI: %s", _sem_segredo(str(e)))
+            if response_schema:
+                raise FalhaExtracao("A OpenAI não concluiu a extração.") from e
             raise
         
+        if response_schema:
+            return _texto_pedidos_validados(response)
+
         # Extrair conteúdo da resposta
         content = response.choices[0].message.content
         

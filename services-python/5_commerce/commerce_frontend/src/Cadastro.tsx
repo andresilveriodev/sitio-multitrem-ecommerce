@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CadastroChat } from "./CadastroChat";
+import { carregarContextosIa, montarContexto } from "./contextoIa";
 import {
   createProduto,
   deleteCliente,
@@ -29,9 +30,11 @@ import {
   mesclarCliente,
   mesmoNome,
   normalizarFormato,
+  opcoesNomeFunil,
   precosDaFrase,
   rotuloProduto,
   separarFormato,
+  sincronizarEnderecoPrincipal,
   type Formulario,
 } from "./rascunho";
 
@@ -42,6 +45,7 @@ export type InclusaoCliente = {
   nome: string;
   tabela?: string;
   endereco?: string;
+  fornecedor?: boolean;
 };
 
 const vazio = formularioVazio;
@@ -69,22 +73,42 @@ function showPhone(value: string | null | undefined): string {
 
 function formFrom(item: Cliente | null, listaPadrao: number | null): Formulario {
   if (!item) return { ...vazio, lista: listaPadrao };
-  return {
+  const enderecos =
+    item.enderecos && item.enderecos.length > 0
+      ? item.enderecos.map((end) => ({
+          rotulo: end.rotulo || "Entrega",
+          endereco: end.endereco || "",
+          localizacao: end.localizacao || "",
+          padrao: Boolean(end.padrao),
+        }))
+      : [
+          {
+            rotulo: "Entrega",
+            endereco: item.endereco ?? "",
+            localizacao: item.localizacao ?? "",
+            padrao: true,
+          },
+        ];
+  return sincronizarEnderecoPrincipal({
     nome: item.name,
     celular1: showPhone(item.phone_e164),
     celular2: showPhone(item.phone2_e164),
     endereco: item.endereco ?? "",
     localizacao: item.localizacao ?? "",
+    enderecos,
     observacao: item.observacao ?? "",
     lista: item.price_list_id ?? listaPadrao,
-    tipo: item.kind === "comercio" ? "comercio" : "pessoa",
+    tipo: item.kind === "comercio" ? "comercio" : item.kind === "fornecedor" ? "fornecedor" : "pessoa",
     pessoas: (item.pessoas ?? []).map((pessoa) => ({
       nome: pessoa.nome,
       celular: showPhone(pessoa.celular),
       papeis: pessoa.papeis ?? [],
+      tratamento: pessoa.tratamento ?? "",
     })),
+    tratamento: item.tratamento ?? "",
+    nomeFunil: item.nome_funil ?? "",
     descontoPedido: item.desconto_pedido ? String(item.desconto_pedido).replace(".", ",") : "",
-  };
+  });
 }
 
 const PAPEIS = [
@@ -103,11 +127,39 @@ function descontoGeral(valor: string): number | null | undefined {
 
 function faltando(form: Formulario): string[] {
   const itens: string[] = [];
-  if (!form.nome.trim()) itens.push("nome completo");
-  if (!form.celular1.trim()) itens.push("celular 1");
-  if (!form.endereco.trim()) itens.push("endereço");
-  if (!form.localizacao.trim()) itens.push("localização");
+  if (!form.nome.trim()) itens.push(form.tipo === "fornecedor" ? "nome do fornecedor" : "nome completo");
+  const enderecos = form.enderecos.filter((item) => item.endereco.trim() || item.localizacao.trim());
+  if (form.tipo === "fornecedor") {
+    if (!enderecos.length && !form.localizacao.trim() && !form.endereco.trim()) itens.push("localização");
+  } else {
+    if (!form.celular1.trim()) itens.push("celular 1");
+    if (!enderecos.length) {
+      itens.push("endereço e localização");
+    } else {
+      enderecos.forEach((item, index) => {
+        const nome = item.rotulo.trim() || `endereço ${index + 1}`;
+        if (!item.endereco.trim()) itens.push(`endereço de ${nome}`);
+        if (!item.localizacao.trim()) itens.push(`localização de ${nome}`);
+      });
+    }
+  }
+  if (form.tipo !== "pessoa") {
+    form.pessoas.forEach((pessoa) => {
+      if (pessoa.nome.trim() && pessoa.papeis.length === 0) itens.push(`o papel de ${pessoa.nome.trim()}`);
+    });
+  }
   return itens;
+}
+
+function avisoParaSalvar(form: Formulario): string {
+  const falta = faltando(form);
+  if (!falta.length) return "";
+  const papeis = falta.filter((item) => item.startsWith("o papel de "));
+  const resto = falta.filter((item) => !item.startsWith("o papel de "));
+  const partes: string[] = [];
+  if (resto.length) partes.push("Para salvar precisa de " + resto.join(", ") + ".");
+  papeis.forEach((item) => partes.push(`Marque ${item}.`));
+  return partes.join(" ");
 }
 
 export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente | null }) {
@@ -128,6 +180,9 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
   const [novoNome, setNovoNome] = useState("");
   const [novoFormato, setNovoFormato] = useState("unidade");
   const [novoOutro, setNovoOutro] = useState("");
+  const [novoPrecos, setNovoPrecos] = useState<Record<number, string>>({});
+  const [destaqueProdutoId, setDestaqueProdutoId] = useState<number | null>(null);
+  const [buscaProduto, setBuscaProduto] = useState("");
   const [excluirId, setExcluirId] = useState<number | null>(null);
   const [excluirCliente, setExcluirCliente] = useState(false);
   const cadastroRef = useRef({ clientePendente, form, listas });
@@ -164,8 +219,11 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
     setForm({
       ...base,
       nome: incluir.nome,
+      tipo: incluir.fornecedor ? "fornecedor" : "pessoa",
       lista: listaPedido?.id ?? base.lista,
-      endereco: incluir.endereco ?? "",
+      endereco: incluir.fornecedor ? "" : incluir.endereco ?? "",
+      localizacao: incluir.fornecedor ? incluir.endereco ?? "" : "",
+      pessoas: incluir.fornecedor ? [{ nome: "", celular: "", papeis: ["proprietario"], tratamento: "" }] : [],
     });
     setMarcados({
       nome: true,
@@ -180,12 +238,20 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
   }, [incluir]);
 
   useEffect(() => {
+    let ativo = true;
     refresh().catch(async (err: Error) => {
+      if (!ativo) return;
       setError(err.message);
       await new Promise((resolve) => setTimeout(resolve, 800));
-      refresh().catch((again: Error) => setError(again.message));
+      if (!ativo) return;
+      refresh().catch((again: Error) => {
+        if (ativo) setError(again.message);
+      });
     });
-  }, []);
+    return () => {
+      ativo = false;
+    };
+  }, [aba]);
 
   useEffect(() => {
     if (!clientePendente && !descontoPendente && Object.keys(precosPendentes).length === 0) {
@@ -216,19 +282,32 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
       : null;
   const pending = clientePendente || descontoPendente || Object.keys(precosPendentes).length > 0;
 
-  const linhasPreco = useMemo(
-    () =>
-      produtos.flatMap((product) =>
-        listas.map((lista, index) => ({
-          product,
-          lista,
-          price: product.precos[String(lista.id)],
-          pending: precosPendentes[`${product.id}:${lista.id}`],
-          first: index === 0,
-        })),
-      ),
-    [produtos, listas, precosPendentes],
-  );
+  const linhasPreco = useMemo(() => {
+    const alvo = buscaProduto
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+    const filtrados = alvo
+      ? produtos.filter((product) => {
+          const nome = `${product.name} ${product.formato || ""}`
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+          return nome.includes(alvo);
+        })
+      : produtos;
+    return filtrados.flatMap((product) =>
+      listas.map((lista, index) => ({
+        product,
+        lista,
+        price: product.precos[String(lista.id)],
+        pending: precosPendentes[`${product.id}:${lista.id}`],
+        first: index === 0,
+      })),
+    );
+  }, [produtos, listas, precosPendentes, buscaProduto]);
+  const qtdeProdutosLista = useMemo(() => linhasPreco.filter((linha) => linha.first).length, [linhasPreco]);
 
   function editar<K extends keyof Formulario>(campo: K, valor: Formulario[K]) {
     setOriginal((atual) => atual ?? form);
@@ -237,12 +316,15 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
     setClientePendente(true);
   }
 
-  function escolherTipo(tipo: "pessoa" | "comercio") {
+  function escolherTipo(tipo: "pessoa" | "comercio" | "fornecedor") {
     setOriginal((atual) => atual ?? form);
     setForm((atual) => ({
       ...atual,
       tipo,
-      pessoas: tipo === "comercio" && atual.pessoas.length === 0 ? [{ nome: "", celular: "", papeis: [] }] : atual.pessoas,
+      pessoas:
+        tipo !== "pessoa" && atual.pessoas.length === 0
+          ? [{ nome: "", celular: "", papeis: tipo === "fornecedor" ? ["proprietario"] : [], tratamento: "" }]
+          : atual.pessoas,
     }));
     setMarcados((atual) => ({ ...atual, tipo: true }));
     setClientePendente(true);
@@ -268,13 +350,56 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
 
   function adicionarPessoa() {
     setOriginal((atual) => atual ?? form);
-    setForm((atual) => ({ ...atual, pessoas: [...atual.pessoas, { nome: "", celular: "", papeis: [] }] }));
+    setForm((atual) => ({ ...atual, pessoas: [...atual.pessoas, { nome: "", celular: "", papeis: [], tratamento: "" }] }));
     setClientePendente(true);
   }
 
   function removerPessoa(index: number) {
     setOriginal((atual) => atual ?? form);
     setForm((atual) => ({ ...atual, pessoas: atual.pessoas.filter((_, i) => i !== index) }));
+    setClientePendente(true);
+  }
+
+  function alterarEndereco(index: number, patch: Partial<Formulario["enderecos"][number]>) {
+    setOriginal((atual) => atual ?? form);
+    setForm((atual) => {
+      let enderecos = atual.enderecos.map((item, i) => (i === index ? { ...item, ...patch } : item));
+      if (patch.padrao) {
+        enderecos = enderecos.map((item, i) => ({ ...item, padrao: i === index }));
+      }
+      return sincronizarEnderecoPrincipal({ ...atual, enderecos });
+    });
+    setMarcados((atual) => ({ ...atual, endereco: true, localizacao: true }));
+    setClientePendente(true);
+  }
+
+  function adicionarEndereco() {
+    setOriginal((atual) => atual ?? form);
+    setForm((atual) =>
+      sincronizarEnderecoPrincipal({
+        ...atual,
+        enderecos: [
+          ...atual.enderecos,
+          { rotulo: `Entrega ${atual.enderecos.length + 1}`, endereco: "", localizacao: "", padrao: atual.enderecos.length === 0 },
+        ],
+      }),
+    );
+    setMarcados((atual) => ({ ...atual, endereco: true, localizacao: true }));
+    setClientePendente(true);
+  }
+
+  function removerEndereco(index: number) {
+    setOriginal((atual) => atual ?? form);
+    setForm((atual) => {
+      const resto = atual.enderecos.filter((_, i) => i !== index);
+      const enderecos =
+        resto.length > 0
+          ? resto
+          : [{ rotulo: "Entrega", endereco: "", localizacao: "", padrao: true }];
+      if (!enderecos.some((item) => item.padrao)) enderecos[0].padrao = true;
+      return sincronizarEnderecoPrincipal({ ...atual, enderecos });
+    });
+    setMarcados((atual) => ({ ...atual, endereco: true, localizacao: true }));
     setClientePendente(true);
   }
 
@@ -353,12 +478,21 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
     let reply = "";
     let recebidas: Acao[] = [];
     try {
+      let contexto = "";
+      try {
+        const bases = await carregarContextosIa();
+        const base = bases.find((item) => item.tela === (aba === "tabelas" ? "tabelas" : "clientes"));
+        if (base) contexto = montarContexto(base.instrucao, { cliente: cliente?.name || "" });
+      } catch {
+        /* a frase segue sem o texto desta tela */
+      }
       const result = await interpretCadastro({
         message: frase,
         tela: aba === "tabelas" ? "precos" : "clientes",
         clientes: clientes.map((item) => ({ nome: item.name })),
         produtos: produtos.map((item) => rotuloProduto(item.name, item.formato || "unidade")),
         listas: listas.map((item) => item.name),
+        contexto,
       });
       reply = result.reply;
       recebidas = result.acoes;
@@ -466,8 +600,8 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
     if (catalogo !== produtos) setProdutos(catalogo);
     setPrecosPendentes(nextPrecos);
 
-    const falta = nextClientePendente ? faltando(nextForm) : [];
-    if (falta.length) avisos.push("Para salvar ainda precisa de " + falta.join(", ") + ".");
+    const falta = nextClientePendente ? avisoParaSalvar(nextForm) : "";
+    if (falta) avisos.push(falta);
     const resposta = [reply, ...avisos].filter(Boolean).join(" ");
     return resposta || "Não identifiquei o que mudar.";
   }
@@ -485,25 +619,36 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
       setPrecosPendentes({});
       let id = clienteId;
       if (clientePendente) {
-        const falta = faltando(form);
-        if (falta.length) throw new Error("Para salvar precisa de " + falta.join(", ") + ".");
+        const aviso = avisoParaSalvar(form);
+        if (aviso) throw new Error(aviso);
         if (descontoGeral(form.descontoPedido) === undefined) {
           throw new Error("O desconto geral do pedido fica entre 0 e 100%.");
         }
         const listaId = form.lista ?? listas[0]?.id;
         if (!listaId) throw new Error("Escolha o preço base.");
+        const pronto = sincronizarEnderecoPrincipal(form);
         const saved = await saveCliente({
           id: id ?? undefined,
-          name: form.nome.trim(),
+          name: pronto.nome.trim(),
           price_list_id: listaId,
-          phone_e164: form.celular1,
-          phone2_e164: form.celular2,
-          endereco: form.endereco,
-          localizacao: form.localizacao,
-          observacao: form.observacao,
-          kind: form.tipo,
-          pessoas: form.tipo === "comercio" ? form.pessoas : [],
-          desconto_pedido: descontoGeral(form.descontoPedido),
+          phone_e164: pronto.celular1,
+          phone2_e164: pronto.celular2,
+          endereco: pronto.tipo === "fornecedor" ? pronto.endereco || pronto.localizacao : pronto.endereco,
+          localizacao: pronto.localizacao || pronto.endereco,
+          enderecos: pronto.enderecos
+            .filter((item) => item.endereco.trim() || item.localizacao.trim())
+            .map((item) => ({
+              rotulo: item.rotulo.trim() || "Entrega",
+              endereco: pronto.tipo === "fornecedor" ? item.endereco || item.localizacao : item.endereco,
+              localizacao: item.localizacao || item.endereco,
+              padrao: item.padrao,
+            })),
+          observacao: pronto.observacao,
+          kind: pronto.tipo,
+          tratamento: pronto.tipo === "pessoa" ? pronto.tratamento : "",
+          nome_funil: pronto.nomeFunil,
+          pessoas: pronto.tipo === "pessoa" ? [] : pronto.pessoas,
+          desconto_pedido: descontoGeral(pronto.descontoPedido),
         });
         id = saved.id;
         setClienteId(saved.id);
@@ -605,11 +750,23 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
     setSaving(true);
     setError("");
     try {
-      await createProduto(novoNome.trim(), formato);
+      const criado = await createProduto(novoNome.trim(), formato);
+      for (const lista of listas) {
+        const raw = (novoPrecos[lista.id] || "").trim();
+        if (!raw) continue;
+        const price = lerReais(raw);
+        if (Number.isNaN(price) || price < 0) continue;
+        await saveTablePrice(lista.id, criado.id, price);
+      }
       setNovoNome("");
       setNovoFormato("unidade");
       setNovoOutro("");
+      setNovoPrecos({});
+      setDestaqueProdutoId(criado.id);
       await refresh();
+      requestAnimationFrame(() => {
+        document.getElementById(`produto-${criado.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não adicionou o produto");
     } finally {
@@ -686,32 +843,82 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
           </p>
           {error ? <p className="error">{error}</p> : null}
           <form
-            className="linha"
+            className="novo-produto"
             onSubmit={(event) => {
               event.preventDefault();
               void onNovoProduto();
             }}
           >
-            <input value={novoNome} placeholder="Ex.: Alface Palito" onChange={(event) => setNovoNome(event.target.value)} />
-            <select value={novoFormato} onChange={(event) => setNovoFormato(event.target.value)}>
-              {FORMATOS.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-              <option value="outro">outro</option>
-            </select>
-            {novoFormato === "outro" ? (
+            <div className="linha">
               <input
-                value={novoOutro}
-                placeholder="Ex.: c/ 03 unidades"
-                onChange={(event) => setNovoOutro(event.target.value)}
+                value={novoNome}
+                placeholder="Ex.: Alface Palito"
+                aria-label="Nome do produto"
+                onChange={(event) => setNovoNome(event.target.value)}
               />
-            ) : null}
-            <button className="primary" type="submit" disabled={saving}>
-              Adicionar
-            </button>
+              <select
+                value={novoFormato}
+                aria-label="Formato"
+                onChange={(event) => setNovoFormato(event.target.value)}
+              >
+                {FORMATOS.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+                <option value="outro">outro</option>
+              </select>
+              {novoFormato === "outro" ? (
+                <input
+                  value={novoOutro}
+                  placeholder="Ex.: c/ 03 unidades"
+                  aria-label="Outro formato"
+                  onChange={(event) => setNovoOutro(event.target.value)}
+                />
+              ) : null}
+            </div>
+            <div className="linha precos-novos">
+              {listas.map((lista) => (
+                <label key={lista.id} className="preco-novo">
+                  <span>{lista.name}</span>
+                  <input
+                    inputMode="decimal"
+                    placeholder="0,00"
+                    aria-label={`Preço ${lista.name}`}
+                    value={novoPrecos[lista.id] ?? ""}
+                    onChange={(event) =>
+                      setNovoPrecos((atual) => ({ ...atual, [lista.id]: event.target.value }))
+                    }
+                  />
+                </label>
+              ))}
+              <button className="primary" type="submit" disabled={saving}>
+                {saving ? "Salvando…" : "Adicionar"}
+              </button>
+            </div>
+            <p className="origem">Pode deixar preço em branco e completar depois na lista.</p>
           </form>
+          <div className="linha">
+            <input
+              value={buscaProduto}
+              placeholder="Pesquisar produto…"
+              aria-label="Pesquisar produto"
+              onChange={(event) => setBuscaProduto(event.target.value)}
+            />
+            {buscaProduto ? (
+              <button type="button" onClick={() => setBuscaProduto("")}>
+                Limpar
+              </button>
+            ) : null}
+            {buscaProduto ? (
+              <span className="origem">
+                {qtdeProdutosLista} {qtdeProdutosLista === 1 ? "produto" : "produtos"}
+              </span>
+            ) : null}
+          </div>
+          {buscaProduto && qtdeProdutosLista === 0 ? (
+            <p className="empty">Nenhum produto com “{buscaProduto}”.</p>
+          ) : null}
           <table className="grade">
             <thead>
               <tr>
@@ -726,6 +933,8 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
               {linhasPreco.map(({ product, lista, price, pending: valor, first }) => (
                 <PriceRow
                   key={`${product.id}-${lista.id}`}
+                  rowId={first ? `produto-${product.id}` : undefined}
+                  destaque={first && destaqueProdutoId === product.id}
                   name={first ? product.name : ""}
                   formato={first ? product.formato || "unidade" : ""}
                   excluindo={first && excluirId === product.id}
@@ -768,7 +977,8 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
               <button type="button" className={item.id === clienteId ? "primary" : undefined} onClick={() => openCliente(item)}>
                 {item.name}
                 <small>
-                  {item.kind === "comercio" ? "Comércio" : "Pessoa física"}
+                  {item.kind === "comercio" ? "Comércio" : item.kind === "fornecedor" ? "Fornecedor" : "Pessoa física"}
+                  {item.nome_funil && item.nome_funil !== item.name ? ` · funil: ${item.nome_funil}` : ""}
                   {showPhone(item.phone_e164) ? ` · ${showPhone(item.phone_e164)}` : ""}
                 </small>
               </button>
@@ -801,40 +1011,90 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
           </div>
         ) : null}
         <div className="linha">
-          <button type="button" className={form.tipo !== "comercio" ? "primary" : undefined} onClick={() => escolherTipo("pessoa")}>
+          <button type="button" className={form.tipo === "pessoa" ? "primary" : undefined} onClick={() => escolherTipo("pessoa")}>
             Pessoa física
           </button>
           <button type="button" className={form.tipo === "comercio" ? "primary" : undefined} onClick={() => escolherTipo("comercio")}>
             Comércio
           </button>
+          <button type="button" className={form.tipo === "fornecedor" ? "primary" : undefined} onClick={() => escolherTipo("fornecedor")}>
+            Fornecedor
+          </button>
         </div>
         <Campo
-          label={form.tipo === "comercio" ? "Nome do comércio" : "Nome completo"}
+          label={form.tipo === "comercio" ? "Nome do comércio" : form.tipo === "fornecedor" ? "Nome do fornecedor" : "Nome completo"}
           required
           pending={marcados.nome}
           antes={gravado("nome")}
           value={form.nome}
           onChange={(valor) => editar("nome", valor)}
         />
+        {form.tipo === "pessoa" ? (
+          <>
+            <Campo
+            label="Como deseja ser chamado"
+            pending={marcados.tratamento}
+            value={form.tratamento}
+            onChange={(valor) => editar("tratamento", valor)}
+            />
+            <NomeNoFunil form={form} onChange={(valor) => editar("nomeFunil", valor)} />
+          </>
+        ) : null}
         <Campo
-          label={form.tipo === "comercio" ? "Telefone do comércio" : "Celular 1"}
-          required
+          label={form.tipo === "comercio" ? "Telefone do comércio" : form.tipo === "fornecedor" ? "Telefone" : "Celular 1"}
+          required={form.tipo !== "fornecedor"}
           pending={marcados.celular1}
           antes={gravado("celular1")}
           value={form.celular1}
           onChange={(valor) => editar("celular1", valor)}
         />
         <Campo label="Celular 2" pending={marcados.celular2} antes={gravado("celular2")} value={form.celular2} onChange={(valor) => editar("celular2", valor)} />
-        <Campo label="Endereço" required pending={marcados.endereco} antes={gravado("endereco")} value={form.endereco} onChange={(valor) => editar("endereco", valor)} />
-        <Campo
-          label="Localização"
-          required
-          pending={marcados.localizacao}
-          antes={gravado("localizacao")}
-          value={form.localizacao}
-          placeholder="Link do mapa ou ponto de referência"
-          onChange={(valor) => editar("localizacao", valor)}
-        />
+        <div className={`campo enderecos-lista ${marcados.endereco || marcados.localizacao ? "pendente" : ""}`}>
+          <div className="enderecos-cabecalho">
+            <span>Endereços {form.tipo === "fornecedor" ? "" : "*"}</span>
+            <button type="button" className="link" onClick={adicionarEndereco}>
+              Incluir endereço
+            </button>
+          </div>
+          {form.enderecos.map((item, index) => (
+            <div className="endereco-card" key={`end-${index}`}>
+              <div className="endereco-card-topo">
+                <Campo
+                  label="Rótulo"
+                  value={item.rotulo}
+                  placeholder="Casa, loja, depósito…"
+                  onChange={(valor) => alterarEndereco(index, { rotulo: valor })}
+                />
+                <label className="endereco-padrao">
+                  <input
+                    type="checkbox"
+                    checked={item.padrao}
+                    onChange={(event) => alterarEndereco(index, { padrao: event.target.checked })}
+                  />
+                  Padrão
+                </label>
+                {form.enderecos.length > 1 ? (
+                  <button type="button" className="link danger" onClick={() => removerEndereco(index)}>
+                    Remover
+                  </button>
+                ) : null}
+              </div>
+              <Campo
+                label="Endereço completo"
+                required={form.tipo !== "fornecedor"}
+                value={item.endereco}
+                onChange={(valor) => alterarEndereco(index, { endereco: valor })}
+              />
+              <Campo
+                label="Localização"
+                required
+                value={item.localizacao}
+                placeholder="Link do Google Maps"
+                onChange={(valor) => alterarEndereco(index, { localizacao: valor })}
+              />
+            </div>
+          ))}
+        </div>
         <label className="campo">
           Observação de entrega
           <textarea
@@ -844,6 +1104,7 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
             onChange={(event) => editar("observacao", event.target.value)}
           />
         </label>
+        {form.tipo === "fornecedor" ? null : (
         <label className="campo">
           Preço base
           <select
@@ -858,8 +1119,13 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
             ))}
           </select>
         </label>
-        <p>Celular 2 e a observação são opcionais. O restante precisa estar preenchido para confirmar.</p>
-        {form.tipo === "comercio" ? (
+        )}
+        <p>
+          {form.tipo === "fornecedor"
+            ? "O nome e o setor bastam. O telefone e o endereço são opcionais. A pessoa é o contato, como o Seu Pedro."
+            : "Celular 2 e a observação são opcionais. O restante precisa estar preenchido para confirmar."}
+        </p>
+        {form.tipo !== "pessoa" ? (
           <div className="desconto-box">
             <h2>Pessoas</h2>
             <p>Pode ser uma pessoa nos três papéis, ou várias em cada um. Proprietário, quem pede e recebe, e quem cuida do financeiro.</p>
@@ -869,6 +1135,11 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
                   label="Nome"
                   value={pessoa.nome}
                   onChange={(valor) => alterarPessoa(index, { nome: valor })}
+                />
+                <Campo
+                  label="Como deseja ser chamado"
+                  value={pessoa.tratamento}
+                  onChange={(valor) => alterarPessoa(index, { tratamento: valor })}
                 />
                 <Campo
                   label="Celular"
@@ -895,6 +1166,7 @@ export function Cadastro({ aba, incluir }: { aba: Aba; incluir?: InclusaoCliente
             <button type="button" onClick={adicionarPessoa}>
               Adicionar pessoa
             </button>
+            <NomeNoFunil form={form} onChange={(valor) => editar("nomeFunil", valor)} />
           </div>
         ) : null}
         <div className="desconto-box">
@@ -1026,6 +1298,29 @@ function FormatoCampo({ value, onSave }: { value: string; onSave: (formato: stri
   );
 }
 
+function NomeNoFunil({ form, onChange }: { form: Formulario; onChange: (valor: string) => void }) {
+  const opcoes = opcoesNomeFunil(form);
+  const atual = form.nomeFunil.trim();
+  const lista =
+    atual && !opcoes.some((item) => item.valor.toLocaleLowerCase("pt-BR") === atual.toLocaleLowerCase("pt-BR"))
+      ? [{ valor: atual, rotulo: atual }, ...opcoes]
+      : opcoes;
+  return (
+    <label className="campo">
+      Nome no funil
+      <select value={atual} onChange={(event) => onChange(event.target.value)}>
+        <option value="">Como está na grade</option>
+        {lista.map((item) => (
+          <option key={item.valor} value={item.valor}>
+            {item.rotulo}
+          </option>
+        ))}
+      </select>
+      <small className="gravado">Esse nome entra na grade de avisos. O pedido continua no cadastro.</small>
+    </label>
+  );
+}
+
 function Campo({
   label,
   value,
@@ -1065,6 +1360,8 @@ function PriceRow({
   price,
   pending,
   excluindo,
+  rowId,
+  destaque,
   onSave,
   onSaveFormato,
   onDraft,
@@ -1078,6 +1375,8 @@ function PriceRow({
   price?: number;
   pending?: string;
   excluindo?: boolean;
+  rowId?: string;
+  destaque?: boolean;
   onSave: (raw: string) => void;
   onSaveFormato: (formato: string) => void;
   onDraft: (raw: string) => void;
@@ -1090,8 +1389,9 @@ function PriceRow({
     if (pending !== undefined) setRaw(pending);
     else setRaw(price === undefined ? "" : formatarReais(price));
   }, [price, pending]);
+  const classe = [pending !== undefined ? "pendente" : "", destaque ? "destaque" : ""].filter(Boolean).join(" ") || undefined;
   return (
-    <tr className={pending !== undefined ? "pendente" : undefined}>
+    <tr id={rowId} className={classe}>
       <td>
         {name ? (
           <div className="produto-nome">

@@ -23,6 +23,12 @@ from routes import (
     chatbot_router,
     cadastro_router,
     boletas_router,
+    conversas_router,
+    listas_compra_router,
+    preferencia_router,
+    contexto_ia_router,
+    colaboradores_router,
+    whatsapp_envio_router,
 )
 
 logger = structlog.get_logger()
@@ -86,6 +92,12 @@ def create_app() -> FastAPI:
     app.include_router(chatbot_router, prefix="/api/v1")
     app.include_router(cadastro_router, prefix="/api/v1")
     app.include_router(boletas_router, prefix="/api/v1")
+    app.include_router(conversas_router, prefix="/api/v1")
+    app.include_router(listas_compra_router, prefix="/api/v1")
+    app.include_router(preferencia_router, prefix="/api/v1")
+    app.include_router(contexto_ia_router, prefix="/api/v1")
+    app.include_router(colaboradores_router, prefix="/api/v1")
+    app.include_router(whatsapp_envio_router, prefix="/api/v1")
     
     # Exception handler para erros de validação (422)
     @app.exception_handler(RequestValidationError)

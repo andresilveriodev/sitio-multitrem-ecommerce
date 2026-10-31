@@ -27,7 +27,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         start_time = time.time()
         
         logger.info(
-            "🌐 REQUISIÇÃO HTTP RECEBIDA",
+            "REQUISICAO HTTP RECEBIDA",
             method=request.method,
             url=str(request.url),
             path=request.url.path,
@@ -43,7 +43,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             process_time = time.time() - start_time
             
             logger.info(
-                "✅ REQUISIÇÃO PROCESSADA",
+                "REQUISICAO PROCESSADA",
                 method=request.method,
                 path=request.url.path,
                 status_code=response.status_code,
@@ -54,7 +54,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         except Exception as e:
             process_time = time.time() - start_time
             logger.error(
-                "❌ ERRO AO PROCESSAR REQUISIÇÃO",
+                "ERRO AO PROCESSAR REQUISICAO",
                 method=request.method,
                 path=request.url.path,
                 error=str(e),

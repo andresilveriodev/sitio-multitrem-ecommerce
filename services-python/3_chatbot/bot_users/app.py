@@ -7,7 +7,7 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 import structlog
 
 from config import settings
-from routes import chat_router, analytics_router, ai_router
+from routes import chat_router, analytics_router, ai_router, whatsapp_router
 from services.cache_service import cache_service
 from services.context_service import context_service
 from services.ai_integration import ai_integration
@@ -65,6 +65,7 @@ def create_app() -> FastAPI:
     app.include_router(chat_router)
     app.include_router(analytics_router)
     app.include_router(ai_router)
+    app.include_router(whatsapp_router)
     
     @app.get("/health")
     async def health_check():

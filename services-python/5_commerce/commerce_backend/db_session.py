@@ -24,12 +24,14 @@ engine = create_engine(
     pool_pre_ping=True
 )
 
-# Session factory
-SessionLocal = scoped_session(sessionmaker(
+# Cada requisição abre a própria sessão. O registro por thread misturava
+# duas requisições quando o pool reaproveitava a thread da entrada.
+_session_factory = sessionmaker(
     bind=engine,
     autocommit=False,
-    autoflush=False
-))
+    autoflush=False,
+)
+SessionLocal = scoped_session(_session_factory)
 
 # Base para os modelos
 Base = declarative_base()
@@ -39,7 +41,7 @@ def get_db_session() -> Generator:
     """
     Dependency para obter sessão do banco de dados
     """
-    db = SessionLocal()
+    db = _session_factory()
     try:
         yield db
     finally:
@@ -51,7 +53,7 @@ def get_db():
     """
     Context manager para sessão do banco de dados
     """
-    db = SessionLocal()
+    db = _session_factory()
     try:
         yield db
     finally:

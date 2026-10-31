@@ -686,6 +686,8 @@ class AIServiceIntegration:
         confidence: Optional[float] = None,
         intent_reason: Optional[str] = None,
         user_id: Optional[str] = None,
+        response_schema: Optional[Dict] = None,
+        max_tokens: Optional[int] = None,
     ) -> Optional[str]:
         """
         Chat com o AI Service. Envia mensagem e, opcionalmente, intent do router
@@ -705,6 +707,10 @@ class AIServiceIntegration:
             request_data["intent_reason"] = intent_reason
         if user_id is not None:
             request_data["user_id"] = user_id
+        if response_schema is not None:
+            request_data["response_schema"] = response_schema
+        if max_tokens is not None:
+            request_data["max_tokens"] = max_tokens
         
         try:
             logger.info(

@@ -91,20 +91,27 @@ export function Contas() {
         </button>
       </form>
       {erro ? <p className="error">{erro}</p> : null}
-      {extrato && !extrato.clientes.length ? <p className="empty">Nenhum pedido nesse período.</p> : null}
-      {extrato && extrato.clientes.length ? (
+      {extrato && !extrato.clientes.some((cliente) => cliente.pedidos.some((pedido) => pedido.tipo !== "compra")) ? (
+        <p className="empty">Nenhum pedido nesse período.</p>
+      ) : null}
+      {extrato && extrato.clientes.some((cliente) => cliente.pedidos.some((pedido) => pedido.tipo !== "compra")) ? (
         <div className="extrato">
           <p className="periodo">
             {mostrarData(extrato.de)} a {mostrarData(extrato.ate)}
             {extrato.clientes.length > 1 ? ` · Total geral ${formatMoney(extrato.total)}` : ""}
           </p>
-          {extrato.clientes.map((cliente) => (
+          {extrato.clientes.map((cliente) => {
+            const pedidos = cliente.pedidos.filter((pedido) => pedido.tipo !== "compra");
+            if (!pedidos.length) return null;
+            const totalCliente = pedidos.reduce((soma, pedido) => soma + pedido.total, 0);
+            return (
             <article key={cliente.id}>
               <h2>{cliente.nome}</h2>
-              {cliente.pedidos.map((pedido) => (
+              {pedidos.map((pedido) => (
                 <div className="nota" key={pedido.id}>
                   <strong>
                     {pedido.data}
+                    {pedido.observacao ? ` · ${pedido.observacao}` : ""}
                     {pedido.endereco ? ` · ${pedido.endereco}` : ""}
                   </strong>
                   <table>
@@ -122,7 +129,16 @@ export function Contas() {
                         const faltou = item.qtd > 0 && item.qtd_entregue < item.qtd;
                         return (
                           <tr key={index} className={faltou ? "falta" : undefined}>
-                            <td>{item.produto}</td>
+                            <td>
+                              {item.produto}
+                              {(item.qtd_reagendada || 0) > 0 && item.data_reagendada ? (
+                                <div className="origem">
+                                  Reagendado {quantidade(item.qtd_reagendada || 0)} para {item.data_reagendada}
+                                </div>
+                              ) : null}
+                              {item.observacao ? <div className="origem">{item.observacao}</div> : null}
+                              {item.origem_data ? <div className="origem">Reagendado de {item.origem_data}</div> : null}
+                            </td>
                             <td className="num">{quantidade(item.qtd)}</td>
                             <td className="num">{quantidade(item.qtd_entregue)}</td>
                             <td className="num">{reais(item.valor)}</td>
@@ -144,9 +160,10 @@ export function Contas() {
                   </table>
                 </div>
               ))}
-              <p className="periodo">Total do período: {formatMoney(cliente.total)}</p>
+              <p className="periodo">Total do período: {formatMoney(totalCliente)}</p>
             </article>
-          ))}
+            );
+          })}
         </div>
       ) : null}
     </section>

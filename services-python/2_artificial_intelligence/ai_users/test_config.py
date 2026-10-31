@@ -66,8 +66,8 @@ if not DATABASE_URI:
 else:
     print("[OK] DATABASE_URI carregada corretamente")
 
-if HTTP_PORT != 8003:
-    print(f"[AVISO] HTTP_PORT esta como {HTTP_PORT}, esperado 8003")
+if HTTP_PORT != 8006:
+    print(f"[AVISO] HTTP_PORT esta como {HTTP_PORT}, esperado 8006")
 else:
     print(f"[OK] HTTP_PORT configurado corretamente: {HTTP_PORT}")
 
